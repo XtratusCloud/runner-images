@@ -27,7 +27,7 @@ stages:
     jobs:
       - template: image-generation.yml
         parameters:
-          image_type: Windows2022
+          image_type: windows2022
           image_readme_name: Windows2022-Readme.md
           agent_pool: Agent Pool Linux
           variable_group_name: devops-agents-generation-shared
