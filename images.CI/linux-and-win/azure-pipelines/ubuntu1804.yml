@@ -23,7 +23,10 @@ stages:
       - name: managed_image_name
         value: "SelfHosted_Ubuntu1804"
       - name: managed_image_version
-        value: "$(MANAGED_IMAGE_ROOT_VERSION)-$(Build.BuildNumber)"
+        ${{ if in(variables['Build.SourceBranchName'],'main','xtratus')) }}:
+          value: "$(MANAGED_IMAGE_ROOT_VERSION)"
+        ${{ if notIn(variables['Build.SourceBranchName'],'main','xtratus')) }}:
+          value: "$(MANAGED_IMAGE_ROOT_VERSION)-$(Build.BuildNumber)"
     jobs:
       - template: image-generation.yml
         parameters:
