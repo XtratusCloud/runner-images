@@ -1,12 +1,16 @@
-schedules:
-- cron: "0 0 * * *"
-  displayName: Daily
+# schedules:
+# - cron: "0 0 * * *"
+#   displayName: Daily
+#   branches:
+#     include:
+#     - main
+#   always: true
+trigger:
   branches:
     include:
     - main
-  always: true
-
-trigger: none
+    - features/*
+    - hotfix/*
 pr:
   autoCancel: true
   branches:
@@ -14,12 +18,17 @@ pr:
     - main
 
 jobs:
+- variables:
+  - name: managed_image_name
+    value: "SelfHosted_Ubuntu2004"
+  - name: managed_image_version
+    value: "$(MANAGED_IMAGE_ROOT_VERSION)-$(Build.BuildNumber)"
+
 - template: image-generation.yml
   parameters:
-    job_id: ubuntu2004_generate_image
-    image_type: ubuntu2004
+    image_type: Ubuntu2004
     image_readme_name: Ubuntu2004-Readme.md
     agent_pool: Agent Pool Linux
     variable_group_name: devops-agents-generation-shared
-    create_release: true
+    create_release: false
     repository_ref: 'self'
