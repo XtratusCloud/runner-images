@@ -68,6 +68,9 @@ jobs:
         Write-Host "##vso[task.setvariable variable=TemplateDirectoryPath;]$TemplateDirectoryPath"
         Write-Host "##vso[task.setvariable variable=TemplatePath;]$TemplatePath"
 
+  - task: riezebosch.Packer.PackerTool.PackerTool@0
+    displayName: 'Download Packer'
+
   - task: PowerShell@2
     displayName: 'Build VM'
     inputs:
