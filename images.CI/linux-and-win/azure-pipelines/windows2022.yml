@@ -18,7 +18,7 @@ pr:
       - main
 
 stages:
-  - stage: image-generation
+  - stage: image_generation
     variables:
       - name: managed_image_name
         value: "SelfHosted_Windows2022"
