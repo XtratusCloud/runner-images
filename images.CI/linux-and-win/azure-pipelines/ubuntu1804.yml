@@ -18,18 +18,18 @@ pr:
       - main
 
 stages:
-  stage: image-generation
-  variables:
-    - name: managed_image_name
-      value: "SelfHosted_Ubuntu1804"
-    - name: managed_image_version
-      value: "$(MANAGED_IMAGE_ROOT_VERSION)-$(Build.BuildNumber)"
-  jobs:
-    - template: image-generation.yml
-      parameters:
-        image_type: Ubuntu1804
-        image_readme_name: Ubuntu1804-Readme.md
-        agent_pool: Agent Pool Linux
-        variable_group_name: devops-agents-generation-shared
-        create_release: false
-        repository_ref: "self"
+  - stage: image-generation
+    variables:
+      - name: managed_image_name
+        value: "SelfHosted_Ubuntu1804"
+      - name: managed_image_version
+        value: "$(MANAGED_IMAGE_ROOT_VERSION)-$(Build.BuildNumber)"
+    jobs:
+      - template: image-generation.yml
+        parameters:
+          image_type: Ubuntu1804
+          image_readme_name: Ubuntu1804-Readme.md
+          agent_pool: Agent Pool Linux
+          variable_group_name: devops-agents-generation-shared
+          create_release: false
+          repository_ref: "self"
