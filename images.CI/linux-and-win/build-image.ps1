@@ -46,7 +46,6 @@ packer build    -var "capture_name_prefix=$ResourcesNamePrefix" `
                 -var "install_password=$InstallPassword" `
                 -var "resource_group=$ResourceGroup" `
                 -var "build_resource_group_name=$ResourceGroup" `
-                -var "storage_account=$StorageAccount" `
                 -var "subscription_id=$SubscriptionId" `
                 -var "managed_image_name=$ManagedImageName" `
                 -var "managed_image_version=$ManagedImageVersion" `
