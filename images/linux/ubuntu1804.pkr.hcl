@@ -101,6 +101,12 @@ variable "installer_script_folder" {
   default = "/imagegeneration/installers"
 }
 
+variable "install_password" {
+  type      = string
+  sensitive = true
+  default = ""
+}
+
 variable "location" {
   type    = string
   default = "${env("ARM_RESOURCE_LOCATION")}"

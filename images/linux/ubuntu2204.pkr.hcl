@@ -114,7 +114,8 @@ variable "installer_script_folder" {
 }
 
 variable "install_password" {
-  type  = string
+  type      = string
+  sensitive = true
   default = ""
 }
 
