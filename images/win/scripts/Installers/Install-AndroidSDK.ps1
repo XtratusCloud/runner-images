@@ -127,4 +127,4 @@ if (Test-Path $ndkLatestPath) {
     exit 1
 }
 
-#Invoke-PesterTests -TestFile "Android"
+Invoke-PesterTests -TestFile "Android"
