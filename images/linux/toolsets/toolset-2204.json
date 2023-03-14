@@ -103,7 +103,8 @@
         {"name": "MarkdownPS"},
         {"name": "Microsoft.Graph"},
         {"name": "Pester"},
-        {"name": "PSScriptAnalyzer"}
+        {"name": "PSScriptAnalyzer"},
+        {"name": "PsDepend"}
     ],
     "azureModules": [
         {
