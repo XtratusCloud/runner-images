@@ -11,6 +11,14 @@ trigger:
       - main
       - features/*
       - hotfix/*
+  paths:
+    include:
+      - images/linux/ubuntu2004.pkr.hcl
+      - images/linux/config/ubuntu2004.conf
+      - images/linux/post-generation/*
+      - images/linux/scripts/*
+      - images/linux/toolsets/toolseet-2004.jaon
+
 pr:
   autoCancel: true
   branches:

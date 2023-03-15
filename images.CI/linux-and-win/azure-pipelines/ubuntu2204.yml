@@ -11,6 +11,13 @@ trigger:
       - main
       - features/*
       - hotfix/*
+  paths:
+    include:
+      - images/linux/ubuntu2204.pkr.hcl
+      - images/linux/config/ubuntu2204.conf
+      - images/linux/post-generation/*
+      - images/linux/scripts/*
+      - images/linux/toolsets/toolseet-2204.jaon
 pr:
   autoCancel: true
   branches:
