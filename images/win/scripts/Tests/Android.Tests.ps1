@@ -71,8 +71,7 @@ Describe "Android SDK" {
     }
 
     Context "Packages" {
-        # XTRATUS: added -Skip to avoid validation errors
-        It "Platform version <platformVersion> is installed" -TestCases $platformTestCases -Skip {
+        It "Platform version <platformVersion> is installed" -TestCases $platformTestCases {
             "$installedPackages" | Should -Match "$platformVersion"
         }
 

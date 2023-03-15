@@ -22,5 +22,4 @@ download_with_retries $zipUrl "/tmp" $zipName
 unzip /tmp/${zipName} -d /tmp
 /tmp/install
 
-## Xtratus: removed test to avoid error
-# invoke_tests "CLI.Tools" "AWS"
+invoke_tests "CLI.Tools" "AWS"
