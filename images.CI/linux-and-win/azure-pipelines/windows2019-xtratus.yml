@@ -3,7 +3,7 @@ trigger:
   branches:
     include:
       - xtratus
-      - features/*
+      - feature/*
       - hotfix/*
     exclude:
       - main
@@ -25,7 +25,7 @@ stages:
       #   ${{ if notIn(variables['Build.SourceBranchName'],'main','xtratus') }}:
       #     value: "$(MANAGED_IMAGE_ROOT_VERSION)-$(Build.BuildNumber)"
     jobs:
-      - template: image-generation.yml
+      - template: image-generation-xtratus.yml
         parameters:
           image_type: windows2019
           image_readme_name: Windows2019-Readme.md
