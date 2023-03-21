@@ -72,7 +72,7 @@ jobs:
           $managedImageVersion = "$(GitVersion.MajorMinorPatch)-$(Build.BuildNumber)"
         }
         Write-Host "##vso[task.setvariable variable=managed_image_version;]$managedImageVersion"
-        Write-Host "##vso[build.updatebuildnumber]$(Build.BuildNumber) [$managedImageVersion]"
+        #Write-Host "##vso[build.updatebuildnumber]$(Build.BuildNumber) [$managedImageVersion]"
 
   - task: PowerShell@2
     displayName: 'Set image template variables'
