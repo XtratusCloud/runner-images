@@ -65,7 +65,7 @@ jobs:
     displayName: 'devops: set calculated version'
     inputs:
       targetType: 'inline'
-      script: |       
+      script: |      
         if ('$(Build.SourceBranchName)' -eq 'xtratus') {
           $managedImageVersion = "$(GitVersion.MajorMinorPatch)"
         } else {
