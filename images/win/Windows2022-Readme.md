@@ -41,7 +41,7 @@
 ### Project Management
 - Ant 1.10.13
 - Gradle 7.6
-- Maven 3.8.7
+- Maven 3.8.8
 - sbt 1.8.2
 
 ### Tools

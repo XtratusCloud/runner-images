@@ -62,7 +62,7 @@ to accomplish this.
 ### Project Management
 - Ant 1.10.5
 - Gradle 8.0.1
-- Maven 3.8.7
+- Maven 3.8.8
 - Sbt 1.8.2
 
 ### Tools

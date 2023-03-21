@@ -45,7 +45,7 @@ jobs:
   - checkout: ${{ parameters.repository_ref }}
 
   - task: PowerShell@2
-    displayName: 'Download custom repository'
+    displayName: 'git: Download custom repository'
     condition: and(ne(variables['CUSTOM_REPOSITORY_URL'], ''), ne(variables['CUSTOM_REPOSITORY_BRANCH'], ''))
     inputs:
       targetType: 'filePath'
@@ -53,6 +53,14 @@ jobs:
       arguments: -RepoUrl $(CUSTOM_REPOSITORY_URL) `
                  -RepoBranch $(CUSTOM_REPOSITORY_BRANCH)
 
+  - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0 
+    displayName: 'gitversion: install'
+    inputs:
+      versionSpec: 5.x
+
+  - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
+    displayName: 'gitversion: execute'
+ 
   - task: PowerShell@2
     displayName: 'Set image template variables'
     inputs:
@@ -67,7 +75,7 @@ jobs:
         }
         Write-Host "##vso[task.setvariable variable=TemplateDirectoryPath;]$TemplateDirectoryPath"
         Write-Host "##vso[task.setvariable variable=TemplatePath;]$TemplatePath"
-
+       
   - task: riezebosch.Packer.PackerTool.PackerTool@0
     displayName: 'Download Packer'
 
@@ -81,7 +89,7 @@ jobs:
                         -ClientSecret $(CLIENT_SECRET) `
                         -TemplatePath $(TemplatePath) `
                         -ResourceGroup $(AZURE_RESOURCE_GROUP) `
-                        -ManagedImageName $(managed_image_name) `
+                        -ManagedImageName $(GitVersion.SemVer) `
                         -ManagedImageVersion $(managed_image_version)
                         -SubscriptionId $(AZURE_SUBSCRIPTION) `
                         -TenantId $(AZURE_TENANT) `
