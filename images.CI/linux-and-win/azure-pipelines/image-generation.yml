@@ -58,22 +58,9 @@ jobs:
     inputs:
       versionSpec: 5.x
 
-  # - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
-  #   displayName: 'gitversion: execute'
-
-  - task: PowerShell@2
-    displayName: 'devops: set calculated version'
-    inputs:
-      targetType: 'inline'
-      script: |      
-        if ('$(Build.SourceBranchName)' -eq 'xtratus') {
-          $managedImageVersion = "$(GitVersion.MajorMinorPatch)"
-        } else {
-          $managedImageVersion = "$(GitVersion.MajorMinorPatch)-$(Build.BuildNumber)"
-        }
-        Write-Host "##vso[task.setvariable variable=managed_image_version;]$managedImageVersion"
-        #Write-Host "##vso[build.updatebuildnumber]$(Build.BuildNumber) [$managedImageVersion]"
-
+  - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
+    displayName: 'gitversion: execute'
+ 
   - task: PowerShell@2
     displayName: 'Set image template variables'
     inputs:
@@ -102,7 +89,7 @@ jobs:
                         -ClientSecret $(CLIENT_SECRET) `
                         -TemplatePath $(TemplatePath) `
                         -ResourceGroup $(AZURE_RESOURCE_GROUP) `
-                        -ManagedImageName $(managed_image_name) `
+                        -ManagedImageName $(GitVersion.SemVer) `
                         -ManagedImageVersion $(managed_image_version)
                         -SubscriptionId $(AZURE_SUBSCRIPTION) `
                         -TenantId $(AZURE_TENANT) `
