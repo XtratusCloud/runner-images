@@ -1,0 +1,23 @@
+branches:
+  xtratus:
+    regex: ^xtratus$
+    mode: ContinuousDelivery
+    tag: ''
+    increment: Minor
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+    source-branches: 
+    - develop
+    - main
+    - release
+    - feature
+    - support
+    - hotfix
+    tracks-release-branches: false
+    is-release-branch: true
+    is-mainline: true
+    pre-release-weight: 55000
+  
+ignore:
+  sha: []
+merge-message-formats: {}

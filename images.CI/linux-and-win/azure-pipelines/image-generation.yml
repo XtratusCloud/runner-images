@@ -68,6 +68,9 @@ jobs:
         Write-Host "##vso[task.setvariable variable=TemplateDirectoryPath;]$TemplateDirectoryPath"
         Write-Host "##vso[task.setvariable variable=TemplatePath;]$TemplatePath"
 
+  - task: riezebosch.Packer.PackerTool.PackerTool@0
+    displayName: 'Download Packer'
+
   - task: PowerShell@2
     displayName: 'Build VM'
     inputs:
@@ -78,7 +81,8 @@ jobs:
                         -ClientSecret $(CLIENT_SECRET) `
                         -TemplatePath $(TemplatePath) `
                         -ResourceGroup $(AZURE_RESOURCE_GROUP) `
-                        -StorageAccount $(AZURE_STORAGE_ACCOUNT) `
+                        -ManagedImageName $(managed_image_name) `
+                        -ManagedImageVersion $(managed_image_version)
                         -SubscriptionId $(AZURE_SUBSCRIPTION) `
                         -TenantId $(AZURE_TENANT) `
                         -Location $(AZURE_LOCATION) `
@@ -88,7 +92,7 @@ jobs:
 
     env:
       PACKER_LOG: 1
-      PACKER_LOG_PATH: $(Build.ArtifactStagingDirectory)/packer-log.txt
+      PACKER_LOG_PATH: "$(Agent.TempDirectory)/packer-log.txt"
   
   - task: PowerShell@2
     displayName: 'Copy image artifacts to the separate directory'
@@ -130,7 +134,7 @@ jobs:
     inputs:
       targetType: 'filePath'
       filePath: ./images.CI/measure-provisioners-duration.ps1
-      arguments: -PackerLogPath "$(Build.ArtifactStagingDirectory)/packer-log.txt" `
+      arguments: -PackerLogPath "$(Agent.TempDirectory)/packer-log.txt" `
                         -PrefixToPathTrim "$(TemplateDirectoryPath)" `
                         -PrintTopNLongest 25
 
@@ -147,16 +151,16 @@ jobs:
                           -ImageName ${{ parameters.image_type }} `
                           -AccessToken $(RELEASE_TARGET_TOKEN)
 
-  - task: PowerShell@2
-    displayName: 'Clean up resources'
-    condition: always()
-    inputs:
-      targetType: filePath
-      filePath: ./images.CI/linux-and-win/cleanup.ps1
-      arguments: -ResourcesNamePrefix $(Build.BuildId) `
-                     -Image ${{ parameters.image_type }} `
-                     -StorageAccount $(AZURE_STORAGE_ACCOUNT) `
-                     -SubscriptionId $(AZURE_SUBSCRIPTION) `
-                     -ClientId $(CLIENT_ID) `
-                     -ClientSecret $(CLIENT_SECRET) `
-                     -TenantId $(AZURE_TENANT)
+  # - task: PowerShell@2
+  #   displayName: 'Clean up resources'
+  #   condition: always()
+  #   inputs:
+  #     targetType: filePath
+  #     filePath: ./images.CI/linux-and-win/cleanup.ps1
+  #     arguments: -ResourcesNamePrefix $(Build.BuildId) `
+  #                    -Image ${{ parameters.image_type }} `
+  #                    -StorageAccount $(AZURE_STORAGE_ACCOUNT) `
+  #                    -SubscriptionId $(AZURE_SUBSCRIPTION) `
+  #                    -ClientId $(CLIENT_ID) `
+  #                    -ClientSecret $(CLIENT_SECRET) `
+  #                    -TenantId $(AZURE_TENANT)

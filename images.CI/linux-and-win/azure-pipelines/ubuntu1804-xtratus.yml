@@ -1,0 +1,35 @@
+trigger:
+  branches:
+    include:
+      - xtratus
+      - features/*
+      - hotfix/*
+    exclude:
+      - main
+  paths:
+    include:
+      - images/linux/ubuntu1804.pkr.hcl
+      - images/linux/config/ubuntu1804.conf
+      - images/linux/post-generation/*
+      - images/linux/scripts/*
+      - images/linux/toolsets/toolset-1804.json
+
+stages:
+  - stage: image_generation
+    variables:
+      - name: managed_image_name
+        value: "SelfHosted_Ubuntu1804"
+      - name: managed_image_version
+        ${{ if in(variables['Build.SourceBranchName'],'main','xtratus')) }}:
+          value: "$(MANAGED_IMAGE_ROOT_VERSION)"
+        ${{ if notIn(variables['Build.SourceBranchName'],'main','xtratus')) }}:
+          value: "$(MANAGED_IMAGE_ROOT_VERSION)-$(Build.BuildNumber)"
+    jobs:
+      - template: image-generation.yml
+        parameters:
+          image_type: ubuntu1804
+          image_readme_name: Ubuntu1804-Readme.md
+          agent_pool: Agent Pool Linux
+          variable_group_name: devops-agents-generation-shared
+          create_release: false
+          repository_ref: "self"
