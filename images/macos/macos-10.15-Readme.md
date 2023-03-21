@@ -60,7 +60,7 @@
 
 ### Project Management
 - Apache Ant(TM) 1.10.12
-- Apache Maven 3.8.6
+- Apache Maven 3.8.8
 - Gradle 7.5.1
 - Sbt 1.7.2
 

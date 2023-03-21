@@ -62,7 +62,7 @@ to accomplish this.
 - Ant 1.10.7
 - Gradle 8.0.2
 - Lerna 6.5.1
-- Maven 3.8.7
+- Maven 3.8.8
 - Sbt 1.8.2
 
 ### Tools
