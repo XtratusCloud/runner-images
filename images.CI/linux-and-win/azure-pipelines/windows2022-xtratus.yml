@@ -18,7 +18,7 @@ stages:
   - stage: image_generation
     variables:
       - name: managed_image_name
-        value: "SelfHosted_Windows2022"
+        value: "selfhosted_windows2022"
       # - name: managed_image_version
       #   ${{ if in(variables['Build.SourceBranchName'],'main','xtratus') }}:
       #     value: "$(MANAGED_IMAGE_ROOT_VERSION)"
