@@ -90,7 +90,7 @@ jobs:
                         -TemplatePath $(TemplatePath) `
                         -ResourceGroup $(AZURE_RESOURCE_GROUP) `
                         -ManagedImageName $(GitVersion.SemVer) `
-                        -ManagedImageVersion $(managed_image_version)
+                        -ManagedImageVersion $(GitVersion.SemVer)
                         -SubscriptionId $(AZURE_SUBSCRIPTION) `
                         -TenantId $(AZURE_TENANT) `
                         -Location $(AZURE_LOCATION) `
