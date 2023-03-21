@@ -45,13 +45,34 @@ jobs:
   - checkout: ${{ parameters.repository_ref }}
 
   - task: PowerShell@2
-    displayName: 'Download custom repository'
+    displayName: 'git: Download custom repository'
     condition: and(ne(variables['CUSTOM_REPOSITORY_URL'], ''), ne(variables['CUSTOM_REPOSITORY_BRANCH'], ''))
     inputs:
       targetType: 'filePath'
       filePath: ./images.CI/download-repo.ps1
       arguments: -RepoUrl $(CUSTOM_REPOSITORY_URL) `
                  -RepoBranch $(CUSTOM_REPOSITORY_BRANCH)
+
+  - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0 
+    displayName: 'gitversion: install'
+    inputs:
+      versionSpec: 5.x
+
+  - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
+    displayName: 'gitversion: execute'
+
+  - task: PowerShell@2
+    displayName: 'devops: set calculated version'
+    inputs:
+      targetType: 'inline'
+      script: |       
+        if ('$(Build.SourceBranchName)' -eq 'xtratus') {
+          $managedImageVersion = "$(GitVersion.MajorMinorPatch)"
+        } else {
+          $managedImageVersion = "$(GitVersion.MajorMinorPatch)-$(Build.BuildNumber)"
+        }
+        Write-Host "##vso[task.setvariable variable=managed_image_version;]$managedImageVersion"
+        Write-Host "##vso[build.updatebuildnumber]$(Build.BuildNumber) [$managedImageVersion]"
 
   - task: PowerShell@2
     displayName: 'Set image template variables'
@@ -67,7 +88,7 @@ jobs:
         }
         Write-Host "##vso[task.setvariable variable=TemplateDirectoryPath;]$TemplateDirectoryPath"
         Write-Host "##vso[task.setvariable variable=TemplatePath;]$TemplatePath"
-
+       
   - task: riezebosch.Packer.PackerTool.PackerTool@0
     displayName: 'Download Packer'
 
