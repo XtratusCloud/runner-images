@@ -58,8 +58,8 @@ jobs:
     inputs:
       versionSpec: 5.x
 
-  - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
-    displayName: 'gitversion: execute'
+  # - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
+  #   displayName: 'gitversion: execute'
 
   - task: PowerShell@2
     displayName: 'devops: set calculated version'
