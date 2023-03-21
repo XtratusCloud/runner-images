@@ -116,8 +116,7 @@
         {"name": "MarkdownPS"},
         {"name": "Microsoft.Graph"},
         {"name": "Pester"},
-        {"name": "PsDepend"},
-        {"name": "Az"}
+        {"name": "PsDepend"}
     ],
     "azureModules": [
         {
