@@ -89,7 +89,7 @@ jobs:
                         -ClientSecret $(CLIENT_SECRET) `
                         -TemplatePath $(TemplatePath) `
                         -ResourceGroup $(AZURE_RESOURCE_GROUP) `
-                        -ManagedImageName $(GitVersion.SemVer) `
+                        -ManagedImageName $(managed_image_name) `
                         -ManagedImageVersion $(GitVersion.SemVer)
                         -SubscriptionId $(AZURE_SUBSCRIPTION) `
                         -TenantId $(AZURE_TENANT) `
