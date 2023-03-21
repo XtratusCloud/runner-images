@@ -1,0 +1,66 @@
+############################################################
+## Pipeline template that publish a VM Image             ###
+##    to an Azure Image Library                          ###
+#  - All resources related variables                     ###
+#      are readed from variable group                    ###
+#                                                        ###
+#                                                        ###
+############################################################
+
+parameters:
+  - name: job_id
+    type: string
+    default: 'generate_image'
+  
+  - name: image_type
+    type: string
+
+  - name: agent_pool
+    type: object
+    default:
+      name: 'Agent Pool Linux'
+
+  - name: variable_group_name
+    type: string
+    default: 'devops-agents-generation-shared'
+
+  - name: source_managed_image
+    type: string
+
+  - name: azureServiceConnection
+    type: string
+
+jobs:
+- job: ${{ parameters.job_id }}
+  displayName: Image Publish (${{ parameters.image_type }})
+  timeoutInMinutes: 600
+  cancelTimeoutInMinutes: 30
+  pool: ${{ parameters.agent_pool }}
+  variables:
+  - group: ${{ parameters.variable_group_name }}
+
+  steps:
+    - checkout: none
+
+    - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0 
+      displayName: 'gitversion: install'
+      inputs:
+        versionSpec: 5.x
+
+    - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
+      displayName: 'gitversion: execute'
+
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: ${{ parameters.azureServiceConnection }}
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az sig image-version create --gallery-name '$(IMAGE_GALLERY_NAME)' `
+            --resource-group '$(IMAGE_GALLERY_RESOURCE_GROUP)' `
+            --gallery-image-definition '$(managed_image_name)' `
+            --gallery-image-version '$(GitVersion.SemVer)' `
+            --subscription '$(IMAGE_GALLERY_SUBSCRIPTION)' `
+            --storage-account-type '$(IMAGE_GALLERY_REPLICATION)' `
+            --target-regions '$(IMAGE_REPLICATION_REGIONS)' `
+            --managed-image '${{ parameters.source_managed_image }}'
