@@ -1,10 +1,3 @@
-# schedules:
-#   - cron: "0 0 * * *"
-#     displayName: Daily
-#     branches:
-#       include:
-#         - main
-#     always: true
 trigger:
   branches:
     include:
@@ -19,14 +12,6 @@ trigger:
       - images/win/post-generation/*
       - images/win/scripts/*
       - images/win/toolsets/toolset-2022.json
-      
-pr:
-  autoCancel: true
-  branches:
-    include:
-      - xtratus
-    exclude:
-      - main
 
 stages:
   - stage: image_generation
