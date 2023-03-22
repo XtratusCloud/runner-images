@@ -58,30 +58,6 @@ variable "managed_image_storage_account_type" {
   type    = string
   default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}"
 }
-variable "image_gallery_subscription" {
-  type    = string
-  default = "${env("IMAGE_GALLERY_SUBSCRIPTION")}"
-}
-variable "image_gallery_resource_group" {
-  type    = string
-  default = "${env("IMAGE_GALLERY_RESOURCE_GROUP")}"
-}
-variable "image_gallery_name" {
-  type    = string
-  default = "${env("IMAGE_GALLERY_NAME")}"
-}
-variable "image_gallery_regions" {
-  type    = string
-  default = "${env("IMAGE_GALLERY_REGIONS")}"
-}
-variable "image_gallery_replication" {
-  type    = string
-  default = "${env("IMAGE_GALLERY_REPLICATION")}"
-}
-variable "image_gallery_resourceId" {
-  type    = string
-  default = "${env("IMAGE_GALLERY_RESOURCEID")}"
-}
 
 variable "helper_script_folder" {
   type    = string
@@ -179,19 +155,6 @@ variable "vm_size" {
   default = "Standard_D4s_v4"
 }
 
-locals {
-  image_gallery_destination = length(regexall("^(?P<major>0|[1-9]\\d*)\\.(?P<minor>0|[1-9]\\d*)\\.(?P<patch>0|[1-9]\\d*)$", var.managed_image_version)) > 0 ? [
-  {
-    subscription = var.image_gallery_subscription
-    resource_group = var.image_gallery_resource_group
-    gallery_name = var.image_gallery_name
-    image_name = var.managed_image_name
-    image_version = var.managed_image_version
-    replication_regions = jsondecode(var.image_gallery_regions)
-    storage_account_type = var.image_gallery_replication
-  }] : []
-}
-
 source "azure-arm" "build_managed" {
   allowed_inbound_ip_addresses           = "${var.allowed_inbound_ip_addresses}"
   build_resource_group_name              = "${var.build_resource_group_name}"
@@ -215,19 +178,6 @@ source "azure-arm" "build_managed" {
   virtual_network_resource_group_name    = "${var.virtual_network_resource_group_name}"
   virtual_network_subnet_name            = "${var.virtual_network_subnet_name}"
   vm_size                                = "${var.vm_size}"
-
-  dynamic "shared_image_gallery_destination" {
-    for_each = local.image_gallery_destination
-    content {
-      subscription = shared_image_gallery_destination.value.subscription
-      resource_group = shared_image_gallery_destination.value.resource_group
-      gallery_name = shared_image_gallery_destination.value.gallery_name
-      image_name = shared_image_gallery_destination.value.image_name
-      image_version = shared_image_gallery_destination.value.image_version
-      replication_regions = shared_image_gallery_destination.value.replication_regions
-      storage_account_type = shared_image_gallery_destination.value.storage_account_type
-    }
-  }
 
   dynamic "azure_tag" {
     for_each = var.azure_tag
