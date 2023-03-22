@@ -46,36 +46,6 @@ variable "image_folder" {
   default = "C:\\image"
 }
 
-variable "image_gallery_name" {
-  type    = string
-  default = "${env("IMAGE_GALLERY_NAME")}"
-}
-
-variable "image_gallery_regions" {
-  type    = string
-  default = "${env("IMAGE_GALLERY_REGIONS")}"
-}
-
-variable "image_gallery_replication" {
-  type    = string
-  default = "${env("IMAGE_GALLERY_REPLICATION")}"
-}
-
-variable "image_gallery_resourceId" {
-  type    = string
-  default = "${env("IMAGE_GALLERY_RESOURCEID")}"
-}
-
-variable "image_gallery_resource_group" {
-  type    = string
-  default = "${env("IMAGE_GALLERY_RESOURCE_GROUP")}"
-}
-
-variable "image_gallery_subscription" {
-  type    = string
-  default = "${env("IMAGE_GALLERY_SUBSCRIPTION")}"
-}
-
 variable "image_os" {
   type    = string
   default = "win19"
@@ -181,21 +151,6 @@ variable "azure_tag" {
   default = {}
 }
 
-# Define image_gallery_destination object based on current version variable
-# only publish to image gallery on main versions.
-locals {
-  image_gallery_destination = length(regexall("^(?P<major>0|[1-9]\\d*)\\.(?P<minor>0|[1-9]\\d*)\\.(?P<patch>0|[1-9]\\d*)$", var.managed_image_version)) > 0 ? [
-  {
-    subscription = var.image_gallery_subscription
-    resource_group = var.image_gallery_resource_group
-    gallery_name = var.image_gallery_name
-    image_name = var.managed_image_name
-    image_version = var.managed_image_version
-    replication_regions = jsondecode(var.image_gallery_regions)
-    storage_account_type = var.image_gallery_replication
-  }] : []
-}
-
 # A build block runs provisioner and post-processors on a source
 # Read the documentation for source blocks here:
 # https://www.packer.io/docs/templates/hcl_templates/blocks/source
@@ -227,19 +182,6 @@ source "azure-arm" "build_managed" {
   winrm_insecure                      = "true"
   winrm_use_ssl                       = "true"
   winrm_username                      = "packer"
-
-  dynamic "shared_image_gallery_destination" {
-    for_each = local.image_gallery_destination
-    content {
-      subscription = shared_image_gallery_destination.value.subscription
-      resource_group = shared_image_gallery_destination.value.resource_group
-      gallery_name = shared_image_gallery_destination.value.gallery_name
-      image_name = shared_image_gallery_destination.value.image_name
-      image_version = shared_image_gallery_destination.value.image_version
-      replication_regions = shared_image_gallery_destination.value.replication_regions
-      storage_account_type = shared_image_gallery_destination.value.storage_account_type
-    }
-  }
 
   dynamic "azure_tag" {
     for_each = var.azure_tag

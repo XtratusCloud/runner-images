@@ -2,7 +2,6 @@ name: $(Date:yyyyMMdd)$(Rev:.r)
 trigger:
   branches:
     include:
-      - xtratus
       - feature/*
       - hotfix/*
     exclude:
@@ -19,11 +18,6 @@ stages:
     variables:
       - name: managed_image_name
         value: "selfhosted_windows2022"
-      # - name: managed_image_version
-      #   ${{ if in(variables['Build.SourceBranchName'],'main','xtratus') }}:
-      #     value: "$(MANAGED_IMAGE_ROOT_VERSION)"
-      #   ${{ if notIn(variables['Build.SourceBranchName'],'main','xtratus') }}:
-      #     value: "$(MANAGED_IMAGE_ROOT_VERSION)-$(Build.BuildNumber)"
     jobs:
       - template: image-generation-xtratus.yml
         parameters:

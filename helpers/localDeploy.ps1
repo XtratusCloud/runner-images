@@ -33,13 +33,6 @@ $Env:PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP = "true"
 $Env:RUN_VALIDATION_FLAG = "true"
 $Env:DOCKERHUB_LOGIN = ""
 $Env:DOCKERHUB_PASSWORD = ""
-$Env:IMAGE_GALLERY_SUBSCRIPTION = "d7a8fe02-cc0e-4c0a-8a4d-9afd9061d5de"
-$Env:IMAGE_GALLERY_RESOURCE_GROUP = "RG-WE-P-IMAGES-SELFHOSTED-001"
-$Env:IMAGE_GALLERY_NAME = "acgwepselfhostedimages01"
-$Env:IMAGE_GALLERY_REGIONS = "[""West Europe"",""eastus2""]"
-$Env:IMAGE_REPLICATION_REGIONS = """West Europe"" eastus2"
-$Env:IMAGE_GALLERY_REPLICATION = "Premium_LRS"
-$Env:MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE = "Premium_LRS"
 
 ##build Ubuntu 20.04
 $Env:MANAGED_IMAGE_NAME = "SelfHosted_Ubuntu2004"
@@ -49,8 +42,13 @@ packer build -on-error="ask" -force `
     -var "client_secret=$($clientKey)" `
     C:\code\cross_zone\EUR\runner-images\images\linux\ubuntu2004.pkr.hcl
 
-    
 ##PUBLISH Ubuntu 20.04
+$Env:IMAGE_GALLERY_SUBSCRIPTION = "d7a8fe02-cc0e-4c0a-8a4d-9afd9061d5de"
+$Env:IMAGE_GALLERY_RESOURCE_GROUP = "RG-WE-P-IMAGES-SELFHOSTED-001"
+$Env:IMAGE_GALLERY_NAME = "acgwepselfhostedimages01"
+$Env:IMAGE_REPLICATION_REGIONS = """West Europe"" eastus2"
+$Env:IMAGE_GALLERY_REPLICATION = "Premium_LRS"
+$Env:MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE = "Premium_LRS"
 $publishVersion = $(gitversion /showvariable MajorMinorPatch)
 $imageResourceId = "/subscriptions/$Env:IMAGE_GALLERY_SUBSCRIPTION/resourceGroups/$Env:BUILD_RESOURCE_GROUP_NAME/providers/Microsoft.Compute/images/$($Env:MANAGED_IMAGE_NAME)_$($Env:MANAGED_IMAGE_VERSION)"
 az sig image-version create --gallery-name "$Env:IMAGE_GALLERY_NAME" `
