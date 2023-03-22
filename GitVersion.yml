@@ -15,12 +15,12 @@ branches:
     is-mainline: true
     pre-release-weight: 55000
   feature:
-    mode: ContinuousDelivery
+    mode: ContinuousDeployment
     regex: ^feature(s)?[/-]
     tag: '{BranchName}'
     increment: Minor
   hotfix:
-    mode: ContinuousDelivery
+    mode: ContinuousDeployment
     regex: ^hotfix(es)?[/-]
     tag: '{BranchName}'
     increment: Patch

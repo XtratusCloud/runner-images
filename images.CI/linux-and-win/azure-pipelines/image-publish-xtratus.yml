@@ -1,0 +1,94 @@
+############################################################
+## Pipeline template that publish a VM Image             ###
+##    to an Azure Image Library                          ###
+#  - All resources related variables                     ###
+#      are readed from variable group                    ###
+#                                                        ###
+#                                                        ###
+############################################################
+
+parameters:
+  - name: job_id
+    type: string
+    default: 'generate_image'
+  
+  - name: image_type
+    type: string
+
+  - name: agent_pool
+    type: object
+    default: 'Agent Pool Linux'
+
+  - name: variable_group_name
+    type: string
+    default: 'devops-agents-generation-shared'
+
+  - name: repository_ref
+    type: string
+    default: 'self'
+
+  - name: managed_image_name
+    type: string
+    displayName: 'Name of the Image Definition in the Azure Compute Gallery.'
+
+  - name: source_managed_image
+    type: string
+    displayName: 'Resource Id of the VM Image to be published.'
+
+  - name: azureServiceConnection
+    type: string
+    displayName: 'Name of the AzureRM service connection used to publish.'
+  
+  - name: replica_count
+    type: number
+    default: 1
+    displayName: 'The default number of replicas to be created per region.'
+    
+
+jobs:
+- job: ${{ parameters.job_id }}
+  displayName: Image Publish (${{ parameters.image_type }})
+  timeoutInMinutes: 600
+  cancelTimeoutInMinutes: 30
+  pool: ${{ parameters.agent_pool }}
+  variables:
+  - group: ${{ parameters.variable_group_name }}
+
+  steps:
+    - checkout: ${{ parameters.repository_ref }}
+      fetchTags: true
+      persistCredentials: true
+
+    - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0 
+      displayName: 'gitversion: install'
+      inputs:
+        versionSpec: 5.x
+
+    - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
+      displayName: 'gitversion: execute'
+
+    - task: AzureCLI@2
+      displayName: 'az: publish image'
+      inputs:
+        azureSubscription: '${{ parameters.azureServiceConnection }}'
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az sig image-version create --gallery-name '$(IMAGE_GALLERY_NAME)' `
+            --resource-group '$(IMAGE_GALLERY_RESOURCE_GROUP)' `
+            --gallery-image-definition '${{ parameters.managed_image_name }}' `
+            --gallery-image-version '$(GitVersion.MajorMinorPatch)' `
+            --subscription '$(IMAGE_GALLERY_SUBSCRIPTION)' `
+            --replica-count ${{ parameters.replica_count }} `
+            --storage-account-type '$(IMAGE_GALLERY_REPLICATION)' `
+            --target-regions $(IMAGE_REPLICATION_REGIONS) `
+            --managed-image '${{ parameters.source_managed_image }}' `
+            --tags "SourceImage=${{ parameters.source_managed_image }}" `
+            --no-wait
+
+    - script: |
+        git config --global user.name "gitversion"
+        git tag $(GitVersion.MajorMinorPatch)
+        git push origin $(GitVersion.MajorMinorPatch)
+      displayName: 'git: set tag'
+      continueOnError: false
