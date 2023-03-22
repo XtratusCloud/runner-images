@@ -8,4 +8,4 @@ Before submitting this PR, please make sure:
 - [ ] Documentation is updated (if applicable)
 
 
-IMPORTANT!!!! Edit PR title and add this: [+semver:patch]
+IMPORTANT!! Add this to PR title: [+semver:patch]

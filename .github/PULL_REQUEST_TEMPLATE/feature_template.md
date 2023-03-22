@@ -9,4 +9,4 @@ Before submitting this PR, please make sure:
 
 
 
-IMPORTANT!!!! Edit PR title and add this: [+semver:minor]
+IMPORTANT!! Add this to PR title: [+semver:minor]

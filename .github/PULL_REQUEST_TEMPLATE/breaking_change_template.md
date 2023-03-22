@@ -7,4 +7,4 @@ Before submitting this PR, please make sure:
 - [ ] Tests are written (if applicable)
 - [ ] Documentation is updated (if applicable)
 
-IMPORTANT!!!! Edit PR title and add this: [+semver:major]
+IMPORTANT!! Add this to PR title: [+semver:major]
