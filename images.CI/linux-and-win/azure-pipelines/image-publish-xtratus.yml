@@ -44,7 +44,7 @@ jobs:
   - group: ${{ parameters.variable_group_name }}
 
   steps:
-    - checkout: none
+    - checkout: ${{ parameters.repository_ref }}
 
     - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0 
       displayName: 'gitversion: install'
