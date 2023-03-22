@@ -56,6 +56,8 @@ jobs:
 
   steps:
     - checkout: ${{ parameters.repository_ref }}
+      fetchTags: true
+      persistCredentials: true
 
     - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0 
       displayName: 'gitversion: install'
@@ -66,6 +68,7 @@ jobs:
       displayName: 'gitversion: execute'
 
     - task: AzureCLI@2
+      displayName: 'az: publish image'
       inputs:
         azureSubscription: '${{ parameters.azureServiceConnection }}'
         scriptType: 'pscore'
@@ -82,3 +85,9 @@ jobs:
             --managed-image '${{ parameters.source_managed_image }}' `
             --tags "SourceImage=${{ parameters.source_managed_image }}" `
             --no-wait
+
+    - script: |
+        git config --global user.name "gitversion"
+        git tag $(GitVersion.MajorMinorPatch)
+        git push origin $(GitVersion.MajorMinorPatch)
+      displayName: 'git: set tag $(GitVersion.MajorMinorPatch)'
