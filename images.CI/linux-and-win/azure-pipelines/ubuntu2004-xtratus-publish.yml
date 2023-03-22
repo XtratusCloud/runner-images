@@ -1,4 +1,5 @@
-
+trigger: none
+pr: none
 resources:
   pipelines:
     - pipeline: build
@@ -7,17 +8,19 @@ resources:
         branches:
           include:
             - xtratus
-          
+            - feature/*
+            - hotfix/*
+
 stages:
   - stage: image_publish
     variables:
-      - name: library_definition_name
-        value: "SelfHosted_Ubuntu2004"
+      - name: image_type
+        value: "Ubuntu2004"
       - name: managed_image_name
-        value: "SelfHosted_Ubuntu2004_$(resources.pipeline.build.runName)"
+        value: "SelfHosted_$(image_type)_$(resources.pipeline.build.runName)"
     jobs:
       - template: image-publish-xtratus.yml
         parameters:
-          image_type: ubuntu2004
+          image_type: '$(image_type)'
           azureServiceConnection: 'IA-CORP-CORE-COMMONSERV'
           source_managed_image: '/subscriptions/$(AZURE_SUBSCRIPTION)/resourceGroups/$(BUILD_RESOURCE_GROUP_NAME)/providers/Microsoft.Compute/images/$(managed_image_name)'
