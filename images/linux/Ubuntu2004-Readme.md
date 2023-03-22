@@ -262,6 +262,7 @@ Use the following command as a part of your job to start the service: 'sudo syst
 - Microsoft.Graph: 1.23.0
 - Pester: 5.4.0
 - PSScriptAnalyzer: 1.21.0
+- PSDepend: 0.3.8
 
 ### Web Servers
 | Name      | Version | ConfigFile                | ServiceStatus | ListenPort |

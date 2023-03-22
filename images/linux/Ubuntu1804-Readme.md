@@ -254,6 +254,8 @@ Use the following command as a part of your job to start the service: 'sudo syst
 - MarkdownPS: 1.9
 - Microsoft.Graph: 1.22.0
 - Pester: 5.4.0
+- PSDepend: 0.3.8
+
 
 ### Web Servers
 | Name    | Version | ConfigFile                | ServiceStatus | ListenPort |
