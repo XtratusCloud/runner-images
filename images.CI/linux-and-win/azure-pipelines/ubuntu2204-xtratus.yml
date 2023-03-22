@@ -1,4 +1,5 @@
 name: $(Date:yyyyMMdd)$(Rev:.r)
+pr: none
 trigger:
   branches:
     include:
