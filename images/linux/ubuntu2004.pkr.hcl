@@ -1,6 +1,5 @@
 # Read the variables type constraints documentation
 # https://www.packer.io/docs/templates/hcl_templates/variables#type-constraints for more info.
-
 variable "allowed_inbound_ip_addresses" {
   type    = list(string)
   default = []
