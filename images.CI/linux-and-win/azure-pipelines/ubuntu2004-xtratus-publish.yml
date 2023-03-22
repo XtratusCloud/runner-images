@@ -14,7 +14,7 @@ stages:
       - name: library_definition_name
         value: "SelfHosted_Ubuntu2004"
       - name: managed_image_name
-        value: "$(managed_image_name)_${{ resources.pipeline.build.runName }}"
+        value: "$(library_definition_name)_${{ resources.pipeline.build.runName }}"
     jobs:
       - template: image-publish-xtratus.yml
         parameters:
