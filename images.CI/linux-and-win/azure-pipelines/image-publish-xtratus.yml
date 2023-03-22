@@ -24,6 +24,10 @@ parameters:
     type: string
     default: 'devops-agents-generation-shared'
 
+  - name: repository_ref
+    type: string
+    default: 'self'
+
   - name: source_managed_image
     type: string
 
@@ -33,6 +37,7 @@ parameters:
   - name: replica_count
     type: number
     default: 1
+    
 
 jobs:
 - job: ${{ parameters.job_id }}
