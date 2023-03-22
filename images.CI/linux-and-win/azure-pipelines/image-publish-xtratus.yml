@@ -91,5 +91,4 @@ jobs:
         git tag $(GitVersion.MajorMinorPatch)
         git push origin $(GitVersion.MajorMinorPatch)
       displayName: 'git: set tag'
-      failOnStderr: true
       continueOnError: false
