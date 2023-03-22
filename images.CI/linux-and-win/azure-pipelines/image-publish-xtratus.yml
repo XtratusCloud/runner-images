@@ -1,9 +1,8 @@
 ############################################################
 ## Pipeline template that publish a VM Image             ###
 ##    to an Azure Image Library                          ###
-#  - All resources related variables                     ###
+#  - All gallery related variables                       ###
 #      are readed from variable group                    ###
-#                                                        ###
 #                                                        ###
 ############################################################
 
