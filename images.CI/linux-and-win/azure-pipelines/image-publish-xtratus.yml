@@ -17,8 +17,7 @@ parameters:
 
   - name: agent_pool
     type: object
-    default:
-      name: 'Agent Pool Linux'
+    default: 'Agent Pool Linux'
 
   - name: variable_group_name
     type: string
@@ -28,15 +27,22 @@ parameters:
     type: string
     default: 'self'
 
+  - name: managed_image_name
+    type: string
+    displayName: 'Name of the Image Definition in the Azure Compute Gallery.'
+
   - name: source_managed_image
     type: string
+    displayName: 'Resource Id of the VM Image to be published.'
 
   - name: azureServiceConnection
     type: string
+    displayName: 'Name of the AzureRM service connection used to publish.'
   
   - name: replica_count
     type: number
     default: 1
+    displayName: 'The default number of replicas to be created per region.'
     
 
 jobs:
@@ -67,8 +73,8 @@ jobs:
         inlineScript: |
           az sig image-version create --gallery-name '$(IMAGE_GALLERY_NAME)' `
             --resource-group '$(IMAGE_GALLERY_RESOURCE_GROUP)' `
-            --gallery-image-definition '$(managed_image_name)' `
-            --gallery-image-version '$(GitVersion.SemVer)' `
+            --gallery-image-definition '${{ parameters.managed_image_name }}' `
+            --gallery-image-version '$(GitVersion.MajorMinorPatch)' `
             --subscription '$(IMAGE_GALLERY_SUBSCRIPTION)' `
             --replica-count ${{ parameters.replica_count }} `
             --storage-account-type '$(IMAGE_GALLERY_REPLICATION)' `
