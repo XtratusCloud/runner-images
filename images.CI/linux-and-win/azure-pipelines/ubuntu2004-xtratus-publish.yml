@@ -19,5 +19,5 @@ stages:
       - template: image-publish-xtratus.yml
         parameters:
           image_type: ubuntu2004
-          azureServiceConnection: IA-CORP-CORE-COMMONSERV
+          azureServiceConnection: 'IA-CORP-CORE-COMMONSERV'
           source_managed_image: '/subscriptions/$(AZURE_SUBSCRIPTION)/resourceGroups/$(BUILD_RESOURCE_GROUP_NAME)/providers/Microsoft.Compute/images/$(managed_image_name)'
