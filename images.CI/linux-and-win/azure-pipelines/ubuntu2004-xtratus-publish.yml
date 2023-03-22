@@ -14,13 +14,11 @@ resources:
 stages:
   - stage: image_publish
     variables:
-      - name: image_type
-        value: "Ubuntu2004"
       - name: managed_image_name
-        value: "SelfHosted_$(image_type)_$(resources.pipeline.build.runName)"
+        value: "SelfHosted_Ubuntu2004_$(resources.pipeline.build.runName)"
     jobs:
       - template: image-publish-xtratus.yml
         parameters:
-          image_type: '$(image_type)'
+          image_type: 'Ubuntu2004'
           azureServiceConnection: 'IA-CORP-CORE-COMMONSERV'
           source_managed_image: '/subscriptions/$(AZURE_SUBSCRIPTION)/resourceGroups/$(BUILD_RESOURCE_GROUP_NAME)/providers/Microsoft.Compute/images/$(managed_image_name)'

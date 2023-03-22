@@ -70,7 +70,7 @@ jobs:
             --gallery-image-definition '$(managed_image_name)' `
             --gallery-image-version '$(GitVersion.SemVer)' `
             --subscription '$(IMAGE_GALLERY_SUBSCRIPTION)' `
-            --replica-count ${{ parameters.replica_count }} ``
+            --replica-count ${{ parameters.replica_count }} `
             --storage-account-type '$(IMAGE_GALLERY_REPLICATION)' `
             --target-regions $(IMAGE_REPLICATION_REGIONS) `
             --managed-image '${{ parameters.source_managed_image }}' `
