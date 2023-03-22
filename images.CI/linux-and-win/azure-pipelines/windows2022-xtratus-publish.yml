@@ -3,23 +3,23 @@ pr: none
 resources:
   pipelines:
     - pipeline: build
-      source: selfhosted_ubuntu_20.04-build
+      source: selfhosted_windows_2022-build
       trigger:
         branches:
           include:
             - xtratus
-
+            
 stages:
   - stage: image_publish
     variables:
       - name: managed_image_name
-        value: "SelfHosted_Ubuntu2004"
+        value: "SelfHosted_Windows2022"
       - name: managed_image_name_full
         value: "$(managed_image_name)_$(resources.pipeline.build.runName)"
     jobs:
       - template: image-publish-xtratus.yml
         parameters:
-          image_type: 'Ubuntu2004'
+          image_type: 'Windows2022'
           managed_image_name: '$(managed_image_name)'
           azureServiceConnection: 'IA-CORP-CORE-COMMONSERV'
           source_managed_image: '/subscriptions/$(AZURE_SUBSCRIPTION)/resourceGroups/$(BUILD_RESOURCE_GROUP_NAME)/providers/Microsoft.Compute/images/$(managed_image_name_full)'
