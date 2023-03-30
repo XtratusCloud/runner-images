@@ -22,7 +22,7 @@ parameters:
 
   - name: variable_group_name
     type: string
-    default: 'devops-agents-generation-shared-fnieto'
+    default: 'devops-agents-generation-shared'
 
   - name: repository_ref
     type: string
