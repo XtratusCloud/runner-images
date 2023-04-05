@@ -1,157 +1,125 @@
 # Read the variables type constraints documentation
 # https://www.packer.io/docs/templates/hcl_templates/variables#type-constraints for more info.
-variable "allowed_inbound_ip_addresses" {
-  type    = list(string)
-  default = []
-}
-
-variable "build_resource_group_name" {
+### MAIN authentication variables
+variable "tenant_id" {
   type    = string
-  default = "${env("BUILD_RESOURCE_GROUP_NAME")}"
+  default = "${env("ARM_TENANT_ID")}"
 }
-
-variable "capture_name_prefix" {
-  type    = string
-  default = "packer"
-}
-
-variable "client_cert_path" {
-  type    = string
-  default = "${env("ARM_CLIENT_CERT_PATH")}"
-}
-
 variable "client_id" {
   type    = string
   default = "${env("ARM_CLIENT_ID")}"
 }
-
 variable "client_secret" {
   type      = string
   default   = "${env("ARM_CLIENT_SECRET")}"
   sensitive = true
 }
+variable "client_cert_path" {
+  type      = string
+  default   = "${env("ARM_CLIENT_CERT_PATH")}"
+}
 
+
+### BUILD variables
+variable "build_subscription_id" {
+  type    = string
+  default = "${env("BUILD_SUBSCRIPTION_ID")}"
+}
+variable "build_resource_group_name" {
+  type    = string
+  default = "${env("BUILD_RESOURCE_GROUP_NAME")}"
+}
+variable "virtual_network_name" {
+  type    = string
+  default = "${env("BUILD_VNET_NAME")}"
+}
+variable "virtual_network_resource_group_name" {
+  type    = string
+  default = "${env("BUILD_VNET_RESOURCE_GROUP")}"
+}
+variable "virtual_network_subnet_name" {
+  type    = string
+  default = "${env("BUILD_VNET_SUBNET_NAME")}"
+}
+variable "private_virtual_network_with_public_ip" {
+  type    = bool
+  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"
+}
+variable "run_validation_diskspace" {
+  type    = bool
+  default = "${env("RUN_VALIDATION_FLAG")}"
+}
 variable "dockerhub_login" {
   type    = string
   default = "${env("DOCKERHUB_LOGIN")}"
 }
-
 variable "dockerhub_password" {
   type    = string
   default = "${env("DOCKERHUB_PASSWORD")}"
 }
 
+
+###IMAGE variables
+variable "managed_image_resource_group" {
+  type    = string
+  default = "${env("MANAGED_IMAGE_RESOURCE_GROUP")}"
+}
+variable "managed_image_storage_account_type" {
+  type    = string
+  default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}"
+}
+variable "managed_image_name" {
+  type    = string
+  default = "${env("MANAGED_IMAGE_NAME")}"
+}
+variable "managed_image_version" {
+  type    = string
+  default = "${env("MANAGED_IMAGE_VERSION")}"
+} 
+
+
+###OTHER variables
+variable "allowed_inbound_ip_addresses" {
+  type    = list(string)
+  default = []
+}
+variable "capture_name_prefix" {
+  type    = string
+  default = "packer"
+}
 variable "helper_script_folder" {
   type    = string
   default = "/imagegeneration/helpers"
 }
-
 variable "image_folder" {
   type    = string
   default = "/imagegeneration"
 }
-
 variable "image_os" {
   type    = string
   default = "ubuntu20"
 }
-
 variable "image_version" {
   type    = string
   default = "dev"
 }
-
 variable "imagedata_file" {
   type    = string
   default = "/imagegeneration/imagedata.json"
 }
-
 variable "installer_script_folder" {
   type    = string
   default = "/imagegeneration/installers"
 }
-
 variable "install_password" {
   type      = string
   sensitive = true
   default = ""
 }
-
-variable "location" {
-  type    = string
-  default = "${env("ARM_RESOURCE_LOCATION")}"
-}
-
-variable "managed_image_name" {
-  type    = string
-  default = "${env("MANAGED_IMAGE_NAME")}"
-}
-
-variable "managed_image_version" {
-  type    = string
-  default = "${env("MANAGED_IMAGE_VERSION")}"
-}
-
-variable "managed_image_storage_account_type" {
-  type    = string
-  default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}"
-}
-
-variable "private_virtual_network_with_public_ip" {
-  type    = bool
-  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"
-}
-
-variable "resource_group" {
-  type    = string
-  default = "${env("ARM_RESOURCE_GROUP")}"
-}
-
-variable "run_validation_diskspace" {
-  type    = bool
-  default = "${env("RUN_VALIDATION_FLAG")}"
-}
-
-variable "storage_account" {
-  type    = string
-  default = "${env("ARM_STORAGE_ACCOUNT")}"
-}
-
-variable "subscription_id" {
-  type    = string
-  default = "${env("ARM_SUBSCRIPTION_ID")}"
-}
-
-variable "temp_resource_group_name" {
-  type    = string
-  default = "${env("TEMP_RESOURCE_GROUP_NAME")}"
-}
-
-variable "tenant_id" {
-  type    = string
-  default = "${env("ARM_TENANT_ID")}"
-}
-
-variable "virtual_network_name" {
-  type    = string
-  default = "${env("VNET_NAME")}"
-}
-
-variable "virtual_network_resource_group_name" {
-  type    = string
-  default = "${env("VNET_RESOURCE_GROUP")}"
-}
-
-variable "virtual_network_subnet_name" {
-  type    = string
-  default = "${env("VNET_SUBNET")}"
-}
-
 variable "vm_size" {
   type    = string
   default = "Standard_D4s_v4"
 }
-
 variable "azure_tag" {
   type    = map(string)
   default = {}
@@ -162,29 +130,30 @@ variable "azure_tag" {
 # Read the documentation for source blocks here:
 # https://www.packer.io/docs/templates/hcl_templates/blocks/source
 source "azure-arm" "build_managed" {
-  allowed_inbound_ip_addresses           = "${var.allowed_inbound_ip_addresses}"
-  build_resource_group_name              = "${var.build_resource_group_name}"
-  client_cert_path                       = "${var.client_cert_path}"
-  client_id                              = "${var.client_id}"
-  client_secret                          = "${var.client_secret}"
-  image_offer                            = "0001-com-ubuntu-server-focal"
-  image_publisher                        = "canonical"
-  image_sku                              = "20_04-lts-gen2"
-  location                               = "${var.location}"
-  managed_image_name                     = "${var.managed_image_name}_${var.managed_image_version}"
-  managed_image_resource_group_name      = "${var.resource_group}"
-  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}"
-  os_disk_size_gb                        = "86"
-  os_type                                = "Linux"
-  private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"  
-  subscription_id                     = "${var.subscription_id}"
-  temp_resource_group_name            = "${var.temp_resource_group_name}"
-  tenant_id                           = "${var.tenant_id}"
+  tenant_id                           = "${var.tenant_id}"    
+  client_id                           = "${var.client_id}"
+  client_secret                       = "${var.client_secret}"
+  client_cert_path                    = "${var.client_cert_path}"
+
+  subscription_id                     = "${var.build_subscription_id}"
+  build_resource_group_name           = "${var.build_resource_group_name}"
   virtual_network_name                = "${var.virtual_network_name}"
   virtual_network_resource_group_name = "${var.virtual_network_resource_group_name}"
   virtual_network_subnet_name         = "${var.virtual_network_subnet_name}"
-  vm_size                             = "${var.vm_size}"
+  private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"  
 
+  managed_image_name                     = "${var.managed_image_name}_${var.managed_image_version}"
+  managed_image_resource_group_name      = "${var.managed_image_resource_group}"
+  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}"
+
+  allowed_inbound_ip_addresses           = "${var.allowed_inbound_ip_addresses}"
+  vm_size                                = "${var.vm_size}"
+  image_offer                            = "0001-com-ubuntu-server-focal"
+  image_publisher                        = "canonical"
+  image_sku                              = "20_04-lts-gen2"  
+  os_disk_size_gb                        = "86"
+  os_type                                = "Linux" 
+  
   dynamic "azure_tag" {
     for_each = var.azure_tag
     content {
@@ -287,98 +256,98 @@ build {
   }
 
   /* lite init*/
-  provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_LOGIN=${var.dockerhub_login}", "DOCKERHUB_PASSWORD=${var.dockerhub_password}"]
-    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = ["${path.root}/scripts/installers/docker-compose.sh", "${path.root}/scripts/installers/docker-moby.sh"]
-  }
+  // provisioner "shell" {
+  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_LOGIN=${var.dockerhub_login}", "DOCKERHUB_PASSWORD=${var.dockerhub_password}"]
+  //   execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+  //   scripts          = ["${path.root}/scripts/installers/docker-compose.sh", "${path.root}/scripts/installers/docker-moby.sh"]
+  // }
 
-  provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DEBIAN_FRONTEND=noninteractive"]
-    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = [
-                        "${path.root}/scripts/installers/azcopy.sh", 
-                        "${path.root}/scripts/installers/azure-cli.sh", 
-                        "${path.root}/scripts/installers/azure-devops-cli.sh", 
-                        "${path.root}/scripts/installers/basic.sh", 
-                        "${path.root}/scripts/installers/bicep.sh", 
-                        "${path.root}/scripts/installers/aliyun-cli.sh",
-                        "${path.root}/scripts/installers/apache.sh", 
-                        "${path.root}/scripts/installers/aws.sh", 
-                        "${path.root}/scripts/installers/clang.sh", 
-                        "${path.root}/scripts/installers/swift.sh", 
-                        "${path.root}/scripts/installers/cmake.sh", 
-                        "${path.root}/scripts/installers/codeql-bundle.sh", 
-                        "${path.root}/scripts/installers/containers.sh", 
-                        "${path.root}/scripts/installers/dotnetcore-sdk.sh", 
-                        "${path.root}/scripts/installers/erlang.sh", 
-                        "${path.root}/scripts/installers/firefox.sh", 
-                        "${path.root}/scripts/installers/microsoft-edge.sh",
-                        "${path.root}/scripts/installers/gcc.sh", 
-                        "${path.root}/scripts/installers/gfortran.sh", 
-                        "${path.root}/scripts/installers/git.sh", 
-                        "${path.root}/scripts/installers/github-cli.sh", 
-                        "${path.root}/scripts/installers/google-chrome.sh", 
-                        "${path.root}/scripts/installers/google-cloud-sdk.sh", 
-                        "${path.root}/scripts/installers/haskell.sh", 
-                        "${path.root}/scripts/installers/heroku.sh", 
-                        "${path.root}/scripts/installers/hhvm.sh", 
-                        "${path.root}/scripts/installers/java-tools.sh", 
-                        "${path.root}/scripts/installers/kubernetes-tools.sh", 
-                        "${path.root}/scripts/installers/oc.sh", 
-                        "${path.root}/scripts/installers/leiningen.sh", 
-                        "${path.root}/scripts/installers/miniconda.sh", 
-                        "${path.root}/scripts/installers/mono.sh", 
-                        "${path.root}/scripts/installers/kotlin.sh", 
-                        "${path.root}/scripts/installers/mysql.sh", 
-                        "${path.root}/scripts/installers/mssql-cmd-tools.sh", 
-                        "${path.root}/scripts/installers/sqlpackage.sh", 
-                        "${path.root}/scripts/installers/nginx.sh", 
-                        "${path.root}/scripts/installers/nvm.sh", 
-                        "${path.root}/scripts/installers/nodejs.sh", 
-                        "${path.root}/scripts/installers/bazel.sh", 
-                        "${path.root}/scripts/installers/oras-cli.sh", 
-                        "${path.root}/scripts/installers/phantomjs.sh", 
-                        "${path.root}/scripts/installers/php.sh", 
-                        "${path.root}/scripts/installers/postgresql.sh", 
-                        "${path.root}/scripts/installers/pulumi.sh", 
-                        "${path.root}/scripts/installers/ruby.sh", 
-                        "${path.root}/scripts/installers/r.sh", 
-                        "${path.root}/scripts/installers/rust.sh", 
-                        "${path.root}/scripts/installers/julia.sh", 
-                        "${path.root}/scripts/installers/sbt.sh", 
-                        "${path.root}/scripts/installers/selenium.sh", 
-                        "${path.root}/scripts/installers/terraform.sh", 
-                        "${path.root}/scripts/installers/packer.sh", 
-                        "${path.root}/scripts/installers/vcpkg.sh", 
-                        "${path.root}/scripts/installers/dpkg-config.sh", 
-                        "${path.root}/scripts/installers/mongodb.sh",
-                        "${path.root}/scripts/installers/yq.sh", 
-                        "${path.root}/scripts/installers/android.sh", 
-                        "${path.root}/scripts/installers/pypy.sh", 
-                        "${path.root}/scripts/installers/python.sh", 
-                        "${path.root}/scripts/installers/graalvm.sh", 
-                        "${path.root}/scripts/installers/zstd.sh"
-                      ]
-  }
+  // provisioner "shell" {
+  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DEBIAN_FRONTEND=noninteractive"]
+  //   execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+  //   scripts          = [
+  //                       "${path.root}/scripts/installers/azcopy.sh", 
+  //                       "${path.root}/scripts/installers/azure-cli.sh", 
+  //                       "${path.root}/scripts/installers/azure-devops-cli.sh", 
+  //                       "${path.root}/scripts/installers/basic.sh", 
+  //                       "${path.root}/scripts/installers/bicep.sh", 
+  //                       "${path.root}/scripts/installers/aliyun-cli.sh",
+  //                       "${path.root}/scripts/installers/apache.sh", 
+  //                       "${path.root}/scripts/installers/aws.sh", 
+  //                       "${path.root}/scripts/installers/clang.sh", 
+  //                       "${path.root}/scripts/installers/swift.sh", 
+  //                       "${path.root}/scripts/installers/cmake.sh", 
+  //                       "${path.root}/scripts/installers/codeql-bundle.sh", 
+  //                       "${path.root}/scripts/installers/containers.sh", 
+  //                       "${path.root}/scripts/installers/dotnetcore-sdk.sh", 
+  //                       "${path.root}/scripts/installers/erlang.sh", 
+  //                       "${path.root}/scripts/installers/firefox.sh", 
+  //                       "${path.root}/scripts/installers/microsoft-edge.sh",
+  //                       "${path.root}/scripts/installers/gcc.sh", 
+  //                       "${path.root}/scripts/installers/gfortran.sh", 
+  //                       "${path.root}/scripts/installers/git.sh", 
+  //                       "${path.root}/scripts/installers/github-cli.sh", 
+  //                       "${path.root}/scripts/installers/google-chrome.sh", 
+  //                       "${path.root}/scripts/installers/google-cloud-sdk.sh", 
+  //                       "${path.root}/scripts/installers/haskell.sh", 
+  //                       "${path.root}/scripts/installers/heroku.sh", 
+  //                       "${path.root}/scripts/installers/hhvm.sh", 
+  //                       "${path.root}/scripts/installers/java-tools.sh", 
+  //                       "${path.root}/scripts/installers/kubernetes-tools.sh", 
+  //                       "${path.root}/scripts/installers/oc.sh", 
+  //                       "${path.root}/scripts/installers/leiningen.sh", 
+  //                       "${path.root}/scripts/installers/miniconda.sh", 
+  //                       "${path.root}/scripts/installers/mono.sh", 
+  //                       "${path.root}/scripts/installers/kotlin.sh", 
+  //                       "${path.root}/scripts/installers/mysql.sh", 
+  //                       "${path.root}/scripts/installers/mssql-cmd-tools.sh", 
+  //                       "${path.root}/scripts/installers/sqlpackage.sh", 
+  //                       "${path.root}/scripts/installers/nginx.sh", 
+  //                       "${path.root}/scripts/installers/nvm.sh", 
+  //                       "${path.root}/scripts/installers/nodejs.sh", 
+  //                       "${path.root}/scripts/installers/bazel.sh", 
+  //                       "${path.root}/scripts/installers/oras-cli.sh", 
+  //                       "${path.root}/scripts/installers/phantomjs.sh", 
+  //                       "${path.root}/scripts/installers/php.sh", 
+  //                       "${path.root}/scripts/installers/postgresql.sh", 
+  //                       "${path.root}/scripts/installers/pulumi.sh", 
+  //                       "${path.root}/scripts/installers/ruby.sh", 
+  //                       "${path.root}/scripts/installers/r.sh", 
+  //                       "${path.root}/scripts/installers/rust.sh", 
+  //                       "${path.root}/scripts/installers/julia.sh", 
+  //                       "${path.root}/scripts/installers/sbt.sh", 
+  //                       "${path.root}/scripts/installers/selenium.sh", 
+  //                       "${path.root}/scripts/installers/terraform.sh", 
+  //                       "${path.root}/scripts/installers/packer.sh", 
+  //                       "${path.root}/scripts/installers/vcpkg.sh", 
+  //                       "${path.root}/scripts/installers/dpkg-config.sh", 
+  //                       "${path.root}/scripts/installers/mongodb.sh",
+  //                       "${path.root}/scripts/installers/yq.sh", 
+  //                       "${path.root}/scripts/installers/android.sh", 
+  //                       "${path.root}/scripts/installers/pypy.sh", 
+  //                       "${path.root}/scripts/installers/python.sh", 
+  //                       "${path.root}/scripts/installers/graalvm.sh", 
+  //                       "${path.root}/scripts/installers/zstd.sh"
+  //                     ]
+  // }
 
-  provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
-    execute_command  = "sudo sh -c '{{ .Vars }} pwsh -f {{ .Path }}'"
-    scripts          = ["${path.root}/scripts/installers/Install-Toolset.ps1", "${path.root}/scripts/installers/Configure-Toolset.ps1"]
-  }
+  // provisioner "shell" {
+  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+  //   execute_command  = "sudo sh -c '{{ .Vars }} pwsh -f {{ .Path }}'"
+  //   scripts          = ["${path.root}/scripts/installers/Install-Toolset.ps1", "${path.root}/scripts/installers/Configure-Toolset.ps1"]
+  // }
 
-  provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
-    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = ["${path.root}/scripts/installers/pipx-packages.sh"]
-  }
+  // provisioner "shell" {
+  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+  //   execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+  //   scripts          = ["${path.root}/scripts/installers/pipx-packages.sh"]
+  // }
 
-  provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "DEBIAN_FRONTEND=noninteractive", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
-    execute_command  = "/bin/sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = ["${path.root}/scripts/installers/homebrew.sh"]
-  }
+  // provisioner "shell" {
+  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "DEBIAN_FRONTEND=noninteractive", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+  //   execute_command  = "/bin/sh -c '{{ .Vars }} {{ .Path }}'"
+  //   scripts          = ["${path.root}/scripts/installers/homebrew.sh"]
+  // }
   /*lite end*/
 
   provisioner "shell" {
@@ -400,35 +369,35 @@ build {
   }
 
   /*lite init*/
-  provisioner "shell" {
-    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    script          = "${path.root}/scripts/base/apt-mock-remove.sh"
-  }
+  // provisioner "shell" {
+  //   execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+  //   script          = "${path.root}/scripts/base/apt-mock-remove.sh"
+  // }
 
-  provisioner "shell" {
-    environment_vars    = ["IMAGE_VERSION=${var.image_version}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
-    inline              = ["pwsh -Command Write-Host Running SoftwareReport.Generator.ps1 script", "pwsh -File ${var.image_folder}/SoftwareReport/SoftwareReport.Generator.ps1 -OutputDirectory ${var.image_folder}", "pwsh -Command Write-Host Running RunAll-Tests.ps1 script", "pwsh -File ${var.image_folder}/tests/RunAll-Tests.ps1 -OutputDirectory ${var.image_folder}"]
-    max_retries         = "3"
-    start_retry_timeout = "2m"
-  }
+  // provisioner "shell" {
+  //   environment_vars    = ["IMAGE_VERSION=${var.image_version}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+  //   inline              = ["pwsh -Command Write-Host Running SoftwareReport.Generator.ps1 script", "pwsh -File ${var.image_folder}/SoftwareReport/SoftwareReport.Generator.ps1 -OutputDirectory ${var.image_folder}", "pwsh -Command Write-Host Running RunAll-Tests.ps1 script", "pwsh -File ${var.image_folder}/tests/RunAll-Tests.ps1 -OutputDirectory ${var.image_folder}"]
+  //   max_retries         = "3"
+  //   start_retry_timeout = "2m"
+  // }
 
-  provisioner "file" {
-    destination = "${path.root}/Ubuntu2004-Readme.md"
-    direction   = "download"
-    source      = "${var.image_folder}/software-report.md"
-  }
+  // provisioner "file" {
+  //   destination = "${path.root}/Ubuntu2004-Readme.md"
+  //   direction   = "download"
+  //   source      = "${var.image_folder}/software-report.md"
+  // }
 
-  provisioner "file" {
-    destination = "${path.root}/software-report.json"
-    direction   = "download"
-    source      = "${var.image_folder}/software-report.json"
-  }
+  // provisioner "file" {
+  //   destination = "${path.root}/software-report.json"
+  //   direction   = "download"
+  //   source      = "${var.image_folder}/software-report.json"
+  // }
 
-  provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPT_FOLDER=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "IMAGE_FOLDER=${var.image_folder}"]
-    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = ["${path.root}/scripts/installers/post-deployment.sh"]
-  }
+  // provisioner "shell" {
+  //   environment_vars = ["HELPER_SCRIPT_FOLDER=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "IMAGE_FOLDER=${var.image_folder}"]
+  //   execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+  //   scripts          = ["${path.root}/scripts/installers/post-deployment.sh"]
+  // }
   /*lite end*/
 
   provisioner "shell" {
