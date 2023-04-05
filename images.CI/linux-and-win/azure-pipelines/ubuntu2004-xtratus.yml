@@ -26,4 +26,4 @@ stages:
         parameters:
           image_type: ubuntu2004
           image_readme_name: Ubuntu2004-Readme.md
-          azureSubscription: 'IA-CORP-FerrovialCloudDeparment-SANDBOX'
+          azureServiceConnection: 'IA-CORP-FerrovialCloudDeparment-SANDBOX'
