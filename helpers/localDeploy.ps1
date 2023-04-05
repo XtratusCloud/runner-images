@@ -76,12 +76,8 @@ packer build -on-error="ask" -force `
 
 ##build Windows 2022
 $Env:MANAGED_IMAGE_NAME = "SelfHosted_lite_Windows2022"
-$Env:MANAGED_IMAGE_version = "2.0.0-20230312.1"
+$Env:MANAGED_IMAGE_VERSION = "$(gitversion /showvariable SemVer)"
 $installPassword = [System.GUID]::NewGuid().ToString().ToUpper()
 packer build -on-error="ask" -force `
-    -var "client_id=$($clientId)" `
-    -var "client_secret=$($clientKey)" `
     -var "install_password=$($installPassword)" `
     C:\code\Xtratus_Cross\cross_zones\EUR\runner-images\images\win\windows2022.pkr.hcl
-
-

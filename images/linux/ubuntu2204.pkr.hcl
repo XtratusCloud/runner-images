@@ -1,3 +1,6 @@
+# Read the variables type constraints documentation
+# https://www.packer.io/docs/templates/hcl_templates/variables#type-constraints for more info.
+### MAIN authentication variables
 variable "tenant_id" {
   type    = string
   default = "${env("ARM_TENANT_ID")}"

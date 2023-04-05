@@ -1,151 +1,123 @@
 # Read the variables type constraints documentation
 # https://www.packer.io/docs/templates/hcl_templates/variables#type-constraints for more info.
-variable "agent_tools_directory" {
+variable "tenant_id" {
   type    = string
-  default = "C:\\hostedtoolcache\\windows"
+  default = "${env("ARM_TENANT_ID")}"
 }
-
-variable "allowed_inbound_ip_addresses" {
-  type    = list(string)
-  default = []
-}
-
-variable "build_resource_group_name" {
-  type    = string
-  default = "${env("BUILD_RESOURCE_GROUP_NAME")}"
-}
-
-variable "capture_name_prefix" {
-  type    = string
-  default = "packer"
-}
-
-variable "client_cert_path" {
-  type    = string
-  default = "${env("ARM_CLIENT_CERT_PATH")}"
-}
-
 variable "client_id" {
   type    = string
   default = "${env("ARM_CLIENT_ID")}"
 }
-
 variable "client_secret" {
   type      = string
   default   = "${env("ARM_CLIENT_SECRET")}"
   sensitive = true
 }
-
-variable "helper_script_folder" {
-  type    = string
-  default = "C:\\Program Files\\WindowsPowerShell\\Modules\\"
-}
-
-variable "image_folder" {
-  type    = string
-  default = "C:\\image"
-}
-
-variable "image_os" {
-  type    = string
-  default = "win22"
-}
-
-variable "image_version" {
-  type    = string
-  default = "dev"
-}
-
-variable "imagedata_file" {
-  type    = string
-  default = "C:\\imagedata.json"
-}
-
-variable "install_password" {
+variable "client_cert_path" {
   type      = string
-  sensitive = true
+  default   = "${env("ARM_CLIENT_CERT_PATH")}"
 }
 
-variable "install_user" {
+
+### BUILD variables
+variable "build_subscription_id" {
   type    = string
-  default = "installer"
+  default = "${env("BUILD_SUBSCRIPTION_ID")}"
 }
-
-variable "location" {
+variable "build_resource_group_name" {
   type    = string
-  default = "${env("ARM_RESOURCE_LOCATION")}"
+  default = "${env("BUILD_RESOURCE_GROUP_NAME")}"
 }
-
-variable "managed_image_name" {
+variable "virtual_network_name" {
   type    = string
-  default = "${env("MANAGED_IMAGE_NAME")}"
+  default = "${env("BUILD_VNET_NAME")}"
 }
-
-variable "managed_image_version" {
+variable "virtual_network_resource_group_name" {
   type    = string
-  default = "${env("MANAGED_IMAGE_VERSION")}"
+  default = "${env("BUILD_VNET_RESOURCE_GROUP")}"
 }
-
-variable "managed_image_storage_account_type" {
+variable "virtual_network_subnet_name" {
   type    = string
-  default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}"
+  default = "${env("BUILD_VNET_SUBNET_NAME")}"
 }
-
-variable "object_id" {
-  type    = string
-  default = "${env("ARM_OBJECT_ID")}"
-}
-
 variable "private_virtual_network_with_public_ip" {
   type    = bool
   default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"
 }
-
-variable "resource_group" {
-  type    = string
-  default = "${env("ARM_RESOURCE_GROUP")}"
-}
-
 variable "run_validation_diskspace" {
   type    = bool
   default = "${env("RUN_VALIDATION_FLAG")}"
 }
 
-variable "subscription_id" {
+
+###IMAGE variables
+variable "managed_image_resource_group" {
   type    = string
-  default = "${env("ARM_SUBSCRIPTION_ID")}"
+  default = "${env("MANAGED_IMAGE_RESOURCE_GROUP")}"
+}
+variable "managed_image_storage_account_type" {
+  type    = string
+  default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}"
+}
+variable "managed_image_name" {
+  type    = string
+  default = "${env("MANAGED_IMAGE_NAME")}"
+}
+variable "managed_image_version" {
+  type    = string
+  default = "${env("MANAGED_IMAGE_VERSION")}"
 }
 
-variable "temp_resource_group_name" {
-  type    = string
-  default = "${env("TEMP_RESOURCE_GROUP_NAME")}"
-}
 
-variable "tenant_id" {
+###OTHER variables
+variable "agent_tools_directory" {
   type    = string
-  default = "${env("ARM_TENANT_ID")}"
+  default = "C:\\hostedtoolcache\\windows"
 }
-
-variable "virtual_network_name" {
+variable "allowed_inbound_ip_addresses" {
+  type    = list(string)
+  default = []
+}
+variable "capture_name_prefix" {
   type    = string
-  default = "${env("VNET_NAME")}"
+  default = "packer"
 }
-
-variable "virtual_network_resource_group_name" {
+variable "helper_script_folder" {
   type    = string
-  default = "${env("VNET_RESOURCE_GROUP")}"
+  default = "C:\\Program Files\\WindowsPowerShell\\Modules\\"
 }
-
-variable "virtual_network_subnet_name" {
+variable "image_folder" {
   type    = string
-  default = "${env("VNET_SUBNET")}"
+  default = "C:\\image"
 }
-
+variable "image_os" {
+  type    = string
+  default = "win22"
+}
+variable "image_version" {
+  type    = string
+  default = "dev"
+}
+variable "imagedata_file" {
+  type    = string
+  default = "C:\\imagedata.json"
+}
+variable "install_user" {
+  type    = string
+  default = "installer"
+}
+variable "install_password" {
+  type      = string
+  sensitive = true
+}
 variable "vm_size" {
   type    = string
   default = "Standard_D8s_v4"
-}
-
+} 
+variable "object_id" {
+  type    = string
+  default = "${env("ARM_OBJECT_ID")}"
+} 
 variable "azure_tag" {
   type    = map(string)
   default = {}
@@ -155,33 +127,34 @@ variable "azure_tag" {
 # Read the documentation for source blocks here:
 # https://www.packer.io/docs/templates/hcl_templates/blocks/source
 source "azure-arm" "build_managed" {
-  allowed_inbound_ip_addresses           = "${var.allowed_inbound_ip_addresses}"
+  tenant_id                           = "${var.tenant_id}"
+  client_id                           = "${var.client_id}"
+  client_secret                       = "${var.client_secret}"
+  client_cert_path                    = "${var.client_cert_path}"
+
+  subscription_id                        = "${var.build_subscription_id}"
   build_resource_group_name              = "${var.build_resource_group_name}"
-  client_cert_path                       = "${var.client_cert_path}"
-  client_id                              = "${var.client_id}"
-  client_secret                          = "${var.client_secret}"
-  communicator                           = "winrm"
+  virtual_network_name                   = "${var.virtual_network_name}"
+  virtual_network_resource_group_name    = "${var.virtual_network_resource_group_name}"
+  virtual_network_subnet_name            = "${var.virtual_network_subnet_name}"
+  private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"  
+
+  managed_image_name                     = "${var.managed_image_name}_${var.managed_image_version}"
+  managed_image_resource_group_name      = "${var.managed_image_resource_group}"
+  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}"
+
+  allowed_inbound_ip_addresses           = "${var.allowed_inbound_ip_addresses}"
+  vm_size                                = "${var.vm_size}"
+  object_id                              = "${var.object_id}"
   image_offer                            = "WindowsServer"
   image_publisher                        = "MicrosoftWindowsServer"
   image_sku                              = "2022-datacenter-g2"
-  location                               = "${var.location}"
-  managed_image_name                     = "${var.managed_image_name}_${var.managed_image_version}"
-  managed_image_resource_group_name      = "${var.resource_group}"
-  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}"
-  object_id                              = "${var.object_id}"
   os_disk_size_gb                        = "256"
   os_type                                = "Windows"
-  private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"   
-  subscription_id                     = "${var.subscription_id}"
-  temp_resource_group_name            = "${var.temp_resource_group_name}"
-  tenant_id                           = "${var.tenant_id}"
-  virtual_network_name                = "${var.virtual_network_name}"
-  virtual_network_resource_group_name = "${var.virtual_network_resource_group_name}"
-  virtual_network_subnet_name         = "${var.virtual_network_subnet_name}"
-  vm_size                             = "${var.vm_size}"
-  winrm_insecure                      = "true"
-  winrm_use_ssl                       = "true"
-  winrm_username                      = "packer"
+  communicator                           = "winrm"
+  winrm_insecure                         = "true"
+  winrm_use_ssl                          = "true"
+  winrm_username                         = "packer"
 
   dynamic "azure_tag" {
     for_each = var.azure_tag
@@ -268,8 +241,8 @@ build {
 
   provisioner "powershell" {
     scripts = [
-      /*º init*/
-      "${path.root}/scripts/Installers/Install-Docker.ps1", 
+      /*lite init*/
+      // "${path.root}/scripts/Installers/Install-Docker.ps1", 
       /*lite end*/
       "${path.root}/scripts/Installers/Install-PowershellCore.ps1", 
       "${path.root}/scripts/Installers/Install-WebPlatformInstaller.ps1"
@@ -281,150 +254,150 @@ build {
   }
 
   /*lite init*/
-  provisioner "powershell" {
-    elevated_password = "${var.install_password}"
-    elevated_user     = "${var.install_user}"
-    scripts           = [
-      "${path.root}/scripts/Installers/Install-VS.ps1", 
-      "${path.root}/scripts/Installers/Install-KubernetesTools.ps1"
-    ]
-    valid_exit_codes  = [0, 3010]
-  }
+  // provisioner "powershell" {
+  //   elevated_password = "${var.install_password}"
+  //   elevated_user     = "${var.install_user}"
+  //   scripts           = [
+  //     "${path.root}/scripts/Installers/Install-VS.ps1", 
+  //     "${path.root}/scripts/Installers/Install-KubernetesTools.ps1"
+  //   ]
+  //   valid_exit_codes  = [0, 3010]
+  // }
 
-  provisioner "windows-restart" {
-    check_registry  = true
-    restart_timeout = "10m"
-  }
+  // provisioner "windows-restart" {
+  //   check_registry  = true
+  //   restart_timeout = "10m"
+  // }
 
-  provisioner "powershell" {
-    pause_before = "2m0s"
-    scripts      = [
-      "${path.root}/scripts/Installers/Install-Wix.ps1", 
-      "${path.root}/scripts/Installers/Install-WDK.ps1", 
-      "${path.root}/scripts/Installers/Install-Vsix.ps1", 
-      "${path.root}/scripts/Installers/Install-AzureCli.ps1", 
-      "${path.root}/scripts/Installers/Install-AzureDevOpsCli.ps1", 
-      "${path.root}/scripts/Installers/Install-CommonUtils.ps1", 
-      "${path.root}/scripts/Installers/Install-JavaTools.ps1", 
-      "${path.root}/scripts/Installers/Install-Kotlin.ps1"
-    ]
-  }
+  // provisioner "powershell" {
+  //   pause_before = "2m0s"
+  //   scripts      = [
+  //     "${path.root}/scripts/Installers/Install-Wix.ps1", 
+  //     "${path.root}/scripts/Installers/Install-WDK.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Vsix.ps1", 
+  //     "${path.root}/scripts/Installers/Install-AzureCli.ps1", 
+  //     "${path.root}/scripts/Installers/Install-AzureDevOpsCli.ps1", 
+  //     "${path.root}/scripts/Installers/Install-CommonUtils.ps1", 
+  //     "${path.root}/scripts/Installers/Install-JavaTools.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Kotlin.ps1"
+  //   ]
+  // }
 
-  provisioner "powershell" {
-    execution_policy = "remotesigned"
-    scripts          = ["${path.root}/scripts/Installers/Install-ServiceFabricSDK.ps1"]
-  }
+  // provisioner "powershell" {
+  //   execution_policy = "remotesigned"
+  //   scripts          = ["${path.root}/scripts/Installers/Install-ServiceFabricSDK.ps1"]
+  // }
 
-  provisioner "windows-restart" {
-    restart_timeout = "10m"
-  }
+  // provisioner "windows-restart" {
+  //   restart_timeout = "10m"
+  // }
 
-  provisioner "windows-shell" {
-    inline = ["wmic product where \"name like '%%microsoft azure powershell%%'\" call uninstall /nointeractive"]
-  }
+  // provisioner "windows-shell" {
+  //   inline = ["wmic product where \"name like '%%microsoft azure powershell%%'\" call uninstall /nointeractive"]
+  // }
 
-  provisioner "powershell" {
-    scripts = [
-      "${path.root}/scripts/Installers/Install-Ruby.ps1", 
-      "${path.root}/scripts/Installers/Install-PyPy.ps1", 
-      "${path.root}/scripts/Installers/Install-Toolset.ps1", 
-      "${path.root}/scripts/Installers/Configure-Toolset.ps1", 
-      "${path.root}/scripts/Installers/Install-NodeLts.ps1", 
-      "${path.root}/scripts/Installers/Install-AndroidSDK.ps1", 
-      "${path.root}/scripts/Installers/Install-AzureModules.ps1", 
-      "${path.root}/scripts/Installers/Install-Pipx.ps1", 
-      "${path.root}/scripts/Installers/Install-PipxPackages.ps1", 
-      "${path.root}/scripts/Installers/Install-Git.ps1", 
-      "${path.root}/scripts/Installers/Install-GitHub-CLI.ps1", 
-      "${path.root}/scripts/Installers/Install-PHP.ps1", 
-      "${path.root}/scripts/Installers/Install-Rust.ps1", 
-      "${path.root}/scripts/Installers/Install-Sbt.ps1", 
-      "${path.root}/scripts/Installers/Install-Chrome.ps1", 
-      "${path.root}/scripts/Installers/Install-Edge.ps1",
-      "${path.root}/scripts/Installers/Install-Firefox.ps1", 
-      "${path.root}/scripts/Installers/Install-Selenium.ps1", 
-      "${path.root}/scripts/Installers/Install-IEWebDriver.ps1", 
-      "${path.root}/scripts/Installers/Install-Apache.ps1", 
-      "${path.root}/scripts/Installers/Install-Nginx.ps1", 
-      "${path.root}/scripts/Installers/Install-Msys2.ps1", 
-      "${path.root}/scripts/Installers/Install-WinAppDriver.ps1", 
-      "${path.root}/scripts/Installers/Install-R.ps1", 
-      "${path.root}/scripts/Installers/Install-AWS.ps1", 
-      "${path.root}/scripts/Installers/Install-DACFx.ps1", 
-      "${path.root}/scripts/Installers/Install-MysqlCli.ps1", 
-      "${path.root}/scripts/Installers/Install-SQLPowerShellTools.ps1",
-      "${path.root}/scripts/Installers/Install-SQLOLEDBDriver.ps1", 
-      "${path.root}/scripts/Installers/Install-DotnetSDK.ps1", 
-      "${path.root}/scripts/Installers/Install-Mingw64.ps1", 
-      "${path.root}/scripts/Installers/Install-Haskell.ps1", 
-      "${path.root}/scripts/Installers/Install-Stack.ps1", 
-      "${path.root}/scripts/Installers/Install-Miniconda.ps1", 
-      "${path.root}/scripts/Installers/Install-AzureCosmosDbEmulator.ps1", 
-      "${path.root}/scripts/Installers/Install-Mercurial.ps1",
-      "${path.root}/scripts/Installers/Install-Zstd.ps1", 
-      "${path.root}/scripts/Installers/Install-NSIS.ps1", 
-      "${path.root}/scripts/Installers/Install-Vcpkg.ps1", 
-      "${path.root}/scripts/Installers/Install-PostgreSQL.ps1",
-      "${path.root}/scripts/Installers/Install-Bazel.ps1", 
-      "${path.root}/scripts/Installers/Install-AliyunCli.ps1", 
-      "${path.root}/scripts/Installers/Install-RootCA.ps1", 
-      "${path.root}/scripts/Installers/Install-MongoDB.ps1", 
-      "${path.root}/scripts/Installers/Install-CodeQLBundle.ps1", 
-      "${path.root}/scripts/Installers/Disable-JITDebugger.ps1"
-    ]
-  }
+  // provisioner "powershell" {
+  //   scripts = [
+  //     "${path.root}/scripts/Installers/Install-Ruby.ps1", 
+  //     "${path.root}/scripts/Installers/Install-PyPy.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Toolset.ps1", 
+  //     "${path.root}/scripts/Installers/Configure-Toolset.ps1", 
+  //     "${path.root}/scripts/Installers/Install-NodeLts.ps1", 
+  //     "${path.root}/scripts/Installers/Install-AndroidSDK.ps1", 
+  //     "${path.root}/scripts/Installers/Install-AzureModules.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Pipx.ps1", 
+  //     "${path.root}/scripts/Installers/Install-PipxPackages.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Git.ps1", 
+  //     "${path.root}/scripts/Installers/Install-GitHub-CLI.ps1", 
+  //     "${path.root}/scripts/Installers/Install-PHP.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Rust.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Sbt.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Chrome.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Edge.ps1",
+  //     "${path.root}/scripts/Installers/Install-Firefox.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Selenium.ps1", 
+  //     "${path.root}/scripts/Installers/Install-IEWebDriver.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Apache.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Nginx.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Msys2.ps1", 
+  //     "${path.root}/scripts/Installers/Install-WinAppDriver.ps1", 
+  //     "${path.root}/scripts/Installers/Install-R.ps1", 
+  //     "${path.root}/scripts/Installers/Install-AWS.ps1", 
+  //     "${path.root}/scripts/Installers/Install-DACFx.ps1", 
+  //     "${path.root}/scripts/Installers/Install-MysqlCli.ps1", 
+  //     "${path.root}/scripts/Installers/Install-SQLPowerShellTools.ps1",
+  //     "${path.root}/scripts/Installers/Install-SQLOLEDBDriver.ps1", 
+  //     "${path.root}/scripts/Installers/Install-DotnetSDK.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Mingw64.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Haskell.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Stack.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Miniconda.ps1", 
+  //     "${path.root}/scripts/Installers/Install-AzureCosmosDbEmulator.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Mercurial.ps1",
+  //     "${path.root}/scripts/Installers/Install-Zstd.ps1", 
+  //     "${path.root}/scripts/Installers/Install-NSIS.ps1", 
+  //     "${path.root}/scripts/Installers/Install-Vcpkg.ps1", 
+  //     "${path.root}/scripts/Installers/Install-PostgreSQL.ps1",
+  //     "${path.root}/scripts/Installers/Install-Bazel.ps1", 
+  //     "${path.root}/scripts/Installers/Install-AliyunCli.ps1", 
+  //     "${path.root}/scripts/Installers/Install-RootCA.ps1", 
+  //     "${path.root}/scripts/Installers/Install-MongoDB.ps1", 
+  //     "${path.root}/scripts/Installers/Install-CodeQLBundle.ps1", 
+  //     "${path.root}/scripts/Installers/Disable-JITDebugger.ps1"
+  //   ]
+  // }
 
-  provisioner "powershell" {
-    elevated_password = "${var.install_password}"
-    elevated_user     = "${var.install_user}"
-    scripts           = [
-      "${path.root}/scripts/Installers/Install-WindowsUpdates.ps1", 
-      "${path.root}/scripts/Installers/Configure-DynamicPort.ps1", 
-      "${path.root}/scripts/Installers/Configure-GDIProcessHandleQuota.ps1", 
-      "${path.root}/scripts/Installers/Configure-Shell.ps1", 
-      "${path.root}/scripts/Installers/Enable-DeveloperMode.ps1", 
-      "${path.root}/scripts/Installers/Install-LLVM.ps1"
-    ]
-  }
+  // provisioner "powershell" {
+  //   elevated_password = "${var.install_password}"
+  //   elevated_user     = "${var.install_user}"
+  //   scripts           = [
+  //     "${path.root}/scripts/Installers/Install-WindowsUpdates.ps1", 
+  //     "${path.root}/scripts/Installers/Configure-DynamicPort.ps1", 
+  //     "${path.root}/scripts/Installers/Configure-GDIProcessHandleQuota.ps1", 
+  //     "${path.root}/scripts/Installers/Configure-Shell.ps1", 
+  //     "${path.root}/scripts/Installers/Enable-DeveloperMode.ps1", 
+  //     "${path.root}/scripts/Installers/Install-LLVM.ps1"
+  //   ]
+  // }
 
-  provisioner "windows-restart" {
-    check_registry        = true
-    restart_check_command = "powershell -command \"& {if ((-not (Get-Process TiWorker.exe -ErrorAction SilentlyContinue)) -and (-not [System.Environment]::HasShutdownStarted) ) { Write-Output 'Restart complete' }}\""
-    restart_timeout       = "30m"
-  }
+  // provisioner "windows-restart" {
+  //   check_registry        = true
+  //   restart_check_command = "powershell -command \"& {if ((-not (Get-Process TiWorker.exe -ErrorAction SilentlyContinue)) -and (-not [System.Environment]::HasShutdownStarted) ) { Write-Output 'Restart complete' }}\""
+  //   restart_timeout       = "30m"
+  // }
 
-  provisioner "powershell" {
-    pause_before = "2m0s"
-    scripts      = [
-      "${path.root}/scripts/Installers/Wait-WindowsUpdatesForInstall.ps1", 
-      "${path.root}/scripts/Tests/RunAll-Tests.ps1"
-    ]
-  }
+  // provisioner "powershell" {
+  //   pause_before = "2m0s"
+  //   scripts      = [
+  //     "${path.root}/scripts/Installers/Wait-WindowsUpdatesForInstall.ps1", 
+  //     "${path.root}/scripts/Tests/RunAll-Tests.ps1"
+  //   ]
+  // }
 
-  provisioner "powershell" {
-    inline = ["if (-not (Test-Path ${var.image_folder}\\Tests\\testResults.xml)) { throw '${var.image_folder}\\Tests\\testResults.xml not found' }"]
-  }
+  // provisioner "powershell" {
+  //   inline = ["if (-not (Test-Path ${var.image_folder}\\Tests\\testResults.xml)) { throw '${var.image_folder}\\Tests\\testResults.xml not found' }"]
+  // }
 
-  provisioner "powershell" {
-    environment_vars = ["IMAGE_VERSION=${var.image_version}"]
-    inline           = ["pwsh -File '${var.image_folder}\\SoftwareReport\\SoftwareReport.Generator.ps1'"]
-  }
+  // provisioner "powershell" {
+  //   environment_vars = ["IMAGE_VERSION=${var.image_version}"]
+  //   inline           = ["pwsh -File '${var.image_folder}\\SoftwareReport\\SoftwareReport.Generator.ps1'"]
+  // }
 
-  provisioner "powershell" {
-    inline = ["if (-not (Test-Path C:\\software-report.md)) { throw 'C:\\software-report.md not found' }", "if (-not (Test-Path C:\\software-report.json)) { throw 'C:\\software-report.json not found' }"]
-  }
+  // provisioner "powershell" {
+  //   inline = ["if (-not (Test-Path C:\\software-report.md)) { throw 'C:\\software-report.md not found' }", "if (-not (Test-Path C:\\software-report.json)) { throw 'C:\\software-report.json not found' }"]
+  // }
 
-  provisioner "file" {
-    destination = "${path.root}/Windows2022-Readme.md"
-    direction   = "download"
-    source      = "C:\\software-report.md"
-  }
+  // provisioner "file" {
+  //   destination = "${path.root}/Windows2022-Readme.md"
+  //   direction   = "download"
+  //   source      = "C:\\software-report.md"
+  // }
 
-  provisioner "file" {
-    destination = "${path.root}/software-report.json"
-    direction   = "download"
-    source      = "C:\\software-report.json"
-  }
+  // provisioner "file" {
+  //   destination = "${path.root}/software-report.json"
+  //   direction   = "download"
+  //   source      = "C:\\software-report.json"
+  // }
   /*lite end*/
 
   provisioner "powershell" {
