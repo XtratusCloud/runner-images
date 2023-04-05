@@ -279,7 +279,8 @@ build {
   //     "${path.root}/scripts/Installers/Install-AzureDevOpsCli.ps1", 
   //     "${path.root}/scripts/Installers/Install-CommonUtils.ps1", 
   //     "${path.root}/scripts/Installers/Install-JavaTools.ps1", 
-  //     "${path.root}/scripts/Installers/Install-Kotlin.ps1"
+  //     "${path.root}/scripts/Installers/Install-Kotlin.ps1",
+  //     "${path.root}/scripts/Installers/Install-OpenSSL.ps1"
   //   ]
   // }
 
