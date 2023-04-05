@@ -28,6 +28,11 @@ parameters:
     type: string
     default: 'self'
 
+  - name: azureServiceConnection
+    type: string
+    displayName: 'Name of the AzureRM service connection used to publish.'
+
+
 jobs:
 - job: ${{ parameters.job_id }}
   displayName: Image Generation (${{ parameters.image_type }})
@@ -80,6 +85,7 @@ jobs:
   - task: AzureCLI@2
     displayName: 'az: Build VM'
     inputs:
+      azureSubscription: ${{ parameters.azureServiceConnection }}
       addSpnToEnvironment: true
       scriptType: pscore
       scriptLocation: scriptPath
