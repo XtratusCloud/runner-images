@@ -28,6 +28,11 @@ parameters:
     type: string
     default: 'self'
 
+  - name: azureServiceConnection
+    type: string
+    displayName: 'Name of the AzureRM service connection used to publish.'
+
+
 jobs:
 - job: ${{ parameters.job_id }}
   displayName: Image Generation (${{ parameters.image_type }})
@@ -75,32 +80,34 @@ jobs:
         Write-Host "##vso[task.setvariable variable=TemplatePath;]$TemplatePath"
        
   - task: riezebosch.Packer.PackerTool.PackerTool@0
-    displayName: 'Download Packer'
+    displayName: 'devops: download Packer'
 
-  - task: PowerShell@2
-    displayName: 'Build VM'
+  - task: AzureCLI@2
+    displayName: 'az: Build VM'
     inputs:
-      targetType: filePath
-      filePath: ./images.CI/linux-and-win/build-image.ps1
-      arguments: -ResourcesNamePrefix $(Build.BuildId) `
-                        -ClientId $(CLIENT_ID) `
-                        -ClientSecret $(CLIENT_SECRET) `
-                        -TemplatePath $(TemplatePath) `
-                        -ResourceGroup $(AZURE_RESOURCE_GROUP) `
-                        -ManagedImageName $(managed_image_name) `
-                        -ManagedImageVersion $(GitVersion.SemVer) `
-                        -SubscriptionId $(AZURE_SUBSCRIPTION) `
-                        -TenantId $(AZURE_TENANT) `
-                        -Location $(AZURE_LOCATION) `
-                        -VirtualNetworkName $(BUILD_AGENT_VNET_NAME) `
-                        -VirtualNetworkRG $(BUILD_AGENT_VNET_RESOURCE_GROUP) `
-                        -VirtualNetworkSubnet $(BUILD_AGENT_SUBNET_NAME)
+      azureSubscription: ${{ parameters.azureServiceConnection }}
+      addSpnToEnvironment: true
+      scriptType: pscore
+      scriptLocation: scriptPath
+      scriptPath: ./images.CI/linux-and-win/build-image-xtratus.ps1
+      arguments: -TenantId $($env:tenantId) `
+                 -ClientId $($env:servicePrincipalId) `
+                 -ClientSecret $($env:servicePrincipalKey) `
+                 -SubscriptionId $(BUILD_SUBSCRIPTION_ID) `
+                 -ResourceGroup $(BUILD_RESOURCE_GROUP_NAME) `
+                 -VirtualNetworkName $(BUILD_VNET_NAME) `
+                 -VirtualNetworkRG $(BUILD_VNET_RESOURCE_GROUP) `
+                 -VirtualNetworkSubnet $(BUILD_VNET_SUBNET_NAME) `
+                 -ManagedImageName $(managed_image_name) `
+                 -ManagedImageVersion $(GitVersion.SemVer) `
+                 -ResourcesNamePrefix $(Build.BuildId) `
+                 -TemplatePath $(TemplatePath)
     env:
       PACKER_LOG: 1
       PACKER_LOG_PATH: "$(Agent.TempDirectory)/packer-log.txt"
-  
+
   - task: PowerShell@2
-    displayName: 'Copy image artifacts to the separate directory'
+    displayName: 'devops: copy image artifacts to the separate directory'
     inputs:
       targetType: 'inline'
       script: |
@@ -113,14 +120,14 @@ jobs:
         }
 
   - task: PowerShell@2
-    displayName: 'Print markdown software report'
+    displayName: 'devops: print markdown software report'
     inputs:
       targetType: 'inline'
       script: |
         Get-Content -Path "$(Build.ArtifactStagingDirectory)/${{ parameters.image_readme_name }}"
 
   - task: PowerShell@2
-    displayName: 'Print json software report'
+    displayName: 'devops: print json software report'
     inputs:
       targetType: 'inline'
       script: |
@@ -132,10 +139,10 @@ jobs:
   - task: PublishBuildArtifacts@1
     inputs:
       ArtifactName: 'Built_VM_Artifacts'
-    displayName: Publish Artifacts
+    displayName: 'devops: publish artifacts'
 
   - task: PowerShell@2
-    displayName: 'Print provisioners duration'
+    displayName: 'devops: print provisioners duration'
     inputs:
       targetType: 'filePath'
       filePath: ./images.CI/measure-provisioners-duration.ps1

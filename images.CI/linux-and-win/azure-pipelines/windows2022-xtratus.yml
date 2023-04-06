@@ -25,3 +25,4 @@ stages:
         parameters:
           image_type: windows2022
           image_readme_name: Windows2022-Readme.md
+          azureServiceConnection: 'IA-CORP-FerrovialCloudDeparment-SANDBOX'

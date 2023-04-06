@@ -1,151 +1,123 @@
 # Read the variables type constraints documentation
 # https://www.packer.io/docs/templates/hcl_templates/variables#type-constraints for more info.
-variable "agent_tools_directory" {
+variable "tenant_id" {
   type    = string
-  default = "C:\\hostedtoolcache\\windows"
+  default = "${env("ARM_TENANT_ID")}"
 }
-
-variable "allowed_inbound_ip_addresses" {
-  type    = list(string)
-  default = []
-}
-
-variable "build_resource_group_name" {
-  type    = string
-  default = "${env("BUILD_RESOURCE_GROUP_NAME")}"
-}
-
-variable "capture_name_prefix" {
-  type    = string
-  default = "packer"
-}
-
-variable "client_cert_path" {
-  type    = string
-  default = "${env("ARM_CLIENT_CERT_PATH")}"
-}
-
 variable "client_id" {
   type    = string
   default = "${env("ARM_CLIENT_ID")}"
 }
-
 variable "client_secret" {
   type      = string
   default   = "${env("ARM_CLIENT_SECRET")}"
   sensitive = true
 }
-
-variable "helper_script_folder" {
-  type    = string
-  default = "C:\\Program Files\\WindowsPowerShell\\Modules\\"
-}
-
-variable "image_folder" {
-  type    = string
-  default = "C:\\image"
-}
-
-variable "image_os" {
-  type    = string
-  default = "win22"
-}
-
-variable "image_version" {
-  type    = string
-  default = "dev"
-}
-
-variable "imagedata_file" {
-  type    = string
-  default = "C:\\imagedata.json"
-}
-
-variable "install_password" {
+variable "client_cert_path" {
   type      = string
-  sensitive = true
+  default   = "${env("ARM_CLIENT_CERT_PATH")}"
 }
 
-variable "install_user" {
+
+### BUILD variables
+variable "build_subscription_id" {
   type    = string
-  default = "installer"
+  default = "${env("BUILD_SUBSCRIPTION_ID")}"
 }
-
-variable "location" {
+variable "build_resource_group_name" {
   type    = string
-  default = "${env("ARM_RESOURCE_LOCATION")}"
+  default = "${env("BUILD_RESOURCE_GROUP_NAME")}"
 }
-
-variable "managed_image_name" {
+variable "virtual_network_name" {
   type    = string
-  default = "${env("MANAGED_IMAGE_NAME")}"
+  default = "${env("BUILD_VNET_NAME")}"
 }
-
-variable "managed_image_version" {
+variable "virtual_network_resource_group_name" {
   type    = string
-  default = "${env("MANAGED_IMAGE_VERSION")}"
+  default = "${env("BUILD_VNET_RESOURCE_GROUP")}"
 }
-
-variable "managed_image_storage_account_type" {
+variable "virtual_network_subnet_name" {
   type    = string
-  default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}"
+  default = "${env("BUILD_VNET_SUBNET_NAME")}"
 }
-
-variable "object_id" {
-  type    = string
-  default = "${env("ARM_OBJECT_ID")}"
-}
-
 variable "private_virtual_network_with_public_ip" {
   type    = bool
   default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"
 }
-
-variable "resource_group" {
-  type    = string
-  default = "${env("ARM_RESOURCE_GROUP")}"
-}
-
 variable "run_validation_diskspace" {
   type    = bool
   default = "${env("RUN_VALIDATION_FLAG")}"
 }
 
-variable "subscription_id" {
+
+###IMAGE variables
+variable "managed_image_resource_group" {
   type    = string
-  default = "${env("ARM_SUBSCRIPTION_ID")}"
+  default = "${env("MANAGED_IMAGE_RESOURCE_GROUP")}"
+}
+variable "managed_image_storage_account_type" {
+  type    = string
+  default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}"
+}
+variable "managed_image_name" {
+  type    = string
+  default = "${env("MANAGED_IMAGE_NAME")}"
+}
+variable "managed_image_version" {
+  type    = string
+  default = "${env("MANAGED_IMAGE_VERSION")}"
 }
 
-variable "temp_resource_group_name" {
-  type    = string
-  default = "${env("TEMP_RESOURCE_GROUP_NAME")}"
-}
 
-variable "tenant_id" {
+###OTHER variables
+variable "agent_tools_directory" {
   type    = string
-  default = "${env("ARM_TENANT_ID")}"
+  default = "C:\\hostedtoolcache\\windows"
 }
-
-variable "virtual_network_name" {
+variable "allowed_inbound_ip_addresses" {
+  type    = list(string)
+  default = []
+}
+variable "capture_name_prefix" {
   type    = string
-  default = "${env("VNET_NAME")}"
+  default = "packer"
 }
-
-variable "virtual_network_resource_group_name" {
+variable "helper_script_folder" {
   type    = string
-  default = "${env("VNET_RESOURCE_GROUP")}"
+  default = "C:\\Program Files\\WindowsPowerShell\\Modules\\"
 }
-
-variable "virtual_network_subnet_name" {
+variable "image_folder" {
   type    = string
-  default = "${env("VNET_SUBNET")}"
+  default = "C:\\image"
 }
-
+variable "image_os" {
+  type    = string
+  default = "win22"
+}
+variable "image_version" {
+  type    = string
+  default = "dev"
+}
+variable "imagedata_file" {
+  type    = string
+  default = "C:\\imagedata.json"
+}
+variable "install_user" {
+  type    = string
+  default = "installer"
+}
+variable "install_password" {
+  type      = string
+  sensitive = true
+}
 variable "vm_size" {
   type    = string
   default = "Standard_D8s_v4"
-}
-
+} 
+variable "object_id" {
+  type    = string
+  default = "${env("ARM_OBJECT_ID")}"
+} 
 variable "azure_tag" {
   type    = map(string)
   default = {}
@@ -155,33 +127,34 @@ variable "azure_tag" {
 # Read the documentation for source blocks here:
 # https://www.packer.io/docs/templates/hcl_templates/blocks/source
 source "azure-arm" "build_managed" {
-  allowed_inbound_ip_addresses           = "${var.allowed_inbound_ip_addresses}"
+  tenant_id                           = "${var.tenant_id}"
+  client_id                           = "${var.client_id}"
+  client_secret                       = "${var.client_secret}"
+  client_cert_path                    = "${var.client_cert_path}"
+
+  subscription_id                        = "${var.build_subscription_id}"
   build_resource_group_name              = "${var.build_resource_group_name}"
-  client_cert_path                       = "${var.client_cert_path}"
-  client_id                              = "${var.client_id}"
-  client_secret                          = "${var.client_secret}"
-  communicator                           = "winrm"
+  virtual_network_name                   = "${var.virtual_network_name}"
+  virtual_network_resource_group_name    = "${var.virtual_network_resource_group_name}"
+  virtual_network_subnet_name            = "${var.virtual_network_subnet_name}"
+  private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"  
+
+  managed_image_name                     = "${var.managed_image_name}_${var.managed_image_version}"
+  managed_image_resource_group_name      = "${var.managed_image_resource_group}"
+  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}"
+
+  allowed_inbound_ip_addresses           = "${var.allowed_inbound_ip_addresses}"
+  vm_size                                = "${var.vm_size}"
+  object_id                              = "${var.object_id}"
   image_offer                            = "WindowsServer"
   image_publisher                        = "MicrosoftWindowsServer"
   image_sku                              = "2022-datacenter-g2"
-  location                               = "${var.location}"
-  managed_image_name                     = "${var.managed_image_name}_${var.managed_image_version}"
-  managed_image_resource_group_name      = "${var.resource_group}"
-  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}"
-  object_id                              = "${var.object_id}"
   os_disk_size_gb                        = "256"
   os_type                                = "Windows"
-  private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"   
-  subscription_id                     = "${var.subscription_id}"
-  temp_resource_group_name            = "${var.temp_resource_group_name}"
-  tenant_id                           = "${var.tenant_id}"
-  virtual_network_name                = "${var.virtual_network_name}"
-  virtual_network_resource_group_name = "${var.virtual_network_resource_group_name}"
-  virtual_network_subnet_name         = "${var.virtual_network_subnet_name}"
-  vm_size                             = "${var.vm_size}"
-  winrm_insecure                      = "true"
-  winrm_use_ssl                       = "true"
-  winrm_username                      = "packer"
+  communicator                           = "winrm"
+  winrm_insecure                         = "true"
+  winrm_use_ssl                          = "true"
+  winrm_username                         = "packer"
 
   dynamic "azure_tag" {
     for_each = var.azure_tag
@@ -268,7 +241,7 @@ build {
 
   provisioner "powershell" {
     scripts = [
-      /*º init*/
+      /*lite init*/
       "${path.root}/scripts/Installers/Install-Docker.ps1", 
       /*lite end*/
       "${path.root}/scripts/Installers/Install-PowershellCore.ps1", 
@@ -306,7 +279,8 @@ build {
       "${path.root}/scripts/Installers/Install-AzureDevOpsCli.ps1", 
       "${path.root}/scripts/Installers/Install-CommonUtils.ps1", 
       "${path.root}/scripts/Installers/Install-JavaTools.ps1", 
-      "${path.root}/scripts/Installers/Install-Kotlin.ps1"
+      "${path.root}/scripts/Installers/Install-Kotlin.ps1",
+      "${path.root}/scripts/Installers/Install-OpenSSL.ps1"
     ]
   }
 

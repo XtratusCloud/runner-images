@@ -21,5 +21,5 @@ stages:
         parameters:
           image_type: 'Windows2022'
           managed_image_name: '$(managed_image_name)'
-          azureServiceConnection: 'IA-CORP-CORE-COMMONSERV'
-          source_managed_image: '/subscriptions/$(AZURE_SUBSCRIPTION)/resourceGroups/$(BUILD_RESOURCE_GROUP_NAME)/providers/Microsoft.Compute/images/$(managed_image_name_full)'
+          azureServiceConnection: 'SPN_IA-CORP-CORE-COMMONSERV_SelfhostedBuild'
+          source_managed_image: '/subscriptions/$(BUILD_SUBSCRIPTION_ID)/resourceGroups/$(BUILD_RESOURCE_GROUP_NAME)/providers/Microsoft.Compute/images/$(managed_image_name_full)'
