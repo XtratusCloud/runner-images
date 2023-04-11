@@ -73,22 +73,21 @@ jobs:
         scriptType: 'pscore'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          $params = New-Object System.Collections.ArrayList
-          $params = @{
-            [void]$commandParams.Add("--gallery-name"); [void]$commandParams.Add("$(IMAGE_GALLERY_NAME)");
-            [void]$commandParams.Add("--resource-group"); [void]$commandParams.Add("$(IMAGE_GALLERY_RESOURCE_GROUP)");
-            [void]$commandParams.Add("--gallery-image-definition"); [void]$commandParams.Add("${{ parameters.managed_image_name }}");
-            [void]$commandParams.Add("--gallery-image-version"); [void]$commandParams.Add("$(GitVersion.MajorMinorPatch)");
-            [void]$commandParams.Add("--subscription"); [void]$commandParams.Add("$(IMAGE_GALLERY_SUBSCRIPTION_ID)");
-            [void]$commandParams.Add("--replica-count"); [void]$commandParams.Add(${{ parameters.replica_count }});
-            [void]$commandParams.Add("--storage-account-type"); [void]$commandParams.Add("$(IMAGE_GALLERY_REPLICATION)");
-            [void]$commandParams.Add("--target-regions"); [void]$commandParams.Add("$(IMAGE_REPLICATION_REGIONS)");
-            [void]$commandParams.Add("--managed-image"); [void]$commandParams.Add("${{ parameters.source_managed_image }}");
-            [void]$commandParams.Add("--tags"); [void]$commandParams.Add("SourceImage=${{ parameters.source_managed_image }}");
-            [void]$commandParams.Add("--no-wait")
-          }
+          $params = New-Object System.Collections.ArrayList 
+          [void]$params.Add("--gallery-name"); [void]$params.Add("$(IMAGE_GALLERY_NAME)");
+          [void]$params.Add("--resource-group"); [void]$params.Add("$(IMAGE_GALLERY_RESOURCE_GROUP)");
+          [void]$params.Add("--gallery-image-definition"); [void]$params.Add("${{ parameters.managed_image_name }}");
+          [void]$params.Add("--gallery-image-version"); [void]$params.Add("$(GitVersion.MajorMinorPatch)");
+          [void]$params.Add("--subscription"); [void]$params.Add("$(IMAGE_GALLERY_SUBSCRIPTION_ID)");
+          [void]$params.Add("--replica-count"); [void]$params.Add(${{ parameters.replica_count }});
+          [void]$params.Add("--storage-account-type"); [void]$params.Add("$(IMAGE_GALLERY_REPLICATION)");
+          [void]$params.Add("--target-regions"); [void]$params.Add("$(IMAGE_REPLICATION_REGIONS)");
+          [void]$params.Add("--managed-image"); [void]$params.Add("${{ parameters.source_managed_image }}");
+          [void]$params.Add("--tags"); [void]$params.Add("SourceImage=${{ parameters.source_managed_image }}");
+          [void]$params.Add("--no-wait")
+
           Write-Host "Publishing image with parameters [$($params | ConvertTo-Json)]"
-          az sig image-version create @params
+          az sig image-version create @commandParams
 
     - script: |
         git config --global user.name "gitversion"
