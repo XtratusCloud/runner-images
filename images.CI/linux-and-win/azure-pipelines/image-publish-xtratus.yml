@@ -73,17 +73,21 @@ jobs:
         scriptType: 'pscore'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          az sig image-version create --gallery-name '$(IMAGE_GALLERY_NAME)' `
-            --resource-group '$(IMAGE_GALLERY_RESOURCE_GROUP)' `
-            --gallery-image-definition '${{ parameters.managed_image_name }}' `
-            --gallery-image-version '$(GitVersion.MajorMinorPatch)' `
-            --subscription '$(IMAGE_GALLERY_SUBSCRIPTION_ID)' `
-            --replica-count ${{ parameters.replica_count }} `
-            --storage-account-type '$(IMAGE_GALLERY_REPLICATION)' `
-            --target-regions $(IMAGE_GALLERY_REPLICATION) `
-            --managed-image '${{ parameters.source_managed_image }}' `
-            --tags "SourceImage=${{ parameters.source_managed_image }}" `
-            --no-wait
+          $params = @{
+            gallery-name = '$(IMAGE_GALLERY_NAME)'
+            resource-group = '$(IMAGE_GALLERY_RESOURCE_GROUP)'
+            gallery-image-definition = '${{ parameters.managed_image_name }}'
+            gallery-image-version = '$(GitVersion.MajorMinorPatch)'
+            subscription = '$(IMAGE_GALLERY_SUBSCRIPTION_ID)'
+            replica-count = ${{ parameters.replica_count }}
+            storage-account-type = $(IMAGE_GALLERY_REPLICATION)'
+            target-regions = $(IMAGE_GALLERY_REPLICATION)
+            managed-image = '${{ parameters.source_managed_image }}'
+            tags = "SourceImage=${{ parameters.source_managed_image }}"
+            no-wait = $true
+          }
+          Write-Host "Publishing image with parameters [$($params ! ConvertTo-Json)]"
+          az sig image-version create @params
 
     - script: |
         git config --global user.name "gitversion"

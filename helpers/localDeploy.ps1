@@ -57,7 +57,7 @@ az sig image-version create --gallery-name "$Env:IMAGE_GALLERY_NAME" `
     --resource-group "$Env:IMAGE_GALLERY_RESOURCE_GROUP" `
     --gallery-image-definition "$Env:MANAGED_IMAGE_NAME" `
     --gallery-image-version "$publishVersion" `
-    --subscription "$Env:IMAGE_GALLERY_SUBSCRIPTION" `
+    --subscription "$Env:IMAGE_GALLERY_SUBSCRIPTION_ID" `
     --replica-count 1 `
     --storage-account-type "$Env:IMAGE_GALLERY_REPLICATION" `
     --target-regions "West Europe" eastus2 `
