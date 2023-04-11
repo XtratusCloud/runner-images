@@ -22,4 +22,4 @@ stages:
           image_type: 'Ubuntu2004'
           managed_image_name: '$(managed_image_name)'
           azureServiceConnection: 'SPN_IA-CORP-CORE-COMMONSERV_SelfhostedBuild'
-          source_managed_image: '/subscriptions/$(BUILD_SUBSCRIPTION_ID)/resourceGroups/$(BUILD_RESOURCE_GROUP_NAME)/providers/Microsoft.Compute/images/$(managed_image_name_full)'
+          source_managed_image: '/subscriptions/$(IMAGE_GALLERY_SUBSCRIPTION_ID)/resourceGroups/$(MANAGED_IMAGE_RESOURCE_GROUP)/providers/Microsoft.Compute/images/$(managed_image_name_full)'
