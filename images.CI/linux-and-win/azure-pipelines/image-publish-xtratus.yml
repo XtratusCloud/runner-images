@@ -81,13 +81,13 @@ jobs:
           [void]$params.Add("--subscription"); [void]$params.Add('$(IMAGE_GALLERY_SUBSCRIPTION_ID)');
           [void]$params.Add("--replica-count"); [void]$params.Add(${{ parameters.replica_count }});
           [void]$params.Add("--storage-account-type"); [void]$params.Add('$(IMAGE_GALLERY_REPLICATION)');
-          [void]$params.Add("--target-regions"); [void]$params.Add('$(IMAGE_REPLICATION_REGIONS)');
+          #[void]$params.Add("--target-regions"); [void]$params.Add('$(IMAGE_REPLICATION_REGIONS)');
           [void]$params.Add("--managed-image"); [void]$params.Add('${{ parameters.source_managed_image }}');
           [void]$params.Add("--tags"); [void]$params.Add('SourceImage=${{ parameters.source_managed_image }}');
           [void]$params.Add("--no-wait")
 
           Write-Host "Publishing image with parameters [$($params | ConvertTo-Json)]"
-          az sig image-version create @commandParams
+          az sig image-version create @commandParams --target-regions "West Europe" eastus2
 
     - script: |
         git config --global user.name "gitversion"

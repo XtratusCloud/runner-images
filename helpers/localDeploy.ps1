@@ -41,7 +41,7 @@ $Env:MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE = "Premium_LRS"
 $Env:IMAGE_GALLERY_SUBSCRIPTION_ID = $gallerySubscriptionId
 $Env:IMAGE_GALLERY_RESOURCE_GROUP = "RG-WE-P-IMAGES-SELFHOSTED-001"
 $Env:IMAGE_GALLERY_NAME = "acgwepselfhostedimages02"
-$Env:IMAGE_REPLICATION_REGIONS = """West Europe"" eastus2"
+$Env:IMAGE_REPLICATION_REGIONS =  """West Europe"" eastus2"
 $Env:IMAGE_GALLERY_REPLICATION = "Premium_LRS"
 
 ##BUILD Ubuntu 20.04
@@ -53,17 +53,31 @@ packer build -on-error="ask" -force `
 ##PUBLISH Ubuntu 20.04
 $publishVersion = $(gitversion /showvariable MajorMinorPatch)
 $imageResourceId = "/subscriptions/$Env:BUILD_SUBSCRIPTION_ID/resourceGroups/$Env:MANAGED_IMAGE_RESOURCE_GROUP/providers/Microsoft.Compute/images/$($Env:MANAGED_IMAGE_NAME)_$($Env:MANAGED_IMAGE_VERSION)"
-az sig image-version create --gallery-name "$Env:IMAGE_GALLERY_NAME" `
-    --resource-group "$Env:IMAGE_GALLERY_RESOURCE_GROUP" `
-    --gallery-image-definition "$Env:MANAGED_IMAGE_NAME" `
-    --gallery-image-version "$publishVersion" `
-    --subscription "$Env:IMAGE_GALLERY_SUBSCRIPTION_ID" `
-    --replica-count 1 `
-    --storage-account-type "$Env:IMAGE_GALLERY_REPLICATION" `
-    --target-regions "West Europe" eastus2 `
-    --managed-image "$imageResourceId" `
-    --tags "SourceImage=$imageResourceId" `
-    --no-wait
+$params = New-Object System.Collections.ArrayList 
+[void]$params.Add("--gallery-name"); [void]$params.Add("$Env:IMAGE_GALLERY_NAME");
+[void]$params.Add("--resource-group"); [void]$params.Add("$Env:IMAGE_GALLERY_RESOURCE_GROUP");
+[void]$params.Add("--gallery-image-definition"); [void]$params.Add("$Env:MANAGED_IMAGE_NAME");
+[void]$params.Add("--gallery-image-version"); [void]$params.Add("$publishVersion");
+[void]$params.Add("--subscription"); [void]$params.Add("$Env:IMAGE_GALLERY_SUBSCRIPTION_ID");
+[void]$params.Add("--replica-count"); [void]$params.Add(1);
+[void]$params.Add("--storage-account-type"); [void]$params.Add("$Env:IMAGE_GALLERY_REPLICATION");
+# [void]$params.Add("--target-regions");  [void]$params.Add($Env:IMAGE_REPLICATION_REGIONS);
+[void]$params.Add("--managed-image"); [void]$params.Add("$imageResourceId");
+[void]$params.Add("--tags"); [void]$params.Add("SourceImage=$imageResourceId");
+[void]$params.Add("--no-wait")
+az sig image-version create @params 
+
+# az sig image-version create --gallery-name "$Env:IMAGE_GALLERY_NAME" `
+#     --resource-group "$Env:IMAGE_GALLERY_RESOURCE_GROUP" `
+#     --gallery-image-definition "$Env:MANAGED_IMAGE_NAME" `
+#     --gallery-image-version "$publishVersion" `
+#     --subscription "$Env:IMAGE_GALLERY_SUBSCRIPTION_ID" `
+#     --replica-count 1 `
+#     --storage-account-type "$Env:IMAGE_GALLERY_REPLICATION" `
+#     --target-regions "West Europe" eastus2 `
+#     --managed-image "$imageResourceId" `
+#     --tags "SourceImage=$imageResourceId" `
+#     --no-wait
 
 ########################## OTHER IMAGES #############################
 ##### NOTE: The image definition in gallery must have created #######
