@@ -81,7 +81,7 @@ jobs:
             "subscription" = '$(IMAGE_GALLERY_SUBSCRIPTION_ID)'
             "replica-count" = ${{ parameters.replica_count }}
             "storage-account-type" = '$(IMAGE_GALLERY_REPLICATION)'
-            "target-regions" = $(IMAGE_GALLERY_REPLICATION)
+            "target-regions" = '$(IMAGE_GALLERY_REPLICATION)'
             "managed-image" = '${{ parameters.source_managed_image }}'
             "tags" = "SourceImage=${{ parameters.source_managed_image }}"
             "no-wait" = $true
