@@ -1,3 +1,5 @@
+#Feature PR
+
 Add details about this Feature PR here-
  
 Before submitting this PR, please make sure:
@@ -7,6 +9,4 @@ Before submitting this PR, please make sure:
 - [ ] Tests are written (if applicable)
 - [ ] Documentation is updated (if applicable)
 
-
-
-IMPORTANT!! Add this to PR title: [+semver:minor]
+**IMPORTANT!!** Add this to PR title: [+semver:minor]

@@ -1,3 +1,5 @@
+# Hotfix PR
+
 Add details about this Bugfix PR here-
  
 Before submitting this PR, please make sure:
@@ -7,5 +9,4 @@ Before submitting this PR, please make sure:
 - [ ] Tests are written (if applicable)
 - [ ] Documentation is updated (if applicable)
 
-
-IMPORTANT!! Add this to PR title: [+semver:patch]
+**IMPORTANT!!** Add this to PR title: [+semver:patch]

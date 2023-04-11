@@ -1,4 +1,4 @@
-## Select Change Type
+# Pull Request - Select Change Type
 Please go the the `Preview` tab and select the appropriate sub-template:
 
 * [Breaking Change](?expand=1&template=breaking_change_template.md)
