@@ -86,7 +86,7 @@ jobs:
             "tags" = "SourceImage=${{ parameters.source_managed_image }}"
             "no-wait" = $true
           }
-          Write-Host "Publishing image with parameters [$($params ! ConvertTo-Json)]"
+          Write-Host "Publishing image with parameters [$($params | ConvertTo-Json)]"
           az sig image-version create @params
 
     - script: |
