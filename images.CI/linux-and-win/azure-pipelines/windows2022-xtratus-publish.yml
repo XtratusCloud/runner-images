@@ -15,7 +15,7 @@ stages:
       - name: managed_image_name
         value: "SelfHosted_Windows2022"
       - name: managed_image_name_full
-        value: "$(managed_image_name)_$(resources.pipeline.build.runName)"
+        value: "${{ lower(variables.managed_image_name) }}_$(resources.pipeline.build.runName)"
     jobs:
       - template: image-publish-xtratus.yml
         parameters:
