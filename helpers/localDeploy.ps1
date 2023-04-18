@@ -5,11 +5,11 @@
 #Deployment global variables
 $tenantId = "a9a8e375-fac1-4ec2-820a-cfb6eb5cf01b"
 $managementSubscriptionId = "3ed57e3b-516c-46e4-9d6a-7519d646c3a0" ##IA-CORP-CORE-MANAGEMENT
-$buildSubscriptionId = "d138c344-c65b-4e01-b8ad-9adfb1dacac4" ##IA-CORP-FerrovialCloudDeparment-SANDBOX
+$buildSubscriptionId = "a15c7cd7-aaa9-481a-8dfd-ed6b31582e94" ##IA-CORP-CORE-COMMONSERV-IMAGEBUILD
 $gallerySubscriptionId = "d7a8fe02-cc0e-4c0a-8a4d-9afd9061d5de" ##IA-CORP-CORE-COMMONSERV
 
-#security context using user credentials (adm for production tenant, standard for test tenant)
-#NOTE: only needed the first time, to allow to read SP credentials
+#security context using user credentials
+#NOTE: only needed the first time, to allow to read SP credentials from MANAGEMENT subscription
 az login --tenant $tenantId -o none
 az account set --subscription $managementSubscriptionId
 #read SP credentials and perform non-interactive login
@@ -35,7 +35,7 @@ $Env:RUN_VALIDATION_FLAG = "true"
 $Env:DOCKERHUB_LOGIN = ""
 $Env:DOCKERHUB_PASSWORD = ""
 
-$Env:MANAGED_IMAGE_RESOURCE_GROUP = "RG-WE-P-IMAGES-SELFHOSTED-001"
+$Env:MANAGED_IMAGE_RESOURCE_GROUP = "RG-WE-P-IMAGES-SELFHOSTED-IMAGES-001"
 $Env:MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE = "Premium_LRS"
 
 $Env:IMAGE_GALLERY_SUBSCRIPTION_ID = $gallerySubscriptionId

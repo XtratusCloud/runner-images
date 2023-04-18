@@ -26,4 +26,4 @@ stages:
         parameters:
           image_type: ubuntu2004
           image_readme_name: Ubuntu2004-Readme.md
-          azureServiceConnection: 'IA-CORP-FerrovialCloudDeparment-SANDBOX'
+          azureServiceConnection: 'SPN_IA-CORP-CORE-COMMONSERV_SelfhostedBuild'
