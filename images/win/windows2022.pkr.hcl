@@ -112,7 +112,7 @@ variable "install_password" {
 }
 variable "vm_size" {
   type    = string
-  default = "Standard_D8s_v4"
+  default = "Standard_D8s_v3"
 } 
 variable "object_id" {
   type    = string
