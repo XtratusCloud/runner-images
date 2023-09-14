@@ -272,8 +272,6 @@ function Install-VsixExtension
         [Parameter(Mandatory = $true)]
         [string] $Name,
         [string] $FilePath,
-        [Parameter(Mandatory = $true)]
-        [string] $VSversion,
         [int] $Retries = 20,
         [switch] $InstallOnly
     )
@@ -288,20 +286,14 @@ function Install-VsixExtension
     do
     {
         Write-Host "Starting Install $Name..."
-        $vsEdition = (Get-ToolsetContent).visualStudio.edition
         try
         {
             $installPath = ${env:ProgramFiles(x86)}
 
-            if (Test-IsWin22)
-            {
-                $installPath = ${env:ProgramFiles}
-            }
-
-            #There are 2 types of packages at the moment - exe and vsix
+            # There are 2 types of packages at the moment - exe and vsix
             if ($Name -match "vsix")
             {
-                $process = Start-Process -FilePath "${installPath}\Microsoft Visual Studio\${VSversion}\${vsEdition}\Common7\IDE\VSIXInstaller.exe" -ArgumentList $argumentList -Wait -PassThru
+                $process = Start-Process -FilePath "${installPath}\Microsoft Visual Studio\Installer\resources\app\ServiceHub\Services\Microsoft.VisualStudio.Setup.Service\VSIXInstaller.exe" -ArgumentList $argumentList -Wait -PassThru
             }
             else
             {
@@ -327,7 +319,8 @@ function Install-VsixExtension
             $Retries--
             if ($Retries -eq 0) {
                 Write-Host "The $Name couldn't be installed after 20 attempts."
-            }else {
+                exit 1
+            } else {
                 Write-Host "Waiting 10 seconds before retrying. Retries left: $Retries"
                 Start-Sleep -Seconds 10
             }
@@ -451,11 +444,13 @@ function Extract-7Zip {
         [Parameter(Mandatory=$true)]
         [string]$Path,
         [Parameter(Mandatory=$true)]
-        [string]$DestinationPath
+        [string]$DestinationPath,
+        [ValidateSet("x", "e")]
+        [char]$ExtractMethod = "x"
     )
 
     Write-Host "Expand archive '$PATH' to '$DestinationPath' directory"
-    7z.exe x "$Path" -o"$DestinationPath" -y | Out-Null
+    7z.exe $ExtractMethod "$Path" -o"$DestinationPath" -y | Out-Null
 
     if ($LASTEXITCODE -ne 0)
     {
@@ -489,7 +484,17 @@ function Get-AndroidPackages {
         [string]$AndroidSDKManagerPath
     )
 
-    return (cmd /c "$AndroidSDKManagerPath --list --verbose 2>&1").Trim() | Foreach-Object { $_.Split()[0] } | Where-Object {$_}
+    $packagesListFile = "C:\Android\android-sdk\packages-list.txt"
+
+    if (-Not (Test-Path -Path $packagesListFile -PathType Leaf)) {
+        (cmd /c "$AndroidSDKManagerPath --list --verbose 2>&1") |
+        Where-Object { $_ -Match "^[^\s]" } |
+        Where-Object { $_ -NotMatch "^(Loading |Info: Parsing |---|\[=+|Installed |Available )" } |
+        Where-Object { $_ -NotMatch "^[^;]*$" } |
+        Out-File -FilePath $packagesListFile
+    }
+
+    return Get-Content $packagesListFile
 }
 
 function Get-AndroidPackagesByName {

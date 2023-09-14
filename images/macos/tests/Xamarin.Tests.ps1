@@ -1,10 +1,12 @@
 Import-Module "$PSScriptRoot/../helpers/Common.Helpers.psm1"
 Import-Module "$PSScriptRoot/../helpers/Tests.Helpers.psm1" -DisableNameChecking
 
-$MONO_VERSIONS = Get-ToolsetValue "xamarin.mono-versions"
-$XAMARIN_IOS_VERSIONS = Get-ToolsetValue "xamarin.ios-versions"
-$XAMARIN_MAC_VERSIONS = Get-ToolsetValue "xamarin.mac-versions"
-$XAMARIN_ANDROID_VERSIONS = Get-ToolsetValue "xamarin.android-versions"
+$os = Get-OSVersion
+if ((-not $os.IsVentura) -and (-not $os.IsVenturaArm64)) {
+    $MONO_VERSIONS = Get-ToolsetValue "xamarin.mono-versions"
+    $XAMARIN_IOS_VERSIONS = Get-ToolsetValue "xamarin.ios-versions"
+    $XAMARIN_MAC_VERSIONS = Get-ToolsetValue "xamarin.mac-versions"
+    $XAMARIN_ANDROID_VERSIONS = Get-ToolsetValue "xamarin.android-versions"
 
 BeforeAll {
     function Get-ShortSymlink {
@@ -17,7 +19,7 @@ BeforeAll {
     }
 }
 
-Describe "Mono" {
+Describe "Mono" -Skip:($os.IsVentura -or $os.IsVenturaArm64) {
     $MONO_VERSIONS | ForEach-Object {
         Context "$_" {
             $MONO_VERSIONS_PATH = "/Library/Frameworks/Mono.framework/Versions"
@@ -81,7 +83,7 @@ Describe "Mono" {
     }
 }
 
-Describe "Xamarin.iOS" {
+Describe "Xamarin.iOS" -Skip:($os.IsVentura -or $os.IsVenturaArm64) {
     $XAMARIN_IOS_VERSIONS | ForEach-Object {
         Context "$_" {
             $XAMARIN_IOS_VERSIONS_PATH = "/Library/Frameworks/Xamarin.iOS.framework/Versions"
@@ -114,7 +116,7 @@ Describe "Xamarin.iOS" {
     }
 }
 
-Describe "Xamarin.Mac" {
+Describe "Xamarin.Mac" -Skip:($os.IsVentura-or $os.IsVenturaArm64) {
     $XAMARIN_MAC_VERSIONS | ForEach-Object {
         Context "$_" {
             $XAMARIN_MAC_VERSIONS_PATH = "/Library/Frameworks/Xamarin.Mac.framework/Versions"
@@ -147,7 +149,7 @@ Describe "Xamarin.Mac" {
     }
 }
 
-Describe "Xamarin.Android" {
+Describe "Xamarin.Android" -Skip:($os.IsVentura -or $os.IsVenturaArm64) {
     $XAMARIN_ANDROID_VERSIONS | ForEach-Object {
         Context "$_" {
             $XAMARIN_ANDROID_VERSIONS_PATH = "/Library/Frameworks/Xamarin.Android.framework/Versions"
@@ -187,7 +189,7 @@ Describe "Xamarin.Android" {
     }
 }
 
-Describe "Xamarin Bundles" {
+Describe "Xamarin Bundles" -Skip:($os.IsVentura -or $os.IsVenturaArm64) {
     BeforeAll {
         $MONO_VERSIONS_PATH = "/Library/Frameworks/Mono.framework/Versions"
         $XAMARIN_IOS_VERSIONS_PATH = "/Library/Frameworks/Xamarin.iOS.framework/Versions"
@@ -292,8 +294,10 @@ Describe "Xamarin Bundles" {
     }
 }
 
-Describe "Nuget" {
+Describe "Nuget" -Skip:($os.IsVentura -or $os.IsVenturaArm64) {
     It "Nuget config contains nuget.org feed" {
         Get-Content $env:HOME/.config/NuGet/NuGet.Config | Out-String | Should -Match "nuget.org"
     }
+}
+
 }

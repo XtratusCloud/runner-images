@@ -28,11 +28,10 @@ rm -rf ~/.fastlane
 npm cache clean --force
 
 # Clean yarn cache
-if ! is_Ventura; then
-    yarn cache clean
-fi
+yarn cache clean
+
 # Clean up temporary directories
-sudo rm -rf ~/utils ~/image-generation /tmp/*
+sudo rm -rf ~/utils /tmp/*
 
 # Erase all indexes and wait until the rebuilding process ends,
 # for now there is no way to get status of indexing process, it takes around 3 minutes to accomplish
