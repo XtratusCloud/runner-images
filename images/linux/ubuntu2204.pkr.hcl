@@ -1,10 +1,31 @@
 # Read the variables type constraints documentation
 # https://www.packer.io/docs/templates/hcl_templates/variables#type-constraints for more info.
 ### MAIN authentication variables
-variable "tenant_id" {
-  type    = string
-  default = "${env("ARM_TENANT_ID")}"
+
+locals {
+  managed_image_name = var.managed_image_name != "" ? var.managed_image_name : "packer-${var.image_os}-${var.image_version}"
 }
+
+variable "allowed_inbound_ip_addresses" {
+  type    = list(string)
+  default = []
+}
+
+variable "azure_tags" {
+  type    = map(string)
+  default = {}
+}
+
+variable "build_resource_group_name" {
+  type    = string
+  default = "${env("BUILD_RESOURCE_GROUP_NAME")}"
+}
+
+variable "managed_image_name" {
+  type    = string
+  default = ""
+}
+
 variable "client_id" {
   type    = string
   default = "${env("ARM_CLIENT_ID")}"
@@ -116,6 +137,57 @@ variable "install_password" {
   sensitive = true
   default = ""
 }
+
+variable "location" {
+  type    = string
+  default = "${env("ARM_RESOURCE_LOCATION")}"
+}
+
+variable "private_virtual_network_with_public_ip" {
+  type    = bool
+  default = false
+}
+
+variable "managed_image_resource_group_name" {
+  type    = string
+  default = "${env("ARM_RESOURCE_GROUP")}"
+}
+
+variable "run_validation_diskspace" {
+  type    = bool
+  default = false
+}
+
+variable "subscription_id" {
+  type    = string
+  default = "${env("ARM_SUBSCRIPTION_ID")}"
+}
+
+variable "temp_resource_group_name" {
+  type    = string
+  default = "${env("TEMP_RESOURCE_GROUP_NAME")}"
+}
+
+variable "tenant_id" {
+  type    = string
+  default = "${env("ARM_TENANT_ID")}"
+}
+
+variable "virtual_network_name" {
+  type    = string
+  default = "${env("VNET_NAME")}"
+}
+
+variable "virtual_network_resource_group_name" {
+  type    = string
+  default = "${env("VNET_RESOURCE_GROUP")}"
+}
+
+variable "virtual_network_subnet_name" {
+  type    = string
+  default = "${env("VNET_SUBNET")}"
+}
+
 variable "vm_size" {
   type    = string
   default = "Standard_D4s_v3"
@@ -152,9 +224,10 @@ source "azure-arm" "build_managed" {
   image_sku                              = "22_04-lts-gen2"
   os_disk_size_gb                        = "86"
   os_type                                = "Linux"
+  temp_resource_group_name               = "${var.temp_resource_group_name}"
 
   dynamic "azure_tag" {
-    for_each = var.azure_tag
+    for_each = var.azure_tags
     content {
       name = azure_tag.key
       value = azure_tag.value
@@ -163,7 +236,7 @@ source "azure-arm" "build_managed" {
 }
 
 build {
-  sources = ["source.azure-arm.build_managed"]
+  sources = ["source.azure-arm.build_image"]
 
   provisioner "shell" {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
@@ -179,6 +252,12 @@ build {
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = ["${path.root}/scripts/base/repos.sh"]
+  }
+
+  provisioner "shell" {
+    environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
+    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    scripts          = ["${path.root}/scripts/base/apt-ubuntu-archive.sh"]
   }
 
   provisioner "shell" {
@@ -240,6 +319,12 @@ build {
   }
 
   provisioner "shell" {
+    environment_vars = ["DEBIAN_FRONTEND=noninteractive", "HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    scripts          = ["${path.root}/scripts/installers/apt-vital.sh"]
+  }
+
+  provisioner "shell" {
     environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = ["${path.root}/scripts/installers/complete-snap-setup.sh", "${path.root}/scripts/installers/powershellcore.sh"]
@@ -253,19 +338,13 @@ build {
 
   /*lite init*/
   provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_LOGIN=${var.dockerhub_login}", "DOCKERHUB_PASSWORD=${var.dockerhub_password}"]
-    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = ["${path.root}/scripts/installers/docker-compose.sh", "${path.root}/scripts/installers/docker-moby.sh"]
-  }
-
-  provisioner "shell" {
     environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DEBIAN_FRONTEND=noninteractive"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = [
+                        "${path.root}/scripts/installers/apt-common.sh",
                         "${path.root}/scripts/installers/azcopy.sh",
                         "${path.root}/scripts/installers/azure-cli.sh",
                         "${path.root}/scripts/installers/azure-devops-cli.sh",
-                        "${path.root}/scripts/installers/basic.sh",
                         "${path.root}/scripts/installers/bicep.sh",
                         "${path.root}/scripts/installers/aliyun-cli.sh",
                         "${path.root}/scripts/installers/apache.sh",
@@ -320,6 +399,12 @@ build {
                         "${path.root}/scripts/installers/python.sh",
                         "${path.root}/scripts/installers/zstd.sh"
                         ]
+  }
+
+  provisioner "shell" {
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_LOGIN=${var.dockerhub_login}", "DOCKERHUB_PASSWORD=${var.dockerhub_password}"]
+    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    scripts          = ["${path.root}/scripts/installers/docker-compose.sh", "${path.root}/scripts/installers/docker.sh"]
   }
 
   provisioner "shell" {

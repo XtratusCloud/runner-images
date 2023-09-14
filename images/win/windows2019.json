@@ -6,8 +6,7 @@
         "subscription_id": "{{env `ARM_SUBSCRIPTION_ID`}}",
         "tenant_id": "{{env `ARM_TENANT_ID`}}",
         "object_id": "{{env `ARM_OBJECT_ID`}}",
-        "resource_group": "{{env `ARM_RESOURCE_GROUP`}}",
-        "storage_account": "{{env `ARM_STORAGE_ACCOUNT`}}",
+        "managed_image_resource_group_name": "{{env `ARM_RESOURCE_GROUP`}}",
         "build_resource_group_name": "{{env `BUILD_RESOURCE_GROUP_NAME`}}",
         "temp_resource_group_name": "{{env `TEMP_RESOURCE_GROUP_NAME`}}",
         "location": "{{env `ARM_RESOURCE_LOCATION`}}",
@@ -23,7 +22,7 @@
         "agent_tools_directory": "C:\\hostedtoolcache\\windows",
         "install_user": "installer",
         "install_password": null,
-        "capture_name_prefix": "packer",
+        "managed_image_name": "packer-win19-dev",
         "image_version": "dev",
         "image_os": "win19"
     },
@@ -33,7 +32,7 @@
     ],
     "builders": [
         {
-            "name": "vhd",
+            "name": "image",
             "type": "azure-arm",
             "client_id": "{{user `client_id`}}",
             "client_secret": "{{user `client_secret`}}",
@@ -44,12 +43,10 @@
             "os_disk_size_gb": "256",
             "location": "{{user `location`}}",
             "vm_size": "{{user `vm_size`}}",
-            "resource_group_name": "{{user `resource_group`}}",
-            "storage_account": "{{user `storage_account`}}",
+            "managed_image_name": "{{user `managed_image_name`}}",
+            "managed_image_resource_group_name": "{{user `managed_image_resource_group_name`}}",
             "build_resource_group_name": "{{user `build_resource_group_name`}}",
             "temp_resource_group_name": "{{user `temp_resource_group_name`}}",
-            "capture_container_name": "images",
-            "capture_name_prefix": "{{user `capture_name_prefix`}}",
             "virtual_network_name": "{{user `virtual_network_name`}}",
             "virtual_network_resource_group_name": "{{user `virtual_network_resource_group_name`}}",
             "virtual_network_subnet_name": "{{user `virtual_network_subnet_name`}}",
@@ -127,6 +124,22 @@
         },
         {
             "type": "powershell",
+            "valid_exit_codes": [
+                0,
+                3010
+            ],
+            "scripts": [
+                "{{ template_dir }}/scripts/Installers/Install-NET48.ps1"
+            ],
+            "elevated_user": "{{user `install_user`}}",
+            "elevated_password": "{{user `install_password`}}"
+        },
+        {
+            "type": "windows-restart",
+            "restart_timeout": "10m"
+        },
+        {
+            "type": "powershell",
             "environment_vars": [
                 "IMAGE_VERSION={{user `image_version`}}",
                 "IMAGE_OS={{user `image_os`}}",
@@ -170,7 +183,7 @@
             "scripts": [
                 "{{ template_dir }}/scripts/Installers/Install-VS.ps1",
                 "{{ template_dir }}/scripts/Installers/Install-KubernetesTools.ps1",
-                "{{ template_dir }}/scripts/Installers/Install-NET48.ps1"
+                "{{ template_dir }}/scripts/Installers/Install-NET48-devpack.ps1"
             ],
             "elevated_user": "{{user `install_user`}}",
             "elevated_password": "{{user `install_password`}}"
@@ -326,7 +339,8 @@
             "skip_clean": true,
             "scripts": [
                 "{{ template_dir }}/scripts/Installers/Run-NGen.ps1",
-                "{{ template_dir }}/scripts/Installers/Finalize-VM.ps1"
+                "{{ template_dir }}/scripts/Installers/Finalize-VM.ps1",
+                "{{ template_dir }}/scripts/Installers/Warmup-User.ps1"
             ],
             "environment_vars": [
                 "INSTALL_USER={{user `install_user`}}"
