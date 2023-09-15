@@ -107,7 +107,8 @@
         {"name": "Pester"},
         {"name": "PSScriptAnalyzer"},
         {"name": "PsDepend"},
-        {"name": "SqlServer"},
+        {"name": "PowerShellGet"},
+        {"name": "SqlServer"}
     ],
     "azureModules": [
         {

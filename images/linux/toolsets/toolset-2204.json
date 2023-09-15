@@ -100,6 +100,7 @@
         {"name": "Pester"},
         {"name": "PSScriptAnalyzer"},
         {"name": "PsDepend"},
+        {"name": "PowerShellGet"},
         {"name": "SqlServer"}
     ],
     "azureModules": [

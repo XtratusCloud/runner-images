@@ -44,11 +44,12 @@ $Env:IMAGE_GALLERY_NAME = "acgwepselfhostedimages02"
 $Env:IMAGE_REPLICATION_REGIONS =  """West Europe"" eastus2"
 $Env:IMAGE_GALLERY_REPLICATION = "Premium_LRS"
 
+Set-Location -Path 'C:\code\github\runner-images'
+
 ##BUILD Ubuntu 20.04
-$Env:MANAGED_IMAGE_NAME = "SelfHosted_lite_Ubuntu2004"
+$Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2004"
 $Env:MANAGED_IMAGE_VERSION = "$(gitversion /showvariable SemVer)"
-packer build -on-error="ask" -force `
-    C:\code\Xtratus_Cross\cross_zones\EUR\runner-images\images\linux\ubuntu2004.pkr.hcl
+packer build -on-error="ask" -force ./images/linux/ubuntu2004.pkr.hcl
 
 ##PUBLISH Ubuntu 20.04
 $publishVersion = $(gitversion /showvariable MajorMinorPatch)
@@ -83,16 +84,13 @@ az sig image-version create @params
 ##### NOTE: The image definition in gallery must have created #######
 #####################################################################
 ##build Ubuntu 22.04
-$Env:MANAGED_IMAGE_NAME = "SelfHosted_Ubuntu2204"
+$Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2204"
 $Env:MANAGED_IMAGE_VERSION = "$(gitversion /showvariable SemVer)"
-packer build -on-error="ask" -force `
-    C:\code\github\runner-images\images\linux\ubuntu2204.pkr.hcl
+packer build -on-error="ask" -force ./images/linux/ubuntu2204.pkr.hcl
     
 
 ##build Windows 2022
 $Env:MANAGED_IMAGE_NAME = "SelfHosted_lite_Windows2022"
 $Env:MANAGED_IMAGE_VERSION = "$(gitversion /showvariable SemVer)"
 $installPassword = [System.GUID]::NewGuid().ToString().ToUpper()
-packer build -on-error="ask" -force `
-    -var "install_password=$($installPassword)" `
-    C:\code\Xtratus_Cross\cross_zones\EUR\runner-images\images\win\windows2022.pkr.hcl
+packer build -on-error="ask" -force -var "install_password=$($installPassword)" ./runner-images/images/win/windows2022.pkr.hcl
