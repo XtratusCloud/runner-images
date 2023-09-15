@@ -1,9 +1,10 @@
-# Read the variables type constraints documentation
-# https://www.packer.io/docs/templates/hcl_templates/variables#type-constraints for more info.
-### MAIN authentication variables
-
 locals {
-  managed_image_name = var.managed_image_name != "" ? "${var.managed_image_name}_${var.managed_image_version}" : "packer-${var.image_os}-${var.image_version}"
+  managed_image_name = var.managed_image_name != "" ? var.managed_image_name : "packer-${var.image_os}-${var.image_version}"
+}
+
+variable "allowed_inbound_ip_addresses" {
+  type    = list(string)
+  default = []
 }
 
 variable "azure_tags" {
@@ -18,90 +19,77 @@ variable "build_resource_group_name" {
 
 variable "managed_image_name" {
   type    = string
-  default = "${env("MANAGED_IMAGE_NAME")}"
+  default = "${env("MANAGED_IMAGE_NAME")}" ##XTRATUS
 }
 
 variable "client_id" {
   type    = string
   default = "${env("ARM_CLIENT_ID")}"
 }
+
 variable "client_secret" {
   type      = string
   default   = "${env("ARM_CLIENT_SECRET")}"
   sensitive = true
 }
+
 variable "client_cert_path" {
   type      = string
   default   = "${env("ARM_CLIENT_CERT_PATH")}"
 }
 
-
-### OTHER BUILD variables
-variable "build_subscription_id" {
-  type    = string
-  default = "${env("BUILD_SUBSCRIPTION_ID")}"
+variable "commit_url" {
+  type      = string
+  default   = ""
 }
+
 variable "dockerhub_login" {
   type    = string
   default = "${env("DOCKERHUB_LOGIN")}"
 }
+
 variable "dockerhub_password" {
   type    = string
   default = "${env("DOCKERHUB_PASSWORD")}"
 }
 
-
-###IMAGE variables
-variable "managed_image_resource_group" {
-  type    = string
-  default = "${env("MANAGED_IMAGE_RESOURCE_GROUP")}"
-}
 variable "managed_image_storage_account_type" {
   type    = string
   default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}"
-}
-variable "managed_image_version" {
-  type    = string
-  default = "${env("MANAGED_IMAGE_VERSION")}"
-}
-
-
-###OTHER variables
-variable "allowed_inbound_ip_addresses" {
-  type    = list(string)
-  default = []
-}
-variable "capture_name_prefix" {
-  type    = string
-  default = "packer"
-}
+} ##XTRATUS
 variable "helper_script_folder" {
   type    = string
   default = "/imagegeneration/helpers"
 }
+
 variable "image_folder" {
   type    = string
   default = "/imagegeneration"
 }
+
 variable "image_os" {
   type    = string
   default = "ubuntu22"
 }
+
 variable "image_version" {
   type    = string
   default = "dev"
 }
+
 variable "imagedata_file" {
   type    = string
   default = "/imagegeneration/imagedata.json"
 }
+
 variable "installer_script_folder" {
   type    = string
   default = "/imagegeneration/installers"
 }
+
 variable "install_password" {
-  type      = string
-  sensitive = true
+  type  = string
+  sensitive = true  ##XTRATUS
   default = ""
 }
 
@@ -112,7 +100,7 @@ variable "location" {
 
 variable "private_virtual_network_with_public_ip" {
   type    = bool
-  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"
+  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"  ##XTRATUS
 }
 
 variable "managed_image_resource_group_name" {
@@ -122,7 +110,7 @@ variable "managed_image_resource_group_name" {
 
 variable "run_validation_diskspace" {
   type    = bool
-  default = "${env("RUN_VALIDATION_FLAG")}"
+  default = "${env("RUN_VALIDATION_FLAG")}" ##XTRATUS
 }
 
 variable "subscription_id" {
@@ -157,41 +145,32 @@ variable "virtual_network_subnet_name" {
 
 variable "vm_size" {
   type    = string
-  default = "Standard_D4s_v3"
-}
-variable "azure_tag" {
-  type    = map(string)
-  default = {}
+  default = "Standard_D4s_v3"  ##XTRATUS
 }
 
-# A build block runs provisioner and post-processors on a source
-# Read the documentation for source blocks here:
-# https://www.packer.io/docs/templates/hcl_templates/blocks/source
-source "azure-arm" "build_managed" {
-  tenant_id                           = "${var.tenant_id}"    
-  client_id                           = "${var.client_id}"
-  client_secret                       = "${var.client_secret}"
-  client_cert_path                    = "${var.client_cert_path}"
-
-  subscription_id                     = "${var.build_subscription_id}"
-  build_resource_group_name           = "${var.build_resource_group_name}"
-  virtual_network_name                = "${var.virtual_network_name}"
-  virtual_network_resource_group_name = "${var.virtual_network_resource_group_name}"
-  virtual_network_subnet_name         = "${var.virtual_network_subnet_name}"
-  private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"  
-
-  managed_image_name                     = "${local.managed_image_name}"
-  managed_image_resource_group_name      = "${var.managed_image_resource_group}"
-  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}"
-
+source "azure-arm" "build_image" {
   allowed_inbound_ip_addresses           = "${var.allowed_inbound_ip_addresses}"
-  vm_size                                = "${var.vm_size}"
+  build_resource_group_name              = "${var.build_resource_group_name}"
+  client_id                              = "${var.client_id}"
+  client_secret                          = "${var.client_secret}"
+  client_cert_path                       = "${var.client_cert_path}"
   image_offer                            = "0001-com-ubuntu-server-jammy"
   image_publisher                        = "canonical"
-  image_sku                              = "22_04-lts-gen2"
+  image_sku                              = "22_04-lts"
+  location                               = "${var.location}"
   os_disk_size_gb                        = "86"
   os_type                                = "Linux"
+  private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"
+  managed_image_name                     = "${local.managed_image_name}"
+  managed_image_resource_group_name      = "${var.managed_image_resource_group_name}"
+  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}" ##XTRATUS
+  subscription_id                        = "${var.subscription_id}"
   temp_resource_group_name               = "${var.temp_resource_group_name}"
+  tenant_id                              = "${var.tenant_id}"
+  virtual_network_name                   = "${var.virtual_network_name}"
+  virtual_network_resource_group_name    = "${var.virtual_network_resource_group_name}"
+  virtual_network_subnet_name            = "${var.virtual_network_subnet_name}"
+  vm_size                                = "${var.vm_size}"
 
   dynamic "azure_tag" {
     for_each = var.azure_tags
@@ -203,7 +182,7 @@ source "azure-arm" "build_managed" {
 }
 
 build {
-  sources = ["source.azure-arm.build_managed"]
+  sources = ["source.azure-arm.build_image"]
 
   provisioner "shell" {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
@@ -368,31 +347,30 @@ build {
                         ]
   }
 
-  // provisioner "shell" {
-  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_LOGIN=${var.dockerhub_login}", "DOCKERHUB_PASSWORD=${var.dockerhub_password}"]
-  //   execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-  //   scripts          = ["${path.root}/scripts/installers/docker-compose.sh", "${path.root}/scripts/installers/docker.sh"]
-  // }
+  provisioner "shell" {
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_LOGIN=${var.dockerhub_login}", "DOCKERHUB_PASSWORD=${var.dockerhub_password}"]
+    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    scripts          = ["${path.root}/scripts/installers/docker-compose.sh", "${path.root}/scripts/installers/docker.sh"]
+  }
 
-  // provisioner "shell" {
-  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
-  //   execute_command  = "sudo sh -c '{{ .Vars }} pwsh -f {{ .Path }}'"
-  //   scripts          = ["${path.root}/scripts/installers/Install-Toolset.ps1", "${path.root}/scripts/installers/Configure-Toolset.ps1"]
-  // }
+  provisioner "shell" {
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+    execute_command  = "sudo sh -c '{{ .Vars }} pwsh -f {{ .Path }}'"
+    scripts          = ["${path.root}/scripts/installers/Install-Toolset.ps1", "${path.root}/scripts/installers/Configure-Toolset.ps1"]
+  }
 
-  // provisioner "shell" {
-  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
-  //   execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-  //   scripts          = ["${path.root}/scripts/installers/pipx-packages.sh"]
-  // }
+  provisioner "shell" {
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    scripts          = ["${path.root}/scripts/installers/pipx-packages.sh"]
+  }
 
-  // provisioner "shell" {
-  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "DEBIAN_FRONTEND=noninteractive", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
-  //   execute_command  = "/bin/sh -c '{{ .Vars }} {{ .Path }}'"
-  //   scripts          = ["${path.root}/scripts/installers/homebrew.sh"]
-  // }
+  provisioner "shell" {
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "DEBIAN_FRONTEND=noninteractive", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+    execute_command  = "/bin/sh -c '{{ .Vars }} {{ .Path }}'"
+    scripts          = ["${path.root}/scripts/installers/homebrew.sh"]
+  }
   /*lite end*/
-
   provisioner "shell" {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     script          = "${path.root}/scripts/base/snap.sh"
@@ -410,37 +388,35 @@ build {
     scripts             = ["${path.root}/scripts/installers/cleanup.sh"]
     start_retry_timeout = "10m"
   }
-
   /*lite init*/
-  // provisioner "shell" {
-  //   execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-  //   script          = "${path.root}/scripts/base/apt-mock-remove.sh"
-  // }
+  provisioner "shell" {
+    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    script          = "${path.root}/scripts/base/apt-mock-remove.sh"
+  }
 
-  // provisioner "shell" {
-  //   environment_vars = ["IMAGE_VERSION=${var.image_version}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
-  //   inline           = ["pwsh -File ${var.image_folder}/SoftwareReport/SoftwareReport.Generator.ps1 -OutputDirectory ${var.image_folder}", "pwsh -File ${var.image_folder}/tests/RunAll-Tests.ps1 -OutputDirectory ${var.image_folder}"]
-  // }
+  provisioner "shell" {
+    environment_vars = ["IMAGE_VERSION=${var.image_version}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+    inline           = ["pwsh -File ${var.image_folder}/SoftwareReport/SoftwareReport.Generator.ps1 -OutputDirectory ${var.image_folder}", "pwsh -File ${var.image_folder}/tests/RunAll-Tests.ps1 -OutputDirectory ${var.image_folder}"]
+  }
 
-  // provisioner "file" {
-  //   destination = "${path.root}/Ubuntu2204-Readme.md"
-  //   direction   = "download"
-  //   source      = "${var.image_folder}/software-report.md"
-  // }
+  provisioner "file" {
+    destination = "${path.root}/Ubuntu2204-Readme.md"
+    direction   = "download"
+    source      = "${var.image_folder}/software-report.md"
+  }
 
-  // provisioner "file" {
-  //   destination = "${path.root}/software-report.json"
-  //   direction   = "download"
-  //   source      = "${var.image_folder}/software-report.json"
-  // }
+  provisioner "file" {
+    destination = "${path.root}/software-report.json"
+    direction   = "download"
+    source      = "${var.image_folder}/software-report.json"
+  }
 
-  // provisioner "shell" {
-  //   environment_vars = ["HELPER_SCRIPT_FOLDER=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "IMAGE_FOLDER=${var.image_folder}"]
-  //   execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-  //   scripts          = ["${path.root}/scripts/installers/post-deployment.sh"]
-  // }
+  provisioner "shell" {
+    environment_vars = ["HELPER_SCRIPT_FOLDER=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "IMAGE_FOLDER=${var.image_folder}"]
+    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    scripts          = ["${path.root}/scripts/installers/post-deployment.sh"]
+  }
   /*lite end*/
-
   provisioner "shell" {
     environment_vars = ["RUN_VALIDATION=${var.run_validation_diskspace}"]
     scripts          = ["${path.root}/scripts/installers/validate-disk-space.sh"]
@@ -460,4 +436,5 @@ build {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     inline          = ["sleep 30", "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"]
   }
+
 }

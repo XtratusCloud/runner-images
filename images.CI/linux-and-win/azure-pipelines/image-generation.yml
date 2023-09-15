@@ -70,6 +70,16 @@ jobs:
         }
         Write-Host "##vso[task.setvariable variable=TemplateDirectoryPath;]$TemplateDirectoryPath"
         Write-Host "##vso[task.setvariable variable=TemplatePath;]$TemplatePath"
+
+        $ManagedImageName = "${{ parameters.image_type }}-$(Build.BuildId)"
+        Write-Host "##vso[task.setvariable variable=ManagedImageName;]$ManagedImageName"
+
+        $VhdName = "$ManagedImageName.vhd"
+        Write-Host "##vso[task.setvariable variable=VhdName;]$VhdName"
+
+        $TempResourceGroupName = "packer-temp-$ManagedImageName"
+        Write-Host "##vso[task.setvariable variable=TempResourceGroupName;]$TempResourceGroupName"
+
   - task: PowerShell@2
     displayName: 'Build VM'
     inputs:
@@ -119,16 +129,19 @@ jobs:
       script: |
         $readmePath = Join-Path "$(TemplateDirectoryPath)" "${{ parameters.image_readme_name }}"
         $softwareReportPath = Join-Path "$(TemplateDirectoryPath)" "software-report.json"
+
         Copy-Item -Path $readmePath -Destination "$(Build.ArtifactStagingDirectory)/"
         if (Test-Path $softwareReportPath) {
             Copy-Item -Path $softwareReportPath -Destination "$(Build.ArtifactStagingDirectory)/"
         }
+
   - task: PowerShell@2
     displayName: 'Print markdown software report'
     inputs:
       targetType: 'inline'
       script: |
         Get-Content -Path "$(Build.ArtifactStagingDirectory)/${{ parameters.image_readme_name }}"
+
   - task: PowerShell@2
     displayName: 'Print json software report'
     inputs:
@@ -138,6 +151,7 @@ jobs:
         if (Test-Path $softwareReportPath) {
             Get-Content -Path $softwareReportPath
         }
+
   - task: PublishBuildArtifacts@1
     inputs:
       ArtifactName: 'Built_VM_Artifacts'
@@ -173,10 +187,9 @@ jobs:
     inputs:
       targetType: filePath
       filePath: ./images.CI/linux-and-win/cleanup.ps1
-      arguments: -ResourcesNamePrefix $(Build.BuildId) `
-                     -Image ${{ parameters.image_type }} `
-                     -StorageAccount $(AZURE_STORAGE_ACCOUNT) `
-                     -SubscriptionId $(AZURE_SUBSCRIPTION) `
-                     -ClientId $(CLIENT_ID) `
-                     -ClientSecret $(CLIENT_SECRET) `
-                     -TenantId $(AZURE_TENANT)
+      arguments: -TempResourceGroupName "$(TempResourceGroupName)" `
+                 -StorageAccount $(AZURE_STORAGE_ACCOUNT) `
+                 -SubscriptionId $(AZURE_SUBSCRIPTION) `
+                 -ClientId $(CLIENT_ID) `
+                 -ClientSecret $(CLIENT_SECRET) `
+                 -TenantId $(AZURE_TENANT)

@@ -24,32 +24,34 @@ az account set --subscription $buildSubscriptionId
 $Env:ARM_CLIENT_ID = $clientId
 $Env:ARM_CLIENT_SECRET = $clientKey
 $Env:ARM_TENANT_ID = $tenantId
+$Env:ARM_RESOURCE_LOCATION = "westeurope"
 
-$Env:BUILD_SUBSCRIPTION_ID = $buildSubscriptionId
+$Env:ARM_SUBSCRIPTION_ID = $buildSubscriptionId
 $Env:BUILD_RESOURCE_GROUP_NAME = "RG-WE-P-IMAGES-SELFHOSTED-BUILD-001"
-$Env:BUILD_VNET_NAME = "vnet-we-p-imagesbuild-001"
-$Env:BUILD_VNET_RESOURCE_GROUP = "RG-WE-P-IMAGES-SELFHOSTED-VNET-001"
-$Env:BUILD_VNET_SUBNET_NAME = "snet-we-p-imagesbuild-001"
+$Env:VNET_NAME = "vnet-we-p-imagesbuild-001"
+$Env:VNET_RESOURCE_GROUP = "RG-WE-P-IMAGES-SELFHOSTED-VNET-001"
+$Env:VNET_SUBNET = "snet-we-p-imagesbuild-001"
 $Env:PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP = "true"
 $Env:RUN_VALIDATION_FLAG = "true"
 $Env:DOCKERHUB_LOGIN = ""
 $Env:DOCKERHUB_PASSWORD = ""
 
-$Env:MANAGED_IMAGE_RESOURCE_GROUP = "RG-WE-P-IMAGES-SELFHOSTED-IMAGES-001"
+$Env:ARM_RESOURCE_GROUP = "RG-WE-P-IMAGES-SELFHOSTED-IMAGES-001"
 $Env:MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE = "Premium_LRS"
 
 $Env:IMAGE_GALLERY_SUBSCRIPTION_ID = $gallerySubscriptionId
 $Env:IMAGE_GALLERY_RESOURCE_GROUP = "RG-WE-P-IMAGES-SELFHOSTED-001"
 $Env:IMAGE_GALLERY_NAME = "acgwepselfhostedimages02"
-$Env:IMAGE_REPLICATION_REGIONS =  """West Europe"" eastus2"
+$Env:IMAGE_REPLICATION_REGIONS = """West Europe"" eastus2"
 $Env:IMAGE_GALLERY_REPLICATION = "Premium_LRS"
 
 Set-Location -Path 'C:\code\github\runner-images'
 
 ##BUILD Ubuntu 20.04
-$Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2004"
-$Env:MANAGED_IMAGE_VERSION = "$(gitversion /showvariable SemVer)"
-packer build -on-error="ask" -force ./images/linux/ubuntu2004.pkr.hcl
+$image_version = "$(gitversion /showvariable SemVer)"
+$Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2004_$image_version"
+packer build -on-error="ask" -force -var 'private_virtual_network_with_public_ip=true' `
+    ./images/linux/ubuntu2004.pkr.hcl
 
 ##PUBLISH Ubuntu 20.04
 $publishVersion = $(gitversion /showvariable MajorMinorPatch)
@@ -84,13 +86,16 @@ az sig image-version create @params
 ##### NOTE: The image definition in gallery must have created #######
 #####################################################################
 ##build Ubuntu 22.04
-$Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2204"
-$Env:MANAGED_IMAGE_VERSION = "$(gitversion /showvariable SemVer)"
-packer build -on-error="ask" -force ./images/linux/ubuntu2204.pkr.hcl
-    
+$image_version = "$(gitversion /showvariable SemVer)"
+$image_version
+$Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2204_$image_version"
+packer build -on-error="ask" -force -var 'private_virtual_network_with_public_ip=true' `
+    ./images/linux/ubuntu2204.pkr.hcl
 
 ##build Windows 2022
-$Env:MANAGED_IMAGE_NAME = "SelfHosted_lite_Windows2022"
-$Env:MANAGED_IMAGE_VERSION = "$(gitversion /showvariable SemVer)"
+$image_version = "$(gitversion /showvariable SemVer)"
+$Env:MANAGED_IMAGE_NAME = "SelfHosted_lite_Windows2022_$image_version"
 $installPassword = [System.GUID]::NewGuid().ToString().ToUpper()
-packer build -on-error="ask" -force -var "install_password=$($installPassword)" ./runner-images/images/win/windows2022.pkr.hcl
+packer build -on-error="ask" -force -var "install_password=$($installPassword)" `
+    -var 'private_virtual_network_with_public_ip=true' `
+    ./images/win/windows2022.pkr.hcl

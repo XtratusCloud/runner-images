@@ -260,6 +260,8 @@ Use the following command as a part of your job to start the service: 'sudo syst
 - Pester: 5.5.0
 - PSScriptAnalyzer: 1.21.0
 - PSDepend: 0.3.8
+- SqlServer: 22.1.1
+- PowerShellGet: 2.2.5
 
 ### Web Servers
 | Name      | Version | ConfigFile                | ServiceStatus | ListenPort |

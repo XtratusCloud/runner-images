@@ -5,7 +5,6 @@
             "arch": "x64",
             "platform" : "win32",
             "versions": [
-                "2.4",
                 "2.5",
                 "2.6",
                 "2.7",
@@ -20,7 +19,6 @@
             "arch": "x64",
             "platform" : "win32",
             "versions": [
-                "3.6.*",
                 "3.7.*",
                 "3.8.*",
                 "3.9.*",
@@ -35,7 +33,6 @@
             "arch": "x86",
             "platform" : "win32",
             "versions": [
-                "3.6.*",
                 "3.7.*",
                 "3.8.*",
                 "3.9.*",
@@ -73,7 +70,6 @@
             "arch": "x64",
             "platform" : "win32",
             "versions": [
-                "1.18.*",
                 "1.19.*",
                 "1.20.*",
                 "1.21.*"
@@ -91,8 +87,7 @@
         {"name": "SqlServer"},
         {"name": "VSSetup"},
         {"name": "Microsoft.Graph"},
-        {"name": "AWSPowershell"},
-        {"name": "PsDepend"}
+        {"name": "AWSPowershell"}
     ],
     "azureModules": [
         {

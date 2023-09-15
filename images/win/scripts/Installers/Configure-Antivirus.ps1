@@ -17,6 +17,7 @@ $avPreference = @(
     @{SubmitSamplesConsent = 2}
     @{ScanAvgCPULoadFactor = 5; ExclusionPath = @("D:\", "C:\")}
     @{DisableRealtimeMonitoring = $true}
+    @{ScanScheduleDay = 8}
 )
 
 $avPreference += @(
@@ -29,7 +30,7 @@ $avPreference | Foreach-Object {
     Set-MpPreference @avParams
 }
 
-Write-Host "Disable Windows Defender scheduled tasks"
+Write-Host "Disable Windows Defender scheduled tasks" #XTRATUS
 Get-ScheduledTask -TaskPath '\Microsoft\Windows\Windows Defender\' | Disable-ScheduledTask | Out-Null
 
 # https://github.com/actions/runner-images/issues/4277

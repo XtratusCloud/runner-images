@@ -8,7 +8,7 @@ locals {
   installer_script_folder = "/imagegeneration/installers"
   imagedata_file          = "/imagegeneration/imagedata.json"
 
-  managed_image_name = var.managed_image_name != "" ? var.managed_image_name : "packer-${local.image_os}-${var.image_version}"
+  managed_image_name = var.managed_image_name != "" ? var.managed_image_name : "packer-${var.image_os}-${var.image_version}"
 }
 
 variable "allowed_inbound_ip_addresses" {
