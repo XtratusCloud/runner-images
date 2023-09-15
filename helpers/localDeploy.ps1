@@ -83,10 +83,11 @@ az sig image-version create @params
 ##### NOTE: The image definition in gallery must have created #######
 #####################################################################
 ##build Ubuntu 22.04
-$Env:MANAGED_IMAGE_NAME = "SelfHosted_lite_Ubuntu2204"
+$Env:MANAGED_IMAGE_NAME = "SelfHosted_Ubuntu2204"
 $Env:MANAGED_IMAGE_VERSION = "$(gitversion /showvariable SemVer)"
 packer build -on-error="ask" -force `
-    C:\code\Xtratus_Cross\cross_zones\EUR\runner-images\images\linux\ubuntu2204.pkr.hcl
+    C:\code\github\runner-images\images\linux\ubuntu2204.pkr.hcl
+    
 
 ##build Windows 2022
 $Env:MANAGED_IMAGE_NAME = "SelfHosted_lite_Windows2022"

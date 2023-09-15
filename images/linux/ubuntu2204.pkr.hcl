@@ -3,12 +3,7 @@
 ### MAIN authentication variables
 
 locals {
-  managed_image_name = var.managed_image_name != "" ? var.managed_image_name : "packer-${var.image_os}-${var.image_version}"
-}
-
-variable "allowed_inbound_ip_addresses" {
-  type    = list(string)
-  default = []
+  managed_image_name = var.managed_image_name != "" ? "${var.managed_image_name}_${var.managed_image_version}" : "packer-${var.image_os}-${var.image_version}"
 }
 
 variable "azure_tags" {
@@ -23,7 +18,7 @@ variable "build_resource_group_name" {
 
 variable "managed_image_name" {
   type    = string
-  default = ""
+  default = "${env("MANAGED_IMAGE_NAME")}"
 }
 
 variable "client_id" {
@@ -41,34 +36,10 @@ variable "client_cert_path" {
 }
 
 
-### BUILD variables
+### OTHER BUILD variables
 variable "build_subscription_id" {
   type    = string
   default = "${env("BUILD_SUBSCRIPTION_ID")}"
-}
-variable "build_resource_group_name" {
-  type    = string
-  default = "${env("BUILD_RESOURCE_GROUP_NAME")}"
-}
-variable "virtual_network_name" {
-  type    = string
-  default = "${env("BUILD_VNET_NAME")}"
-}
-variable "virtual_network_resource_group_name" {
-  type    = string
-  default = "${env("BUILD_VNET_RESOURCE_GROUP")}"
-}
-variable "virtual_network_subnet_name" {
-  type    = string
-  default = "${env("BUILD_VNET_SUBNET_NAME")}"
-}
-variable "private_virtual_network_with_public_ip" {
-  type    = bool
-  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"
-}
-variable "run_validation_diskspace" {
-  type    = bool
-  default = "${env("RUN_VALIDATION_FLAG")}"
 }
 variable "dockerhub_login" {
   type    = string
@@ -88,10 +59,6 @@ variable "managed_image_resource_group" {
 variable "managed_image_storage_account_type" {
   type    = string
   default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}"
-}
-variable "managed_image_name" {
-  type    = string
-  default = "${env("MANAGED_IMAGE_NAME")}"
 }
 variable "managed_image_version" {
   type    = string
@@ -145,7 +112,7 @@ variable "location" {
 
 variable "private_virtual_network_with_public_ip" {
   type    = bool
-  default = false
+  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"
 }
 
 variable "managed_image_resource_group_name" {
@@ -155,7 +122,7 @@ variable "managed_image_resource_group_name" {
 
 variable "run_validation_diskspace" {
   type    = bool
-  default = false
+  default = "${env("RUN_VALIDATION_FLAG")}"
 }
 
 variable "subscription_id" {
@@ -213,7 +180,7 @@ source "azure-arm" "build_managed" {
   virtual_network_subnet_name         = "${var.virtual_network_subnet_name}"
   private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"  
 
-  managed_image_name                     = "${var.managed_image_name}_${var.managed_image_version}"
+  managed_image_name                     = "${local.managed_image_name}"
   managed_image_resource_group_name      = "${var.managed_image_resource_group}"
   managed_image_storage_account_type     = "${var.managed_image_storage_account_type}"
 
@@ -236,7 +203,7 @@ source "azure-arm" "build_managed" {
 }
 
 build {
-  sources = ["source.azure-arm.build_image"]
+  sources = ["source.azure-arm.build_managed"]
 
   provisioner "shell" {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
@@ -401,29 +368,29 @@ build {
                         ]
   }
 
-  provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_LOGIN=${var.dockerhub_login}", "DOCKERHUB_PASSWORD=${var.dockerhub_password}"]
-    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = ["${path.root}/scripts/installers/docker-compose.sh", "${path.root}/scripts/installers/docker.sh"]
-  }
+  // provisioner "shell" {
+  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_LOGIN=${var.dockerhub_login}", "DOCKERHUB_PASSWORD=${var.dockerhub_password}"]
+  //   execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+  //   scripts          = ["${path.root}/scripts/installers/docker-compose.sh", "${path.root}/scripts/installers/docker.sh"]
+  // }
 
-  provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
-    execute_command  = "sudo sh -c '{{ .Vars }} pwsh -f {{ .Path }}'"
-    scripts          = ["${path.root}/scripts/installers/Install-Toolset.ps1", "${path.root}/scripts/installers/Configure-Toolset.ps1"]
-  }
+  // provisioner "shell" {
+  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+  //   execute_command  = "sudo sh -c '{{ .Vars }} pwsh -f {{ .Path }}'"
+  //   scripts          = ["${path.root}/scripts/installers/Install-Toolset.ps1", "${path.root}/scripts/installers/Configure-Toolset.ps1"]
+  // }
 
-  provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
-    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = ["${path.root}/scripts/installers/pipx-packages.sh"]
-  }
+  // provisioner "shell" {
+  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+  //   execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+  //   scripts          = ["${path.root}/scripts/installers/pipx-packages.sh"]
+  // }
 
-  provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "DEBIAN_FRONTEND=noninteractive", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
-    execute_command  = "/bin/sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = ["${path.root}/scripts/installers/homebrew.sh"]
-  }
+  // provisioner "shell" {
+  //   environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "DEBIAN_FRONTEND=noninteractive", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+  //   execute_command  = "/bin/sh -c '{{ .Vars }} {{ .Path }}'"
+  //   scripts          = ["${path.root}/scripts/installers/homebrew.sh"]
+  // }
   /*lite end*/
 
   provisioner "shell" {
@@ -445,33 +412,33 @@ build {
   }
 
   /*lite init*/
-  provisioner "shell" {
-    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    script          = "${path.root}/scripts/base/apt-mock-remove.sh"
-  }
+  // provisioner "shell" {
+  //   execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+  //   script          = "${path.root}/scripts/base/apt-mock-remove.sh"
+  // }
 
-  provisioner "shell" {
-    environment_vars = ["IMAGE_VERSION=${var.image_version}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
-    inline           = ["pwsh -File ${var.image_folder}/SoftwareReport/SoftwareReport.Generator.ps1 -OutputDirectory ${var.image_folder}", "pwsh -File ${var.image_folder}/tests/RunAll-Tests.ps1 -OutputDirectory ${var.image_folder}"]
-  }
+  // provisioner "shell" {
+  //   environment_vars = ["IMAGE_VERSION=${var.image_version}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+  //   inline           = ["pwsh -File ${var.image_folder}/SoftwareReport/SoftwareReport.Generator.ps1 -OutputDirectory ${var.image_folder}", "pwsh -File ${var.image_folder}/tests/RunAll-Tests.ps1 -OutputDirectory ${var.image_folder}"]
+  // }
 
-  provisioner "file" {
-    destination = "${path.root}/Ubuntu2204-Readme.md"
-    direction   = "download"
-    source      = "${var.image_folder}/software-report.md"
-  }
+  // provisioner "file" {
+  //   destination = "${path.root}/Ubuntu2204-Readme.md"
+  //   direction   = "download"
+  //   source      = "${var.image_folder}/software-report.md"
+  // }
 
-  provisioner "file" {
-    destination = "${path.root}/software-report.json"
-    direction   = "download"
-    source      = "${var.image_folder}/software-report.json"
-  }
+  // provisioner "file" {
+  //   destination = "${path.root}/software-report.json"
+  //   direction   = "download"
+  //   source      = "${var.image_folder}/software-report.json"
+  // }
 
-  provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPT_FOLDER=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "IMAGE_FOLDER=${var.image_folder}"]
-    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = ["${path.root}/scripts/installers/post-deployment.sh"]
-  }
+  // provisioner "shell" {
+  //   environment_vars = ["HELPER_SCRIPT_FOLDER=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "IMAGE_FOLDER=${var.image_folder}"]
+  //   execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+  //   scripts          = ["${path.root}/scripts/installers/post-deployment.sh"]
+  // }
   /*lite end*/
 
   provisioner "shell" {
