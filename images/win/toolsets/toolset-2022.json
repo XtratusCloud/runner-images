@@ -86,7 +86,7 @@
         { "name": "Microsoft.Graph" },
         {"name": "AWSPowershell"},
         {"name": "PsDepend"},
-        {"name": "SqlServer"},
+        {"name": "SqlServer"}
     ],
     "azureModules": [
         {

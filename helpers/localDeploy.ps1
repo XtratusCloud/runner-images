@@ -24,7 +24,7 @@ az account set --subscription $buildSubscriptionId
 $Env:ARM_CLIENT_ID = $clientId
 $Env:ARM_CLIENT_SECRET = $clientKey
 $Env:ARM_TENANT_ID = $tenantId
-$Env:ARM_RESOURCE_LOCATION = "westeurope"
+##$Env:ARM_RESOURCE_LOCATION = "westeurope"
 
 $Env:ARM_SUBSCRIPTION_ID = $buildSubscriptionId
 $Env:BUILD_RESOURCE_GROUP_NAME = "RG-WE-P-IMAGES-SELFHOSTED-BUILD-001"
@@ -45,13 +45,15 @@ $Env:IMAGE_GALLERY_NAME = "acgwepselfhostedimages02"
 $Env:IMAGE_REPLICATION_REGIONS = """West Europe"" eastus2"
 $Env:IMAGE_GALLERY_REPLICATION = "Premium_LRS"
 
-Set-Location -Path 'C:\code\github\runner-images'
+Set-Location -Path 'C:\code\Xtratus_Cross\cross_zones\EUR\xtratus-runner-images'
 
-##BUILD Ubuntu 20.04
+##build Ubuntu 22.04
 $image_version = "$(gitversion /showvariable SemVer)"
-$Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2004_$image_version"
+$image_version
+$Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2204_$image_version"
 packer build -on-error="ask" -force -var 'private_virtual_network_with_public_ip=true' `
-    ./images/linux/ubuntu2004.pkr.hcl
+    ./images/linux/ubuntu2204.pkr.hcl
+
 
 ##PUBLISH Ubuntu 20.04
 $publishVersion = $(gitversion /showvariable MajorMinorPatch)
@@ -85,15 +87,16 @@ az sig image-version create @params
 ########################## OTHER IMAGES #############################
 ##### NOTE: The image definition in gallery must have created #######
 #####################################################################
-##build Ubuntu 22.04
+##BUILD Ubuntu 20.04
 $image_version = "$(gitversion /showvariable SemVer)"
 $image_version
-$Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2204_$image_version"
+$Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2004_$image_version"
 packer build -on-error="ask" -force -var 'private_virtual_network_with_public_ip=true' `
-    ./images/linux/ubuntu2204.pkr.hcl
+    ./images/linux/ubuntu2004.pkr.hcl
 
 ##build Windows 2022
 $image_version = "$(gitversion /showvariable SemVer)"
+$image_version
 $Env:MANAGED_IMAGE_NAME = "SelfHosted_lite_Windows2022_$image_version"
 $installPassword = [System.GUID]::NewGuid().ToString().ToUpper()
 packer build -on-error="ask" -force -var "install_password=$($installPassword)" `
