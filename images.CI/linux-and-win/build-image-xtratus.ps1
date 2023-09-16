@@ -9,7 +9,6 @@ param(
     [String] [Parameter (Mandatory = $false)] $VirtualNetworkSubnet,
     [String] [Parameter (Mandatory = $true)] $ManagedImageName,
     [String] [Parameter (Mandatory = $true)] $ManagedImageVersion,
-    [String] [Parameter (Mandatory = $true)] $ResourcesNamePrefix,
     [String] [Parameter (Mandatory = $true)] $TemplatePath
 )
 
@@ -46,9 +45,7 @@ packer build    -var "tenant_id=$TenantId" `
     -var "virtual_network_resource_group_name=$VirtualNetworkRG" `
     -var "virtual_network_subnet_name=$VirtualNetworkSubnet" `
     -var "run_validation_diskspace=$env:RUN_VALIDATION_FLAG" `
-    -var "managed_image_name=$ManagedImageName" `
-    -var "managed_image_version=$ManagedImageVersion" `
-    -var "capture_name_prefix=$ResourcesNamePrefix" `
+    -var "managed_image_name=$ManagedImageName_$ManagedImageVersion" `
     -var "install_password=$InstallPassword" `
     -color=false `
     $TemplatePath `

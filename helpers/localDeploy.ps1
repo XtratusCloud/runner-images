@@ -57,7 +57,7 @@ packer build -on-error="ask" -force -var 'private_virtual_network_with_public_ip
 
 ##PUBLISH Ubuntu 20.04
 $publishVersion = $(gitversion /showvariable MajorMinorPatch)
-$imageResourceId = "/subscriptions/$Env:BUILD_SUBSCRIPTION_ID/resourceGroups/$Env:MANAGED_IMAGE_RESOURCE_GROUP/providers/Microsoft.Compute/images/$($Env:MANAGED_IMAGE_NAME)_$($Env:MANAGED_IMAGE_VERSION)"
+$imageResourceId = "/subscriptions/$Env:BUILD_SUBSCRIPTION_ID/resourceGroups/$Env:MANAGED_IMAGE_RESOURCE_GROUP/providers/Microsoft.Compute/images/$($Env:MANAGED_IMAGE_NAME)"
 $params = New-Object System.Collections.ArrayList 
 [void]$params.Add("--gallery-name"); [void]$params.Add("$Env:IMAGE_GALLERY_NAME");
 [void]$params.Add("--resource-group"); [void]$params.Add("$Env:IMAGE_GALLERY_RESOURCE_GROUP");

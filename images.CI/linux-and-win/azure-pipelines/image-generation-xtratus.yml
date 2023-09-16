@@ -93,14 +93,13 @@ jobs:
       arguments: -TenantId $($env:tenantId) `
                  -ClientId $($env:servicePrincipalId) `
                  -ClientSecret $($env:servicePrincipalKey) `
-                 -SubscriptionId $(BUILD_SUBSCRIPTION_ID) `
+                 -SubscriptionId $(ARM_SUBSCRIPTION_ID) `
                  -ResourceGroup $(BUILD_RESOURCE_GROUP_NAME) `
-                 -VirtualNetworkName $(BUILD_VNET_NAME) `
-                 -VirtualNetworkRG $(BUILD_VNET_RESOURCE_GROUP) `
-                 -VirtualNetworkSubnet $(BUILD_VNET_SUBNET_NAME) `
+                 -VirtualNetworkName $(VNET_NAME) `
+                 -VirtualNetworkRG $(VNET_RESOURCE_GROUP) `
+                 -VirtualNetworkSubnet $(VNET_SUBNET_NAME) `
                  -ManagedImageName $(managed_image_name) `
                  -ManagedImageVersion $(GitVersion.SemVer) `
-                 -ResourcesNamePrefix $(Build.BuildId) `
                  -TemplatePath $(TemplatePath)
     env:
       PACKER_LOG: 1
