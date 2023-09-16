@@ -39,7 +39,7 @@ Write-Host "Build $Image VM"
 packer build    -var "tenant_id=$TenantId" `
     -var "client_id=$ClientId" `
     -var "client_secret=$ClientSecret" `
-    -var "build_subscription_id=$SubscriptionId" `
+    -var "subscription_id=$SubscriptionId" `
     -var "build_resource_group_name=$ResourceGroup" `
     -var "virtual_network_name=$VirtualNetworkName" `
     -var "virtual_network_resource_group_name=$VirtualNetworkRG" `
