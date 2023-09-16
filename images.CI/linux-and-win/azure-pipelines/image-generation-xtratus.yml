@@ -97,7 +97,7 @@ jobs:
                  -ResourceGroup $(BUILD_RESOURCE_GROUP_NAME) `
                  -VirtualNetworkName $(VNET_NAME) `
                  -VirtualNetworkRG $(VNET_RESOURCE_GROUP) `
-                 -VirtualNetworkSubnet $(VNET_SUBNET_NAME) `
+                 -VirtualNetworkSubnet $(VNET_SUBNET) `
                  -ManagedImageName $(managed_image_name) `
                  -ManagedImageVersion $(GitVersion.SemVer) `
                  -TemplatePath $(TemplatePath)
