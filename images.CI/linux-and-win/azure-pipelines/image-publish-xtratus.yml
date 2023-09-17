@@ -81,7 +81,6 @@ jobs:
           [void]$params.Add("--subscription"); [void]$params.Add("$(IMAGE_GALLERY_SUBSCRIPTION_ID)");
           [void]$params.Add("--replica-count"); [void]$params.Add(${{ parameters.replica_count }});
           [void]$params.Add("--storage-account-type"); [void]$params.Add("$(IMAGE_GALLERY_REPLICATION)");
-          #[void]$params.Add("--target-regions"); [void]$params.Add("$(IMAGE_REPLICATION_REGIONS)");
           [void]$params.Add("--managed-image"); [void]$params.Add("${{ parameters.source_managed_image }}");
           [void]$params.Add("--tags"); [void]$params.Add("SourceImage=${{ parameters.source_managed_image }}");
           [void]$params.Add("--no-wait")

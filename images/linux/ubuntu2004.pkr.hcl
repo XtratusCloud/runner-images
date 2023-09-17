@@ -1,9 +1,25 @@
 # Read the variables type constraints documentation
 # https://www.packer.io/docs/templates/hcl_templates/variables#type-constraints for more info.
 ### MAIN authentication variables
-variable "tenant_id" {
+locals {
+  managed_image_name = var.managed_image_name != "" ? var.managed_image_name : "packer-${var.image_os}-${var.image_version}"
+}
+
+variable "allowed_inbound_ip_addresses" {
+  type    = list(string)
+  default = []
+}
+variable "azure_tags" {
+  type    = map(string)
+  default = {}
+}
+variable "build_resource_group_name" {
   type    = string
-  default = "${env("ARM_TENANT_ID")}"
+  default = "${env("BUILD_RESOURCE_GROUP_NAME")}"
+}
+variable "managed_image_name" {
+  type    = string
+  default = "${env("MANAGED_IMAGE_NAME")}"
 }
 variable "client_id" {
   type    = string
@@ -18,36 +34,9 @@ variable "client_cert_path" {
   type      = string
   default   = "${env("ARM_CLIENT_CERT_PATH")}"
 }
-
-
-### BUILD variables
-variable "build_subscription_id" {
-  type    = string
-  default = "${env("BUILD_SUBSCRIPTION_ID")}"
-}
-variable "build_resource_group_name" {
-  type    = string
-  default = "${env("BUILD_RESOURCE_GROUP_NAME")}"
-}
-variable "virtual_network_name" {
-  type    = string
-  default = "${env("BUILD_VNET_NAME")}"
-}
-variable "virtual_network_resource_group_name" {
-  type    = string
-  default = "${env("BUILD_VNET_RESOURCE_GROUP")}"
-}
-variable "virtual_network_subnet_name" {
-  type    = string
-  default = "${env("BUILD_VNET_SUBNET_NAME")}"
-}
-variable "private_virtual_network_with_public_ip" {
-  type    = bool
-  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"
-}
-variable "run_validation_diskspace" {
-  type    = bool
-  default = "${env("RUN_VALIDATION_FLAG")}"
+variable "commit_url" {
+  type      = string
+  default   = ""
 }
 variable "dockerhub_login" {
   type    = string
@@ -57,35 +46,9 @@ variable "dockerhub_password" {
   type    = string
   default = "${env("DOCKERHUB_PASSWORD")}"
 }
-
-
-###IMAGE variables
-variable "managed_image_resource_group" {
-  type    = string
-  default = "${env("MANAGED_IMAGE_RESOURCE_GROUP")}"
-}
 variable "managed_image_storage_account_type" {
   type    = string
   default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}"
-}
-variable "managed_image_name" {
-  type    = string
-  default = "${env("MANAGED_IMAGE_NAME")}"
-}
-variable "managed_image_version" {
-  type    = string
-  default = "${env("MANAGED_IMAGE_VERSION")}"
-} 
-
-
-###OTHER variables
-variable "allowed_inbound_ip_addresses" {
-  type    = list(string)
-  default = []
-}
-variable "capture_name_prefix" {
-  type    = string
-  default = "packer"
 }
 variable "helper_script_folder" {
   type    = string
@@ -116,46 +79,81 @@ variable "install_password" {
   sensitive = true
   default = ""
 }
-variable "vm_size" {
+variable "location" {
   type    = string
-  default = "Standard_D4s_v3"
+  default = "${env("ARM_RESOURCE_LOCATION")}"
 }
-variable "azure_tag" {
-  type    = map(string)
-  default = {}
+variable "private_virtual_network_with_public_ip" {
+  type    = bool
+  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"
+}
+variable "managed_image_resource_group_name" {
+  type    = string
+  default = "${env("ARM_RESOURCE_GROUP")}"
 }
 
+variable "run_validation_diskspace" {
+  type    = bool
+  default = false
+}
+variable "subscription_id" {
+  type    = string
+  default = "${env("ARM_SUBSCRIPTION_ID")}"
+}
+variable "temp_resource_group_name" {
+  type    = string
+  default = "${env("TEMP_RESOURCE_GROUP_NAME")}"
+}
+variable "tenant_id" {
+  type    = string
+  default = "${env("ARM_TENANT_ID")}"
+}
+variable "virtual_network_name" {
+  type    = string
+  default = "${env("VNET_NAME")}"
+}
+variable "virtual_network_resource_group_name" {
+  type    = string
+  default = "${env("VNET_RESOURCE_GROUP")}"
+}
+variable "virtual_network_subnet_name" {
+  type    = string
+  default = "${env("VNET_SUBNET")}"
+}
+variable "vm_size" {
+  type    = string
+  default = "Standard_D4s_v3"  ##XTRATUS
+} 
 
 # A build block runs provisioner and post-processors on a source
 # Read the documentation for source blocks here:
 # https://www.packer.io/docs/templates/hcl_templates/blocks/source
 source "azure-arm" "build_managed" {
-  tenant_id                           = "${var.tenant_id}"    
-  client_id                           = "${var.client_id}"
-  client_secret                       = "${var.client_secret}"
-  client_cert_path                    = "${var.client_cert_path}"
-
-  subscription_id                     = "${var.build_subscription_id}"
-  build_resource_group_name           = "${var.build_resource_group_name}"
-  virtual_network_name                = "${var.virtual_network_name}"
-  virtual_network_resource_group_name = "${var.virtual_network_resource_group_name}"
-  virtual_network_subnet_name         = "${var.virtual_network_subnet_name}"
-  private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"  
-
-  managed_image_name                     = "${var.managed_image_name}_${var.managed_image_version}"
-  managed_image_resource_group_name      = "${var.managed_image_resource_group}"
-  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}"
-
   allowed_inbound_ip_addresses           = "${var.allowed_inbound_ip_addresses}"
-  vm_size                                = "${var.vm_size}"
+  build_resource_group_name              = "${var.build_resource_group_name}"
+  client_id                              = "${var.client_id}"
+  client_secret                          = "${var.client_secret}"
+  client_cert_path                       = "${var.client_cert_path}"
   image_offer                            = "0001-com-ubuntu-server-focal"
   image_publisher                        = "canonical"
   image_sku                              = "20_04-lts-gen2"  
+  location                               = "${var.location}"
   os_disk_size_gb                        = "86"
   os_type                                = "Linux" 
+  private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"  
+  managed_image_name                     = "${local.managed_image_name}"
+  managed_image_resource_group_name      = "${var.managed_image_resource_group_name}"
+  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}"
+  subscription_id                        = "${var.subscription_id}"
+  temp_resource_group_name               = "${var.temp_resource_group_name}"
+  tenant_id                              = "${var.tenant_id}"
+  virtual_network_name                   = "${var.virtual_network_name}"
+  virtual_network_resource_group_name    = "${var.virtual_network_resource_group_name}"
+  virtual_network_subnet_name            = "${var.virtual_network_subnet_name}"
+  vm_size                                = "${var.vm_size}"
   
   dynamic "azure_tag" {
-    for_each = var.azure_tag
+    for_each = var.azure_tags
     content {
       name = azure_tag.key
       value = azure_tag.value
@@ -188,7 +186,13 @@ build {
   provisioner "shell" {
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    script           = "${path.root}/scripts/base/apt.sh"
+    script           = "${path.root}/scripts/base/apt-ubuntu-archive.sh"
+  }
+
+  provisioner "shell" {
+    environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
+    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    script          = "${path.root}/scripts/base/apt.sh"
   }
 
   provisioner "shell" {
@@ -242,6 +246,11 @@ build {
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = ["${path.root}/scripts/installers/configure-environment.sh"]
   }
+  provisioner "shell" {
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DEBIAN_FRONTEND=noninteractive"]
+    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    scripts          = ["${path.root}/scripts/installers/apt-vital.sh"]
+  }
 
   provisioner "shell" {
     environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}"]
@@ -257,19 +266,13 @@ build {
 
   /* lite init*/
   provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_LOGIN=${var.dockerhub_login}", "DOCKERHUB_PASSWORD=${var.dockerhub_password}"]
-    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = ["${path.root}/scripts/installers/docker-compose.sh", "${path.root}/scripts/installers/docker-moby.sh"]
-  }
-
-  provisioner "shell" {
     environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DEBIAN_FRONTEND=noninteractive"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = [
+                        "${path.root}/scripts/installers/apt-common.sh", 
                         "${path.root}/scripts/installers/azcopy.sh", 
                         "${path.root}/scripts/installers/azure-cli.sh", 
                         "${path.root}/scripts/installers/azure-devops-cli.sh", 
-                        "${path.root}/scripts/installers/basic.sh", 
                         "${path.root}/scripts/installers/bicep.sh", 
                         "${path.root}/scripts/installers/aliyun-cli.sh",
                         "${path.root}/scripts/installers/apache.sh", 
@@ -328,6 +331,12 @@ build {
                         "${path.root}/scripts/installers/python.sh", 
                         "${path.root}/scripts/installers/zstd.sh"
                       ]
+  }
+
+  provisioner "shell" {
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_LOGIN=${var.dockerhub_login}", "DOCKERHUB_PASSWORD=${var.dockerhub_password}"]
+    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    scripts          = ["${path.root}/scripts/installers/docker-compose.sh", "${path.root}/scripts/installers/docker.sh"]
   }
 
   provisioner "shell" {

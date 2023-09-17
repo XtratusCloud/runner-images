@@ -30,5 +30,7 @@ fi
 
 # Adding this dir to PATH will make installed pip commands are immediately available.
 prependEtcEnvironmentPath '$HOME/.local/bin'
+# XTRATUS #14202: In DevOps execution context the $HOME env var points to /home/AzDevOps
+prependEtcEnvironmentPath '/home/AzDevOps/.local/bin'
 
 invoke_tests "Tools" "Python"
