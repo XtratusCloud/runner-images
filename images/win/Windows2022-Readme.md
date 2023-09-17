@@ -582,7 +582,6 @@ Note: MSYS2 is pre-installed on image but not added to PATH.
 - SqlServer: 22.1.1
 - VSSetup: 2.2.16
 - PsDepend: 0.3.8
-- SqlServer: 22.1.1
 ```
 Azure PowerShell module 2.1.0 and AzureRM PowerShell module 2.1.0 are installed
 and are available via 'Get-Module -ListAvailable'.

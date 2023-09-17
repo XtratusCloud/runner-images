@@ -85,8 +85,7 @@
         { "name": "VSSetup" },
         { "name": "Microsoft.Graph" },
         {"name": "AWSPowershell"},
-        {"name": "PsDepend"},
-        {"name": "SqlServer"}
+        {"name": "PsDepend"}
     ],
     "azureModules": [
         {
