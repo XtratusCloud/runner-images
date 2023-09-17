@@ -136,7 +136,7 @@ source "azure-arm" "build_managed" {
   client_cert_path                       = "${var.client_cert_path}"
   image_offer                            = "0001-com-ubuntu-server-focal"
   image_publisher                        = "canonical"
-  image_sku                              = "20_04-lts-gen2"  
+  image_sku                              = "20_04-lts-gen2" ##XTRATUS
   location                               = "${var.location}"
   os_disk_size_gb                        = "86"
   os_type                                = "Linux" 

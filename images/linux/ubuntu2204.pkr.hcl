@@ -156,7 +156,7 @@ source "azure-arm" "build_image" {
   client_cert_path                       = "${var.client_cert_path}"
   image_offer                            = "0001-com-ubuntu-server-jammy"
   image_publisher                        = "canonical"
-  image_sku                              = "22_04-lts"
+  image_sku                              = "22_04-lts-gen2" ##XTRATUS
   location                               = "${var.location}"
   os_disk_size_gb                        = "86"
   os_type                                = "Linux"
