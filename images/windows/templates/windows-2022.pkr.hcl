@@ -100,7 +100,7 @@ variable "managed_image_resource_group_name" {
 
 variable "managed_image_storage_account_type" {
   type    = string
-  default = "Premium_LRS"
+  default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}" ##XTRATUS
 }
 
 variable "object_id" {
