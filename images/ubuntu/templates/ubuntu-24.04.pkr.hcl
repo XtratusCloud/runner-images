@@ -42,6 +42,11 @@ variable "client_secret" {
   sensitive = true
 }
 
+variable "use_azure_cli_auth" {
+  type      = string
+  default   = false
+} ##XTRATUS
+
 variable "dockerhub_login" {
   type    = string
   default = "${env("DOCKERHUB_LOGIN")}"
@@ -149,6 +154,7 @@ source "azure-arm" "build_image" {
   client_cert_path                       = "${var.client_cert_path}"
   client_id                              = "${var.client_id}"
   client_secret                          = "${var.client_secret}"
+  use_azure_cli_auth                     = "${var.use_azure_cli_auth}" ##XTRATUS
   image_offer                            = "ubuntu-24_04-lts"
   image_publisher                        = "canonical"
   image_sku                              = "server-gen1"
