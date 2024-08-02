@@ -21,8 +21,6 @@ if (-not (Test-Path $TemplatePath)) {
 $Image = [io.path]::GetFileName($TemplatePath).Split(".")[0]
 $InstallPassword = [System.GUID]::NewGuid().ToString().ToUpper()
 
-packer validate -syntax-only $TemplatePath
-
 $SensitiveData = @(
     'OSType',
     'StorageAccountLocation',
@@ -35,6 +33,12 @@ $SensitiveData = @(
 
 Write-Host "Show Packer Version"
 packer --version
+
+Write-Host "Download packer plugins"
+packer init $TemplatePath
+
+Write-Host "Validate packer template"
+packer validate -syntax-only $TemplatePath
 
 Write-Host "Build $Image VM"
 if ($UseAcureCliAuth) {
