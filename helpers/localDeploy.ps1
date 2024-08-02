@@ -48,7 +48,9 @@ Set-Location -Path 'C:\code\Xtratus_Cross\cross_zones\EUR\xtratus-runner-images'
 $image_version = "$(gitversion /showvariable SemVer)"
 $image_version
 $Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2204_$image_version"
-packer build -on-error="ask" -force -var 'private_virtual_network_with_public_ip=true' `
+packer build -on-error="ask" -force `
+    -var 'private_virtual_network_with_public_ip=true' `
+    -var 'use_azure_cli_auth=true' `
     ./images/linux/ubuntu2204.pkr.hcl
 
 
@@ -88,7 +90,9 @@ az sig image-version create @params
 $image_version = "$(gitversion /showvariable SemVer)"
 $image_version
 $Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2004_$image_version"
-packer build -on-error="ask" -force -var 'private_virtual_network_with_public_ip=true' `
+packer build -on-error="ask" -force `
+    -var 'private_virtual_network_with_public_ip=true' `
+    -var 'use_azure_cli_auth=true' `
     ./images/linux/ubuntu2004.pkr.hcl
 
 ##build Windows 2022
@@ -98,4 +102,5 @@ $Env:MANAGED_IMAGE_NAME = "SelfHosted_lite_Windows2022_$image_version"
 $installPassword = [System.GUID]::NewGuid().ToString().ToUpper()
 packer build -on-error="ask" -force -var "install_password=$($installPassword)" `
     -var 'private_virtual_network_with_public_ip=true' `
+    -var 'use_azure_cli_auth=true' `
     ./images/win/windows2022.pkr.hcl

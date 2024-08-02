@@ -92,7 +92,7 @@ jobs:
       scriptType: pscore
       scriptLocation: scriptPath
       scriptPath: ./images.CI/linux-and-win/build-image-xtratus.ps1
-      arguments: -TenantId $($env:tenantId) `
+      arguments: -TenantId $(az account show --query "tenantId" -o tsv) `
                  -UseAcureCliAuth 'true' `
                  -SubscriptionId $(ARM_SUBSCRIPTION_ID) `
                  -ResourceGroup $(BUILD_RESOURCE_GROUP_NAME) `
