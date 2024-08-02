@@ -44,7 +44,6 @@ packer build    -var "tenant_id=$TenantId" `
     -var "virtual_network_name=$VirtualNetworkName" `
     -var "virtual_network_resource_group_name=$VirtualNetworkRG" `
     -var "virtual_network_subnet_name=$VirtualNetworkSubnet" `
-    -var "run_validation_diskspace=$env:RUN_VALIDATION_FLAG" `
     -var "managed_image_name=$($ManagedImageName)_$($ManagedImageVersion)" `
     -var "install_password=$InstallPassword" `
     -color=false `
