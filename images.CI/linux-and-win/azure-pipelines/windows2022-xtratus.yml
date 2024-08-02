@@ -6,6 +6,8 @@ trigger:
       - xtratus
       - feature/*
       - hotfix/*
+      - feat/*
+      - fix/*
     exclude:
       - main
   paths:
