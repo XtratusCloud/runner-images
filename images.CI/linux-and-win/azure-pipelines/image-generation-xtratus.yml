@@ -89,13 +89,11 @@ jobs:
     displayName: 'az: Build VM'
     inputs:
       azureSubscription: ${{ parameters.azureServiceConnection }}
-      addSpnToEnvironment: true
       scriptType: pscore
       scriptLocation: scriptPath
       scriptPath: ./images.CI/linux-and-win/build-image-xtratus.ps1
       arguments: -TenantId $($env:tenantId) `
-                 -ClientId $($env:servicePrincipalId) `
-                 -ClientSecret $($env:servicePrincipalKey) `
+                 -UseAcureCliAuth 'true' `
                  -SubscriptionId $(ARM_SUBSCRIPTION_ID) `
                  -ResourceGroup $(BUILD_RESOURCE_GROUP_NAME) `
                  -VirtualNetworkName $(VNET_NAME) `
