@@ -115,7 +115,7 @@ variable "object_id" {
 
 variable "private_virtual_network_with_public_ip" {
   type    = bool
-  default = false
+  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"  ##XTRATUS
 }
 
 variable "subscription_id" {
