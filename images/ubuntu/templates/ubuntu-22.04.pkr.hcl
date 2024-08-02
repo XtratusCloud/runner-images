@@ -42,6 +42,11 @@ variable "client_secret" {
   sensitive = true
 }
 
+variable "use_azure_cli_auth" {
+  type      = string
+  default   = false
+} ##XTRATUS
+
 variable "dockerhub_login" {
   type    = string
   default = "${env("DOCKERHUB_LOGIN")}"
@@ -154,13 +159,14 @@ source "azure-arm" "build_image" {
   client_cert_path                       = "${var.client_cert_path}"
   client_id                              = "${var.client_id}"
   client_secret                          = "${var.client_secret}"
+  use_azure_cli_auth                     = "${var.use_azure_cli_auth}" ##XTRATUS
   image_offer                            = "0001-com-ubuntu-server-jammy"
   image_publisher                        = "canonical"
   image_sku                              = "22_04-lts-gen2" ##XTRATUS
   location                               = "${var.location}"
   managed_image_name                     = "${local.managed_image_name}"
   managed_image_resource_group_name      = "${var.managed_image_resource_group_name}"
-   managed_image_storage_account_type     = "${var.managed_image_storage_account_type}" ##XTRATUS
+  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}" ##XTRATUS
   os_disk_size_gb                        = "75"
   os_type                                = "Linux"
   private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"
