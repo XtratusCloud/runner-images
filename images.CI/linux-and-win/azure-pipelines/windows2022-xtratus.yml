@@ -26,4 +26,4 @@ stages:
           image_type: windows2022
           image_readme_name: Windows2022-Readme.md
           image_template_name: windows-2022.pkr.hcl
-          azureServiceConnection: 'SPN_IA-CORP-CORE-COMMONSERV_SelfhostedBuild'
+          azureServiceConnection: 'umi-devops-gl-a-selfhosted-build-01'
