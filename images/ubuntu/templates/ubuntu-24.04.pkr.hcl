@@ -100,7 +100,7 @@ variable "location" {
 
 variable "managed_image_name" {
   type    = string
-  default = ""
+  default = "${env("MANAGED_IMAGE_NAME")}" ##XTRATUS
 }
 
 variable "managed_image_resource_group_name" {
@@ -108,9 +108,14 @@ variable "managed_image_resource_group_name" {
   default = "${env("ARM_RESOURCE_GROUP")}"
 }
 
+variable "managed_image_storage_account_type" {
+  type    = string
+  default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}"
+} ##XTRATUS
+
 variable "private_virtual_network_with_public_ip" {
   type    = bool
-  default = false
+  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"  ##XTRATUS
 }
 
 variable "subscription_id" {
@@ -157,10 +162,11 @@ source "azure-arm" "build_image" {
   use_azure_cli_auth                     = "${var.use_azure_cli_auth}" ##XTRATUS
   image_offer                            = "ubuntu-24_04-lts"
   image_publisher                        = "canonical"
-  image_sku                              = "server-gen1"
+  image_sku                              = "server"
   location                               = "${var.location}"
   managed_image_name                     = "${local.managed_image_name}"
   managed_image_resource_group_name      = "${var.managed_image_resource_group_name}"
+  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}" ##XTRATUS
   os_disk_size_gb                        = "75"
   os_type                                = "Linux"
   private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"

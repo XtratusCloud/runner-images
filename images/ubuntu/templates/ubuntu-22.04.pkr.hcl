@@ -160,7 +160,7 @@ source "azure-arm" "build_image" {
   client_id                              = "${var.client_id}"
   client_secret                          = "${var.client_secret}"
   use_azure_cli_auth                     = "${var.use_azure_cli_auth}" ##XTRATUS
-  image_offer                            = "0001-com-ubuntu-server-jammy"
+  image_offer                            = "ubuntu"
   image_publisher                        = "canonical"
   image_sku                              = "22_04-lts-gen2" ##XTRATUS
   location                               = "${var.location}"
