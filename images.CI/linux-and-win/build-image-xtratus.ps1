@@ -1,7 +1,8 @@
 param(
     [String] [Parameter (Mandatory = $true)] $TenantId,
-    [String] [Parameter (Mandatory = $true)] $ClientId,
-    [String] [Parameter (Mandatory = $true)] $ClientSecret,
+    [String] [Parameter (Mandatory = $false)] $ClientId = "",
+    [String] [Parameter (Mandatory = $false)] $ClientSecret = "",
+    [Boolean] [Parameter (Mandatory = $false)] $UseAcureCliAuth = $false,
     [String] [Parameter (Mandatory = $true)] $SubscriptionId,
     [String] [Parameter (Mandatory = $true)] $ResourceGroup,
     [String] [Parameter (Mandatory = $false)] $VirtualNetworkName,
@@ -20,8 +21,6 @@ if (-not (Test-Path $TemplatePath)) {
 $Image = [io.path]::GetFileName($TemplatePath).Split(".")[0]
 $InstallPassword = [System.GUID]::NewGuid().ToString().ToUpper()
 
-packer validate -syntax-only $TemplatePath
-
 $SensitiveData = @(
     'OSType',
     'StorageAccountLocation',
@@ -35,23 +34,48 @@ $SensitiveData = @(
 Write-Host "Show Packer Version"
 packer --version
 
+Write-Host "Download packer plugins"
+packer init $TemplatePath
+
+Write-Host "Validate packer template"
+packer validate -syntax-only $TemplatePath
+
 Write-Host "Build $Image VM"
-packer build    -var "tenant_id=$TenantId" `
-    -var "client_id=$ClientId" `
-    -var "client_secret=$ClientSecret" `
-    -var "subscription_id=$SubscriptionId" `
-    -var "build_resource_group_name=$ResourceGroup" `
-    -var "virtual_network_name=$VirtualNetworkName" `
-    -var "virtual_network_resource_group_name=$VirtualNetworkRG" `
-    -var "virtual_network_subnet_name=$VirtualNetworkSubnet" `
-    -var "run_validation_diskspace=$env:RUN_VALIDATION_FLAG" `
-    -var "managed_image_name=$($ManagedImageName)_$($ManagedImageVersion)" `
-    -var "install_password=$InstallPassword" `
-    -color=false `
-    $TemplatePath `
-| Where-Object {
-    #Filter sensitive data from Packer logs
-    $currentString = $_
-    $sensitiveString = $SensitiveData | Where-Object { $currentString -match $_ }
-    $sensitiveString -eq $null
+if ($UseAcureCliAuth) {
+    packer build -var "tenant_id=$TenantId" `
+        -var "use_azure_cli_auth=true" `
+        -var "subscription_id=$SubscriptionId" `
+        -var "build_resource_group_name=$ResourceGroup" `
+        -var "virtual_network_name=$VirtualNetworkName" `
+        -var "virtual_network_resource_group_name=$VirtualNetworkRG" `
+        -var "virtual_network_subnet_name=$VirtualNetworkSubnet" `
+        -var "managed_image_name=$($ManagedImageName)_$($ManagedImageVersion)" `
+        -var "install_password=$InstallPassword" `
+        -color=false `
+        $TemplatePath `
+    | Where-Object {
+        #Filter sensitive data from Packer logs
+        $currentString = $_
+        $sensitiveString = $SensitiveData | Where-Object { $currentString -match $_ }
+        $sensitiveString -eq $null
+    }
+} else {
+    packer build -var "tenant_id=$TenantId" `
+        -var "client_id=$ClientId" `
+        -var "client_secret=$ClientSecret" `
+        -var "subscription_id=$SubscriptionId" `
+        -var "build_resource_group_name=$ResourceGroup" `
+        -var "virtual_network_name=$VirtualNetworkName" `
+        -var "virtual_network_resource_group_name=$VirtualNetworkRG" `
+        -var "virtual_network_subnet_name=$VirtualNetworkSubnet" `
+        -var "managed_image_name=$($ManagedImageName)_$($ManagedImageVersion)" `
+        -var "install_password=$InstallPassword" `
+        -color=false `
+        $TemplatePath `
+    | Where-Object {
+        #Filter sensitive data from Packer logs
+        $currentString = $_
+        $sensitiveString = $SensitiveData | Where-Object { $currentString -match $_ }
+        $sensitiveString -eq $null
+    }
 }

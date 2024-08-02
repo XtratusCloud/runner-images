@@ -12,6 +12,9 @@ parameters:
   - name: image_type
     type: string
 
+  - name: image_template_name
+    type: string
+
   - name: image_readme_name
     type: string
 
@@ -70,9 +73,9 @@ jobs:
       targetType: 'inline'
       script: |
         $ImageType = "${{ parameters.image_type }}"
-        $TemplateDirectoryName = if ($ImageType.StartsWith("ubuntu")) { "linux" } else { "win" }
+        $TemplateDirectoryName = if ($ImageType.StartsWith("ubuntu")) { "ubuntu" } else { "windows" }
         $TemplateDirectoryPath = Join-Path "images" $TemplateDirectoryName | Resolve-Path
-        $TemplatePath = Join-Path $TemplateDirectoryPath "$ImageType.pkr.hcl"
+        $TemplatePath = Join-Path $TemplateDirectoryPath templates ""${{ parameters.image_template_name }}""
         if ( -not (Test-Path $TemplatePath) ) {
             $TemplatePath = Join-Path $TemplateDirectoryPath "$ImageType.json"
         }
@@ -86,13 +89,11 @@ jobs:
     displayName: 'az: Build VM'
     inputs:
       azureSubscription: ${{ parameters.azureServiceConnection }}
-      addSpnToEnvironment: true
       scriptType: pscore
       scriptLocation: scriptPath
       scriptPath: ./images.CI/linux-and-win/build-image-xtratus.ps1
-      arguments: -TenantId $($env:tenantId) `
-                 -ClientId $($env:servicePrincipalId) `
-                 -ClientSecret $($env:servicePrincipalKey) `
+      arguments: -TenantId $(az account show --query "tenantId" -o tsv) `
+                 -UseAcureCliAuth $true `
                  -SubscriptionId $(ARM_SUBSCRIPTION_ID) `
                  -ResourceGroup $(BUILD_RESOURCE_GROUP_NAME) `
                  -VirtualNetworkName $(VNET_NAME) `

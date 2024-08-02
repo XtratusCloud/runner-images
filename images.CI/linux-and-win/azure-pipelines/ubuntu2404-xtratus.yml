@@ -1,0 +1,34 @@
+name: $(Date:yyyyMMdd)$(Rev:.r)
+pr: none
+trigger:
+  branches:
+    include:
+      - xtratus
+      - feature/*
+      - hotfix/*
+      - feat/*
+      - fix/*
+    exclude:
+      - main
+  paths:
+    include:
+      - images/ubuntu/assets/post-gen/*
+      - images/ubuntu/scripts/*      
+      - images/ubuntu/assets/ubuntu2404.conf      
+      - images/ubuntu/templates/ubuntu-24.04.pkr.hcl
+      - images/ubuntu/toolsets/toolset-2404.json
+      - images/ubuntu/ubuntu2404.pkr.hcl
+      - images/ubuntu/Ubuntu2404-Readme.md
+
+stages:
+  - stage: image_generation
+    variables:
+      - name: managed_image_name
+        value: "selfhosted_ubuntu2404"
+    jobs:
+      - template: image-generation-xtratus.yml
+        parameters:
+          image_type: ubuntu2404
+          image_readme_name: Ubuntu2404-Readme.md
+          image_template_name: ubuntu-24.04.pkr.hcl
+          azureServiceConnection: 'umi-devops-gl-a-selfhosted-build-01'

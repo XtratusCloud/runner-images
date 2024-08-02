@@ -6,15 +6,19 @@ trigger:
       - xtratus
       - feature/*
       - hotfix/*
+      - feat/*
+      - fix/*
     exclude:
       - main
   paths:
     include:
-      - images/linux/ubuntu2004.pkr.hcl
-      - images/linux/config/ubuntu2004.conf
-      - images/linux/post-generation/*
-      - images/linux/scripts/*
-      - images/linux/toolsets/toolset-2004.json
+      - images/ubuntu/assets/post-gen/*
+      - images/ubuntu/scripts/*      
+      - images/ubuntu/assets/ubuntu2004.conf      
+      - images/ubuntu/templates/ubuntu-20.04.pkr.hcl
+      - images/ubuntu/toolsets/toolset-2004.json
+      - images/ubuntu/ubuntu2004.pkr.hcl
+      - images/ubuntu/Ubuntu2004-Readme.md
 
 stages:
   - stage: image_generation
@@ -26,4 +30,5 @@ stages:
         parameters:
           image_type: ubuntu2004
           image_readme_name: Ubuntu2004-Readme.md
-          azureServiceConnection: 'SPN_IA-CORP-CORE-COMMONSERV_SelfhostedBuild'
+          image_template_name: ubuntu-20.04.pkr.hcl
+          azureServiceConnection: 'umi-devops-gl-a-selfhosted-build-01'

@@ -4,26 +4,24 @@
 #############
 #Deployment global variables
 $tenantId = "a9a8e375-fac1-4ec2-820a-cfb6eb5cf01b"
-$managementSubscriptionId = "3ed57e3b-516c-46e4-9d6a-7519d646c3a0" ##IA-CORP-CORE-MANAGEMENT
+# $managementSubscriptionId = "3ed57e3b-516c-46e4-9d6a-7519d646c3a0" ##IA-CORP-CORE-MANAGEMENT
 $buildSubscriptionId = "a15c7cd7-aaa9-481a-8dfd-ed6b31582e94" ##IA-CORP-CORE-COMMONSERV-IMAGEBUILD
 $gallerySubscriptionId = "d7a8fe02-cc0e-4c0a-8a4d-9afd9061d5de" ##IA-CORP-CORE-COMMONSERV
 
-#security context using user credentials
-#NOTE: only needed the first time, to allow to read SP credentials from MANAGEMENT subscription
-az login --tenant $tenantId -o none
-az account set --subscription $managementSubscriptionId
-#read SP credentials and perform non-interactive login
-$clientId = "9c3a6ec0-64bc-4c68-adc8-711402467f33" #SPN_IA-CORP-CORE-COMMONSERV_SelfhostedBuild
-$vault_name = "kv-we-p-management-001"
-$secret_name = "sp-$clientId-secret" 
-$clientKey = (az keyvault secret show --vault-name $vault_name -n $secret_name --query "value" -o tsv)
-az login --service-principal --username $clientId --password $clientKey --tenant $tenantId
-az account set --subscription $buildSubscriptionId
+# Azure login with Managed Identity credentials
+$managedIdentity = "1573a984-6391-4700-9c79-fc041ce3dabf" #umi-devops-gl-a-selfhosted-build-01
+az login --identity --username $managedIdentity
+az account set --subscription $subscriptionId
 
 ##terraform authentication env variables
-$Env:ARM_CLIENT_ID = $clientId
-$Env:ARM_CLIENT_SECRET = $clientKey
+$Env:TF_DATA_DIR = "./.terraform"
+$Env:ARM_CLIENT_ID = $managedIdentity
+#$Env:ARM_CLIENT_SECRET = $clientKey
+$Env:ARM_SUBSCRIPTION_ID = $subscriptionId
 $Env:ARM_TENANT_ID = $tenantId
+$Env:ARM_USE_AZUREAD = "true"
+$Env:ARM_USE_MSI = "true"
+$Env:ARM_USE_OIDC = ""
 ##$Env:ARM_RESOURCE_LOCATION = "westeurope"
 
 $Env:ARM_SUBSCRIPTION_ID = $buildSubscriptionId
@@ -32,7 +30,6 @@ $Env:VNET_NAME = "vnet-we-p-imagesbuild-001"
 $Env:VNET_RESOURCE_GROUP = "RG-WE-P-IMAGES-SELFHOSTED-VNET-001"
 $Env:VNET_SUBNET = "snet-we-p-imagesbuild-001"
 $Env:PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP = "true"
-$Env:RUN_VALIDATION_FLAG = "true"
 $Env:DOCKERHUB_LOGIN = ""
 $Env:DOCKERHUB_PASSWORD = ""
 
@@ -51,7 +48,9 @@ Set-Location -Path 'C:\code\Xtratus_Cross\cross_zones\EUR\xtratus-runner-images'
 $image_version = "$(gitversion /showvariable SemVer)"
 $image_version
 $Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2204_$image_version"
-packer build -on-error="ask" -force -var 'private_virtual_network_with_public_ip=true' `
+packer build -on-error="ask" -force `
+    -var 'private_virtual_network_with_public_ip=true' `
+    -var 'use_azure_cli_auth=true' `
     ./images/linux/ubuntu2204.pkr.hcl
 
 
@@ -91,7 +90,9 @@ az sig image-version create @params
 $image_version = "$(gitversion /showvariable SemVer)"
 $image_version
 $Env:MANAGED_IMAGE_NAME = "SelfHosted_local_Ubuntu2004_$image_version"
-packer build -on-error="ask" -force -var 'private_virtual_network_with_public_ip=true' `
+packer build -on-error="ask" -force `
+    -var 'private_virtual_network_with_public_ip=true' `
+    -var 'use_azure_cli_auth=true' `
     ./images/linux/ubuntu2004.pkr.hcl
 
 ##build Windows 2022
@@ -101,4 +102,5 @@ $Env:MANAGED_IMAGE_NAME = "SelfHosted_lite_Windows2022_$image_version"
 $installPassword = [System.GUID]::NewGuid().ToString().ToUpper()
 packer build -on-error="ask" -force -var "install_password=$($installPassword)" `
     -var 'private_virtual_network_with_public_ip=true' `
+    -var 'use_azure_cli_auth=true' `
     ./images/win/windows2022.pkr.hcl

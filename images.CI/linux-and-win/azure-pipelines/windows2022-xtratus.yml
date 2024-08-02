@@ -6,6 +6,8 @@ trigger:
       - xtratus
       - feature/*
       - hotfix/*
+      - feat/*
+      - fix/*
     exclude:
       - main
   paths:
@@ -25,4 +27,5 @@ stages:
         parameters:
           image_type: windows2022
           image_readme_name: Windows2022-Readme.md
-          azureServiceConnection: 'SPN_IA-CORP-CORE-COMMONSERV_SelfhostedBuild'
+          image_template_name: windows-2022.pkr.hcl
+          azureServiceConnection: 'umi-devops-gl-a-selfhosted-build-01'
