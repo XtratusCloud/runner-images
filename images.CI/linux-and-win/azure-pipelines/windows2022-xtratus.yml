@@ -12,10 +12,12 @@ trigger:
       - main
   paths:
     include:
-      - images/win/windows2022.pkr.hcl
-      - images/win/post-generation/*
-      - images/win/scripts/*
-      - images/win/toolsets/toolset-2022.json
+      - images/windows/assets/post-gen/*
+      - images/windows/scripts/*      
+      - images/windows/templates/windows-2022.pkr.hcl
+      - images/windows/toolsets/toolset-2022.json
+      - images/windows/windows2022.pkr.hcl
+      - images/windows/Windows2022-Readme.md
 
 stages:
   - stage: image_generation
