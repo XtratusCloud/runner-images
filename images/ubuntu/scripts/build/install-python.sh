@@ -12,17 +12,22 @@ source $HELPER_SCRIPTS/os.sh
 # Install Python, Python 3, pip, pip3
 apt-get install --no-install-recommends python3 python3-dev python3-pip python3-venv
 
+if is_ubuntu24; then
+# Create temporary workaround to allow user to continue using pip
+    sudo cat <<EOF > /etc/pip.conf
+[global]
+break-system-packages = true
+EOF
+fi
+
 # Install pipx
 # Set pipx custom directory
 export PIPX_BIN_DIR=/opt/pipx_bin
 export PIPX_HOME=/opt/pipx
-if is_ubuntu24; then
-    apt-get install --no-install-recommends pipx
-    pipx ensurepath
-else
-    python3 -m pip install pipx
-    python3 -m pipx ensurepath
-fi
+
+python3 -m pip install pipx
+python3 -m pipx ensurepath
+
 # Update /etc/environment
 set_etc_environment_variable "PIPX_BIN_DIR" $PIPX_BIN_DIR
 set_etc_environment_variable "PIPX_HOME" $PIPX_HOME
@@ -36,6 +41,4 @@ fi
 
 # Adding this dir to PATH will make installed pip commands are immediately available.
 prepend_etc_environment_path '$HOME/.local/bin'
-# XTRATUS #14202: In DevOps execution context the $HOME env var points to /home/AzDevOps
-prepend_etc_environment_path '/home/AzDevOps/.local/bin'
 invoke_tests "Tools" "Python"

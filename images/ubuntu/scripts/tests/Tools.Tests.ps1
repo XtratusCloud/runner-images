@@ -407,7 +407,7 @@ Describe "Kotlin" -Skip:((-not (Test-IsUbuntu20)) -and (-not (Test-IsUbuntu22)))
         "kotlinc-jvm -version" | Should -ReturnZeroExitCode
     }
 
-    It "kotlin-dce-js" {
-        "kotlin-dce-js -version" | Should -ReturnZeroExitCode
+    It "kotlinc-js" {
+        "kotlinc-js -version" | Should -ReturnZeroExitCode
     }
 }

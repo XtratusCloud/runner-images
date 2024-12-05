@@ -7,6 +7,7 @@ name: Create SBOM for the release
 #
 # Current SYFT tool issues:
 # macOS (major): prompt privilegies that blocking process indefinetely (https://github.com/anchore/syft/issues/1367)
+run-name: Collecting SBOM for ${{ github.event.client_payload.ReleaseBranchName || 'unknown release' }}
 on:
   repository_dispatch:
     types: [generate-sbom]
