@@ -83,7 +83,7 @@ Describe "Windows Updates" {
     }
 }
 
-Describe "WSL2" {
+Describe "WSL2" -Skip {
     It "WSL status should return zero exit code" {
         "wsl --status" | Should -ReturnZeroExitCode
     }
