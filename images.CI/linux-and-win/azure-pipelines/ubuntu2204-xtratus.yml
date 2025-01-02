@@ -32,6 +32,7 @@ stages:
             image_type: ubuntu2204
             image_readme_name: Ubuntu2204-Readme.md
             image_template_name: ubuntu-22.04.pkr.hcl
+            agent_pool: 'Xtratus-Tests'
             variable_group_name: 'devops-agents-generation-test'
             azureServiceConnection: 'umi-devops-gl-t-selfhosted-build-01'
 
@@ -41,5 +42,6 @@ stages:
             image_type: ubuntu2204
             image_readme_name: Ubuntu2204-Readme.md
             image_template_name: ubuntu-22.04.pkr.hcl
+            agent_pool: 'Agent Pool Linux'
             variable_group_name: 'devops-agents-generation-shared'
             azureServiceConnection: 'umi-devops-gl-a-selfhosted-build-01'

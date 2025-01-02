@@ -28,6 +28,7 @@ stages:
           parameters:
             image_type: 'Ubuntu2204'
             managed_image_name: '$(managed_image_name)'
+            agent_pool: 'Xtratus-Tests'
             variable_group_name: 'devops-agents-generation-test'
             azureServiceConnection: 'umi-devops-gl-t-selfhosted-build-01'
             source_managed_image: '/subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(ARM_RESOURCE_GROUP)/providers/Microsoft.Compute/images/$(managed_image_name_full)'
@@ -37,6 +38,7 @@ stages:
           parameters:
             image_type: 'Ubuntu2204'
             managed_image_name: '$(managed_image_name)'
+            agent_pool: 'Agent Pool Linux'
             variable_group_name: 'devops-agents-generation-shared'
             azureServiceConnection: 'umi-devops-gl-a-selfhosted-build-01'
             source_managed_image: '/subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(ARM_RESOURCE_GROUP)/providers/Microsoft.Compute/images/$(managed_image_name_full)'
