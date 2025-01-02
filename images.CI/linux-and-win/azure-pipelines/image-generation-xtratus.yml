@@ -41,6 +41,8 @@ jobs:
   pool: ${{ parameters.agent_pool }}
   variables:
   - group: ${{ parameters.variable_group_name }}
+  - name: managed_image_version
+    value: '$(GitVersion.SemVer)-$(Build.BuildNumber)'
 
   steps:
   - checkout: ${{ parameters.repository_ref }}
@@ -61,6 +63,12 @@ jobs:
 
   - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
     displayName: 'gitversion: execute'
+
+  - pwsh: |
+      Write-Host "Image version that will be published: $managed_image_version"
+      Write-Host "##vso[build.updatebuildnumber]$(managed_image_version)"
+    name: setBuildNumber
+    displayName: 'devops: set build number'
  
   - task: PowerShell@2
     displayName: 'Set image template variables'
@@ -95,7 +103,7 @@ jobs:
                  -VirtualNetworkRG $(VNET_RESOURCE_GROUP) `
                  -VirtualNetworkSubnet $(VNET_SUBNET) `
                  -ManagedImageName $(managed_image_name) `
-                 -ManagedImageVersion $(GitVersion.SemVer) `
+                 -ManagedImageVersion $(managed_image_version) `
                  -TemplatePath $(TemplatePath)
     env:
       PACKER_LOG: 1
