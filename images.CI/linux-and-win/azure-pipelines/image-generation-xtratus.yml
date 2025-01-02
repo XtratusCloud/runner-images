@@ -43,9 +43,9 @@ jobs:
   - group: ${{ parameters.variable_group_name }}
   - name: managed_image_version
     ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/xtratus') }}:
-      value: '$(GitVersion.SemVer)-$(Build.BuildNumber)'
+      value: '$(GitVersion.MajorMinorPatch)-$(Build.BuildNumber)'
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/xtratus') }}:
-      value: '$(GitVersion.SemVer)'
+      value: '$(GitVersion.MajorMinorPatch)'
   steps:
   - checkout: ${{ parameters.repository_ref }}
 
