@@ -54,13 +54,22 @@ jobs:
       arguments: -RepoUrl $(CUSTOM_REPOSITORY_URL) `
                  -RepoBranch $(CUSTOM_REPOSITORY_BRANCH)
 
-  - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0 
+  - task: gittools.gittools.setup-gitversion-task.gitversion/setup@3.1.1
     displayName: 'gitversion: install'
     inputs:
       versionSpec: 5.x
 
-  - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
+  - task: gittools.gittools.execute-gitversion-task.gitversion/execute@3.1.1
     displayName: 'gitversion: execute'
+    inputs:
+      overrideConfig: |
+        update-build-number=false
+        
+  - pwsh: |
+      Write-Host "Image version that will be published: $(GitVersion.SemVer)"
+      Write-Host "##vso[build.updatebuildnumber]$(GitVersion.SemVer)"
+    name: setvar
+    displayName: 'devops: set build number'
  
   - task: PowerShell@2
     displayName: 'Set image template variables'
