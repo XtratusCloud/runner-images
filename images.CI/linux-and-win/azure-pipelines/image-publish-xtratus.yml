@@ -63,9 +63,9 @@ jobs:
 
     - task: gitversion/execute@3.1.1
       displayName: 'gitversion: execute'
-      inputs:
-        overrideConfig: |
-          update-build-number=false
+      # inputs:
+      #   overrideConfig: |
+      #     update-build-number=false
 
     - pwsh: |
         Write-Host "Image version that will be published: $(GitVersion.SemVer)"
