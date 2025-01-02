@@ -39,8 +39,6 @@ jobs:
   timeoutInMinutes: 600
   cancelTimeoutInMinutes: 30
   pool: ${{ parameters.agent_pool }}
-    # name: Azure Pipelines
-    # vmImage: ubuntu-20.04
   variables:
   - group: ${{ parameters.variable_group_name }}
 
