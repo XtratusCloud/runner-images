@@ -54,12 +54,12 @@ jobs:
       arguments: -RepoUrl $(CUSTOM_REPOSITORY_URL) `
                  -RepoBranch $(CUSTOM_REPOSITORY_BRANCH)
 
-  - task: gitversion/setup@3.1.1
+  - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0
     displayName: 'gitversion: install'
     inputs:
       versionSpec: 5.x
 
-  - task: gitversion/execute@3.1.1
+  - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
     displayName: 'gitversion: execute'
     # inputs:
     #   overrideConfig: |
