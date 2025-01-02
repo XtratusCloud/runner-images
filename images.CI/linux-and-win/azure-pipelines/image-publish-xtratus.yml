@@ -16,7 +16,6 @@ parameters:
 
   - name: agent_pool
     type: object
-    default: 'Agent Pool Linux'
 
   - name: variable_group_name
     type: string

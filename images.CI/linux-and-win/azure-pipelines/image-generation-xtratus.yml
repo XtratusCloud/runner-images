@@ -20,8 +20,6 @@ parameters:
 
   - name: agent_pool
     type: object
-    default:
-      name: 'Agent Pool Linux'
 
   - name: variable_group_name
     type: string
@@ -40,9 +38,9 @@ jobs:
   displayName: Image Generation (${{ parameters.image_type }})
   timeoutInMinutes: 600
   cancelTimeoutInMinutes: 30
-  pool: ##${{ parameters.agent_pool }}
-    name: Azure Pipelines
-    vmImage: ubuntu-20.04
+  pool: ${{ parameters.agent_pool }}
+    # name: Azure Pipelines
+    # vmImage: ubuntu-20.04
   variables:
   - group: ${{ parameters.variable_group_name }}
 
