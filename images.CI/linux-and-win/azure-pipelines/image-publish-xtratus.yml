@@ -63,13 +63,11 @@ jobs:
 
     - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
       displayName: 'gitversion: execute'
-      # inputs:
-      #   overrideConfig: |
-      #     update-build-number=false
 
     - pwsh: |
-        Write-Host "Image version that will be published: $(GitVersion.SemVer)"
-        Write-Host "##vso[build.updatebuildnumber]$(GitVersion.SemVer)"
+        $imageName = "${{ parameters.source_managed_image }}" -split '/' | Select-Object -Last 1
+        Write-Host "Image version that will be published: $imageName"
+        Write-Host "##vso[build.updatebuildnumber]$imageName"
       name: setvar
       displayName: 'devops: set build number'
 
