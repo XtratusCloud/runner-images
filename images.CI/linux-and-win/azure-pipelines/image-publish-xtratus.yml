@@ -89,7 +89,7 @@ jobs:
           [void]$params.Add("--storage-account-type"); [void]$params.Add("$(IMAGE_GALLERY_REPLICATION)");
           [void]$params.Add("--managed-image"); [void]$params.Add("${{ parameters.source_managed_image }}");
           [void]$params.Add("--tags"); [void]$params.Add("SourceImage=${{ parameters.source_managed_image }}");
-          [void]$params.Add("--no-wait")
+          ##[void]$params.Add("--no-wait")
 
           Write-Host "Publishing image with parameters [$($params | ConvertTo-Json)]"
           az sig image-version create @params --target-regions "West Europe" eastus2
