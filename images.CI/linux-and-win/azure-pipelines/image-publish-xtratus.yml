@@ -65,9 +65,10 @@ jobs:
       displayName: 'gitversion: execute'
 
     - pwsh: |
-        $imageName = "${{ parameters.source_managed_image }}" -split '/' | Select-Object -Last 1
-        Write-Host "Image version that will be published: $imageName"
-        Write-Host "##vso[build.updatebuildnumber]$imageName"
+        $imageFullName = "${{ parameters.source_managed_image }}" -split '/' | Select-Object -Last 1
+        $buildVersion = $imageFullName -split '_' | Select-Object -Last 1
+        Write-Host "Image version that will be published: $buildVersion"
+        Write-Host "##vso[build.updatebuildnumber]$buildVersion"
       name: setvar
       displayName: 'devops: set build number'
 
