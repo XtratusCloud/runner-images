@@ -107,7 +107,7 @@ variable "virtual_network_subnet_name" {
 }
 variable "vm_size" {
   type    = string
-  default = "Standard_D8s_v3"
+  default = "Standard_D2ds_v5"
 } 
 variable "agent_tools_directory" {
   type    = string
