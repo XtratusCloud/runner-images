@@ -129,7 +129,7 @@ source "azure-arm" "build_managed" {
   client_cert_path                       = "${var.client_cert_path}"
   image_offer                            = "WindowsServer"
   image_publisher                        = "MicrosoftWindowsServer"
-  image_sku                              = "2022-datacenter-g2" ##XTRATUS
+  image_sku                              = "2022-datacenter-azure-edition" ##XTRATUS
   location                               = "${var.location}"
   os_disk_size_gb                        = "256"
   os_type                                = "Windows"
