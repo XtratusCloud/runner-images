@@ -20,12 +20,9 @@ parameters:
 
   - name: agent_pool
     type: object
-    default:
-      name: 'Agent Pool Linux'
 
   - name: variable_group_name
     type: string
-    default: 'devops-agents-generation-shared'
 
   - name: repository_ref
     type: string
@@ -41,9 +38,7 @@ jobs:
   displayName: Image Generation (${{ parameters.image_type }})
   timeoutInMinutes: 600
   cancelTimeoutInMinutes: 30
-  pool: ##${{ parameters.agent_pool }}
-    name: Azure Pipelines
-    vmImage: ubuntu-20.04
+  pool: ${{ parameters.agent_pool }}
   variables:
   - group: ${{ parameters.variable_group_name }}
 
@@ -59,13 +54,19 @@ jobs:
       arguments: -RepoUrl $(CUSTOM_REPOSITORY_URL) `
                  -RepoBranch $(CUSTOM_REPOSITORY_BRANCH)
 
-  - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0 
+  - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0
     displayName: 'gitversion: install'
     inputs:
       versionSpec: 5.x
 
   - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
     displayName: 'gitversion: execute'
+        
+  - pwsh: |
+      Write-Host "Image version that will be published: $(GitVersion.SemVer)"
+      Write-Host "##vso[build.updatebuildnumber]$(GitVersion.SemVer)"
+    name: setvar
+    displayName: 'devops: set build number'
  
   - task: PowerShell@2
     displayName: 'Set image template variables'

@@ -16,11 +16,9 @@ parameters:
 
   - name: agent_pool
     type: object
-    default: 'Agent Pool Linux'
 
   - name: variable_group_name
     type: string
-    default: 'devops-agents-generation-shared'
 
   - name: repository_ref
     type: string
@@ -58,13 +56,21 @@ jobs:
       fetchTags: true
       persistCredentials: true
 
-    - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0 
+    - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0
       displayName: 'gitversion: install'
       inputs:
         versionSpec: 5.x
 
     - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
       displayName: 'gitversion: execute'
+
+    - pwsh: |
+        $imageFullName = "${{ parameters.source_managed_image }}" -split '/' | Select-Object -Last 1
+        $buildVersion = $imageFullName -split '_' | Select-Object -Last 1
+        Write-Host "Image version that will be published: $buildVersion"
+        Write-Host "##vso[build.updatebuildnumber]$buildVersion"
+      name: setvar
+      displayName: 'devops: set build number'
 
     - task: AzureCLI@2
       displayName: 'az: publish image'
@@ -83,7 +89,7 @@ jobs:
           [void]$params.Add("--storage-account-type"); [void]$params.Add("$(IMAGE_GALLERY_REPLICATION)");
           [void]$params.Add("--managed-image"); [void]$params.Add("${{ parameters.source_managed_image }}");
           [void]$params.Add("--tags"); [void]$params.Add("SourceImage=${{ parameters.source_managed_image }}");
-          [void]$params.Add("--no-wait")
+          ##[void]$params.Add("--no-wait")
 
           Write-Host "Publishing image with parameters [$($params | ConvertTo-Json)]"
           az sig image-version create @params --target-regions "West Europe" eastus2

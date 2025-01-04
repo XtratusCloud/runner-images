@@ -100,7 +100,7 @@ variable "location" {
 
 variable "managed_image_name" {
   type    = string
-  default = ""
+  default = "${env("MANAGED_IMAGE_NAME")}" ##XTRATUS
 }
 
 variable "managed_image_resource_group_name" {
@@ -155,7 +155,7 @@ variable "virtual_network_subnet_name" {
 
 variable "vm_size" {
   type    = string
-  default = "Standard_F8s_v2"
+  default = "Standard_D8s_v3" ##XTRATUS
 }
 
 source "azure-arm" "image" {
@@ -168,7 +168,7 @@ source "azure-arm" "image" {
   communicator                           = "winrm"
   image_offer                            = "WindowsServer"
   image_publisher                        = "MicrosoftWindowsServer"
-  image_sku                              = "2022-Datacenter"
+  image_sku                              = "2022-datacenter-g2" ##XTRATUS
   location                               = "${var.location}"
   managed_image_name                     = "${local.managed_image_name}"
   managed_image_resource_group_name      = "${var.managed_image_resource_group_name}"

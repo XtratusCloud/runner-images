@@ -6,8 +6,6 @@ trigger:
       - xtratus
       - feature/*
       - hotfix/*
-      - feat/*
-      - fix/*
     exclude:
       - main
   paths:
@@ -25,9 +23,22 @@ stages:
       - name: managed_image_name
         value: "selfhosted_windows2022"
     jobs:
-      - template: image-generation-xtratus.yml
-        parameters:
-          image_type: windows2022
-          image_readme_name: Windows2022-Readme.md
-          image_template_name: windows-2022.pkr.hcl
-          azureServiceConnection: 'umi-devops-gl-a-selfhosted-build-01'
+      - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/xtratus') }}:
+        - template: image-generation-xtratus.yml
+          parameters:
+            image_type: windows2022
+            image_readme_name: Windows2022-Readme.md
+            image_template_name: windows-2022.pkr.hcl
+            agent_pool: 'Xtratus-Tests'
+            variable_group_name: 'devops-agents-generation-test'
+            azureServiceConnection: 'umi-devops-gl-t-selfhosted-build-01'
+            
+      - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/xtratus') }}:
+        - template: image-generation-xtratus.yml
+          parameters:
+            image_type: windows2022
+            image_readme_name: Windows2022-Readme.md
+            image_template_name: windows-2022.pkr.hcl
+            agent_pool: 'Agent Pool Linux'
+            variable_group_name: 'devops-agents-generation-shared'
+            azureServiceConnection: 'umi-devops-gl-a-selfhosted-build-01'
