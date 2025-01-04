@@ -10,8 +10,6 @@ resources:
             - xtratus
             - feature/*
             - hotfix/*
-            - feat/*
-            - fix/*
           exclude:
             - main
             
