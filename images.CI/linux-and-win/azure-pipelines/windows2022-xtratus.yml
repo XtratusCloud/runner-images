@@ -39,6 +39,8 @@ stages:
             image_type: windows2022
             image_readme_name: Windows2022-Readme.md
             image_template_name: windows-2022.pkr.hcl
-            agent_pool: 'Agent Pool Linux'
+            agent_pool: 
+              name: Azure Pipelines
+              vmImage: ubuntu-latest
             variable_group_name: 'devops-agents-generation-shared'
             azureServiceConnection: 'umi-devops-gl-a-selfhosted-build-01'
