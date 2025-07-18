@@ -16,6 +16,7 @@ param(
     [String] [Parameter (Mandatory=$false)] $VirtualNetworkRG,
     [String] [Parameter (Mandatory=$false)] $VirtualNetworkSubnet,
     [String] [Parameter (Mandatory=$false)] $AllowedInboundIpAddresses = "[]",
+    [Bool] [Parameter (Mandatory=$false)] $PrivateVirtualNetworkWithPublicIp = "false", ## XTRATUS
     [hashtable] [Parameter (Mandatory=$false)] $Tags = @{}
 )
 
@@ -67,6 +68,7 @@ packer build    -only "$buildName*" `
                 -var "allowed_inbound_ip_addresses=$($AllowedInboundIpAddresses)" `
                 -var "use_azure_cli_auth=$UseAzureCliAuth" `
                 -var "azure_tags=$azure_tags" `
+                -var "private_virtual_network_with_public_ip=$private_virtual_network_with_public_ip" `
                 -color=false `
                 $TemplatePath `
         | Where-Object {
