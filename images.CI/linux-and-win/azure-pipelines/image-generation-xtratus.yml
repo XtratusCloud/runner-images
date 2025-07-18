@@ -98,7 +98,6 @@ jobs:
                  -UseAzureCliAuth "true" `
                  -ClientId "$env:servicePrincipalId" `
                  -SubscriptionId $(ARM_SUBSCRIPTION_ID) `
-                 -Location $(BUILD_LOCATION) `
                  -ImageResourceGroupName $(BUILD_RESOURCE_GROUP_NAME) `
                  -TempResourceGroupName $(BUILD_RESOURCE_GROUP_NAME) `
                  -ImageOS ${{ parameters.image_os }} `
