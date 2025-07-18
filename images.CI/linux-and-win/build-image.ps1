@@ -59,7 +59,7 @@ packer build    -only "$buildName*" `
                 -var "managed_image_name=$ImageName" `
                 -var "managed_image_resource_group_name=$ImageResourceGroupName" `
                 -var "subscription_id=$SubscriptionId" `
-                -var "temp_resource_group_name=$TempResourceGroupName" `
+                -var "build_resource_group_name=$TempResourceGroupName" `
                 -var "tenant_id=$TenantId" `
                 -var "virtual_network_name=$VirtualNetworkName" `
                 -var "virtual_network_resource_group_name=$VirtualNetworkRG" `
@@ -75,3 +75,4 @@ packer build    -only "$buildName*" `
             $sensitiveString = $SensitiveData | Where-Object { $currentString -match $_ }
             $sensitiveString -eq $null
         }
+        ##XTRATUS build_resource_group_name instead of temp_resource_group_name
