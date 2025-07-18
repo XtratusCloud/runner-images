@@ -13,9 +13,8 @@ trigger:
       - images/ubuntu/assets/post-gen/*
       - images/ubuntu/scripts/*      
       - images/ubuntu/assets/ubuntu2404.conf      
-      - images/ubuntu/templates/ubuntu-24.04.pkr.hcl
+      - images/ubuntu/templates/build.ubuntu-24_04.pkr.hcl
       - images/ubuntu/toolsets/toolset-2404.json
-      - images/ubuntu/ubuntu2404.pkr.hcl
       - images/ubuntu/Ubuntu2404-Readme.md
 
 stages:

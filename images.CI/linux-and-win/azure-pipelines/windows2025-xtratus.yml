@@ -12,23 +12,23 @@ trigger:
     include:
       - images/windows/assets/post-gen/*
       - images/windows/scripts/*      
-      - images/windows/templates/build.windows-2022.pkr.hcl
-      - images/windows/toolsets/toolset-2022.json
-      - images/windows/Windows2022-Readme.md
-      
+      - images/windows/templates/build.windows-2025.pkr.hcl
+      - images/windows/toolsets/toolset-2025.json
+      - images/windows/Windows2025-Readme.md
+
 stages:
   - stage: image_generation
     variables:
       - name: managed_image_name
-        value: "selfhosted_windows2022"
+        value: "selfhosted_windows2025"
     jobs:
       - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/xtratus') }}:
         - template: image-generation-xtratus.yml
           parameters:
-            image_type: windows2022
-            image_os: win22
-            image_readme_name: Windows2022-Readme.md
-            image_template_name: build.windows-2022.pkr.hcl
+            image_type: windows2025
+            image_os: win25
+            image_readme_name: Windows2025-Readme.md
+            image_template_name: build.windows-2025.pkr.hcl
             agent_pool: 'Xtratus-Tests'
             variable_group_name: 'devops-agents-generation-test'
             azureServiceConnection: 'umi-devops-gl-t-selfhosted-build-01'
@@ -36,10 +36,10 @@ stages:
       - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/xtratus') }}:
         - template: image-generation-xtratus.yml
           parameters:
-            image_type: windows2022
-            image_os: win22
-            image_readme_name: Windows2022-Readme.md
-            image_template_name: build.windows-2022.pkr.hcl
+            image_type: windows2025
+            image_os: win25
+            image_readme_name: Windows2025-Readme.md
+            image_template_name: build.windows-2025.pkr.hcl
             agent_pool: 
               name: Azure Pipelines
               vmImage: ubuntu-latest
