@@ -88,7 +88,7 @@ variable "location" {
 }
 variable "managed_image_name" {
   type    = string
-  default = ""
+  default = "${env("MANAGED_IMAGE_NAME")}" ##XTRATUS
 }
 variable "managed_image_resource_group_name" {
   type    = string
@@ -96,11 +96,11 @@ variable "managed_image_resource_group_name" {
 }
 variable "managed_image_storage_account_type" {
   type    = string
-  default = "Premium_LRS"
+  default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}" ##XTRATUS
 }
 variable "private_virtual_network_with_public_ip" {
   type    = bool
-  default = false
+  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"  ##XTRATUS
 }
 variable "os_disk_size_gb" {
   type    = number
@@ -128,7 +128,7 @@ variable "virtual_network_subnet_name" {
 }
 variable "vm_size" {
   type    = string
-  default = "Standard_F8s_v2"
+  default = "Standard_D8s_v3" ##XTRATUS
 }
 variable "winrm_expiration_time" {  // A time duration with which to set the WinRM certificate to expire
   type    = string                  // Also applies to key vault secret expiration time

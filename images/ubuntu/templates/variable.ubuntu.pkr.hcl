@@ -80,7 +80,7 @@ variable "location" {
 }
 variable "managed_image_name" {
   type    = string
-  default = ""
+  default = "${env("MANAGED_IMAGE_NAME")}" ##XTRATUS
 }
 variable "managed_image_resource_group_name" {
   type    = string
@@ -88,11 +88,11 @@ variable "managed_image_resource_group_name" {
 }
 variable "managed_image_storage_account_type" {
   type    = string
-  default = "Premium_LRS"
+  default = "${env("MANAGED_IMAGE_STORAGE_ACCOUNT_TYPE")}"  ##XTRATUS
 }
 variable "private_virtual_network_with_public_ip" {
   type    = bool
-  default = false
+  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"  ##XTRATUS
 }
 variable "os_disk_size_gb" {
   type    = number
