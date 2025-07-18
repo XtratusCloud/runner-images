@@ -94,7 +94,7 @@ jobs:
       scriptLocation: scriptPath
       scriptPath: ./images.CI/linux-and-win/build-image.ps1
       arguments: -TenantId $(az account show --query "tenantId" -o tsv) `
-                 -UseAcureCliAuth "true" `
+                 -UseAzureCliAuth "true" `
                  -SubscriptionId $(ARM_SUBSCRIPTION_ID) `
                  -Location $(BUILD_LOCATION) `
                  -ImageResourceGroupName $(BUILD_RESOURCE_GROUP_NAME) `
