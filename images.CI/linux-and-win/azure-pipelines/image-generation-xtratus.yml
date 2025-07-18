@@ -107,8 +107,7 @@ jobs:
                  -VirtualNetworkSubnet $(VNET_SUBNET) `
                  -ImageName "$(managed_image_name)_$(GitVersion.SemVer)"
                  -TemplatePath $(TemplatePath) `
-                 -BuildTemplateName  ${{ parameters.image_template_name }} `
-                 -PrivateVirtualNetworkWithPublicIp [bool]"$(PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP)"
+                 -BuildTemplateName  ${{ parameters.image_template_name }}
     env:
       PACKER_LOG: 1
       PACKER_LOG_PATH: "$(Agent.TempDirectory)/packer-log.txt"

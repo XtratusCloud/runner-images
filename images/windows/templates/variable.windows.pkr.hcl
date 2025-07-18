@@ -100,7 +100,7 @@ variable "managed_image_storage_account_type" {
 }
 variable "private_virtual_network_with_public_ip" {
   type    = bool
-  default = "${env("PRIVATE_VIRTUAL_NETWORK_WITH_PUBLIC_IP")}"  ##XTRATUS
+  default = true ##XTRATUS
 }
 variable "os_disk_size_gb" {
   type    = number
