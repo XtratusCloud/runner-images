@@ -12,6 +12,9 @@ parameters:
   - name: image_type
     type: string
 
+  - name: image_os
+    type: string
+
   - name: image_template_name
     type: string
 
@@ -76,10 +79,7 @@ jobs:
         $ImageType = "${{ parameters.image_type }}"
         $TemplateDirectoryName = if ($ImageType.StartsWith("ubuntu")) { "ubuntu" } else { "windows" }
         $TemplateDirectoryPath = Join-Path "images" $TemplateDirectoryName | Resolve-Path
-        $TemplatePath = Join-Path $TemplateDirectoryPath templates ""${{ parameters.image_template_name }}""
-        if ( -not (Test-Path $TemplatePath) ) {
-            $TemplatePath = Join-Path $TemplateDirectoryPath "$ImageType.json"
-        }
+        $TemplatePath = Join-Path $TemplateDirectoryPath templates
         Write-Host "##vso[task.setvariable variable=TemplateDirectoryPath;]$TemplateDirectoryPath"
         Write-Host "##vso[task.setvariable variable=TemplatePath;]$TemplatePath"
        
@@ -92,17 +92,20 @@ jobs:
       azureSubscription: ${{ parameters.azureServiceConnection }}
       scriptType: pscore
       scriptLocation: scriptPath
-      scriptPath: ./images.CI/linux-and-win/build-image-xtratus.ps1
+      scriptPath: ./images.CI/linux-and-win/build-image.ps1
       arguments: -TenantId $(az account show --query "tenantId" -o tsv) `
-                 -UseAcureCliAuth $true `
+                 -UseAcureCliAuth "true" `
                  -SubscriptionId $(ARM_SUBSCRIPTION_ID) `
-                 -ResourceGroup $(BUILD_RESOURCE_GROUP_NAME) `
+                 -Location $(BUILD_LOCATION) `
+                 -ImageResourceGroupName $(BUILD_RESOURCE_GROUP_NAME) `
+                 -TempResourceGroupName $(BUILD_RESOURCE_GROUP_NAME) `
+                 -ImageOS ${{ parameters.image_os }} `
                  -VirtualNetworkName $(VNET_NAME) `
                  -VirtualNetworkRG $(VNET_RESOURCE_GROUP) `
                  -VirtualNetworkSubnet $(VNET_SUBNET) `
-                 -ManagedImageName $(managed_image_name) `
-                 -ManagedImageVersion $(GitVersion.SemVer) `
-                 -TemplatePath $(TemplatePath)
+                 -ImageName "$(managed_image_name)_$(GitVersion.SemVer)"
+                 -TemplatePath $(TemplatePath) `
+                 -BuildTemplateName  ${{ parameters.image_template_name }}
     env:
       PACKER_LOG: 1
       PACKER_LOG_PATH: "$(Agent.TempDirectory)/packer-log.txt"

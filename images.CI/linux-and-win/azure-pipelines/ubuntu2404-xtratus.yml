@@ -28,6 +28,7 @@ stages:
         - template: image-generation-xtratus.yml
           parameters:
             image_type: ubuntu2404
+            image_os: ubuntu24
             image_readme_name: Ubuntu2404-Readme.md
             image_template_name: build.ubuntu-24_04.pkr.hcl
             agent_pool: 'Xtratus-Tests'
@@ -38,6 +39,7 @@ stages:
         - template: image-generation-xtratus.yml
           parameters:
             image_type: ubuntu2404
+            image_os: ubuntu24
             image_readme_name: Ubuntu2404-Readme.md
             image_template_name: build.ubuntu-24_04.pkr.hcl
             agent_pool: 
