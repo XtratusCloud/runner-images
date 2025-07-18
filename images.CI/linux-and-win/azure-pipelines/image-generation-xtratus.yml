@@ -98,8 +98,9 @@ jobs:
                  -UseAzureCliAuth "true" `
                  -ClientId "$env:servicePrincipalId" `
                  -SubscriptionId $(ARM_SUBSCRIPTION_ID) `
+                 -Location $(ARM_LOCATION) `
                  -ImageResourceGroupName $(BUILD_RESOURCE_GROUP_NAME) `
-                 -TempResourceGroupName $(BUILD_RESOURCE_GROUP_NAME) `
+                 -TempResourceGroupName "$(BUILD_RESOURCE_GROUP_NAME)-${{ parameters.image_type }}-$([System.GUID]::NewGuid().ToString())" `
                  -ImageOS ${{ parameters.image_os }} `
                  -VirtualNetworkName $(VNET_NAME) `
                  -VirtualNetworkRG $(VNET_RESOURCE_GROUP) `

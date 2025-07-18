@@ -3,7 +3,7 @@ param(
     [String] [Parameter (Mandatory=$true)] $BuildTemplateName,
     [String] [Parameter (Mandatory=$true)] $ClientId,
     [String] [Parameter (Mandatory=$false)] $ClientSecret,
-    # [String] [Parameter (Mandatory=$true)] $Location, ##XTRATUS
+    [String] [Parameter (Mandatory=$true)] $Location,
     [String] [Parameter (Mandatory=$true)] $ImageName,
     [String] [Parameter (Mandatory=$true)] $ImageResourceGroupName,
     [String] [Parameter (Mandatory=$true)] $TempResourceGroupName,
@@ -54,11 +54,12 @@ packer build    -only "$buildName*" `
                 -var "client_id=$ClientId" `
                 -var "client_secret=$ClientSecret" `
                 -var "install_password=$InstallPassword" `
+                -var "location=$Location" `
                 -var "image_os=$ImageOS" `
                 -var "managed_image_name=$ImageName" `
                 -var "managed_image_resource_group_name=$ImageResourceGroupName" `
                 -var "subscription_id=$SubscriptionId" `
-                -var "build_resource_group_name=$TempResourceGroupName" `
+                -var "temp_resource_group_name=$TempResourceGroupName" `
                 -var "tenant_id=$TenantId" `
                 -var "virtual_network_name=$VirtualNetworkName" `
                 -var "virtual_network_resource_group_name=$VirtualNetworkRG" `
@@ -74,4 +75,3 @@ packer build    -only "$buildName*" `
             $sensitiveString = $SensitiveData | Where-Object { $currentString -match $_ }
             $sensitiveString -eq $null
         }
-        ##XTRATUS set build_resource_group_name variable instead of temp_resource_group_name, and location removed
