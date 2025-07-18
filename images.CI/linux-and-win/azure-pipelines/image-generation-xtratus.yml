@@ -93,8 +93,10 @@ jobs:
       scriptType: pscore
       scriptLocation: scriptPath
       scriptPath: ./images.CI/linux-and-win/build-image.ps1
+      addSpnToEnvironment: true
       arguments: -TenantId $(az account show --query "tenantId" -o tsv) `
                  -UseAzureCliAuth "true" `
+                 -ClientId "$env:servicePrincipalId" `
                  -SubscriptionId $(ARM_SUBSCRIPTION_ID) `
                  -Location $(BUILD_LOCATION) `
                  -ImageResourceGroupName $(BUILD_RESOURCE_GROUP_NAME) `
