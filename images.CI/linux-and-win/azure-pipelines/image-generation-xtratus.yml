@@ -99,7 +99,7 @@ jobs:
                  -ClientId "$env:servicePrincipalId" `
                  -SubscriptionId $(ARM_SUBSCRIPTION_ID) `
                  -Location $(ARM_LOCATION) `
-                 -ImageResourceGroupName $(BUILD_RESOURCE_GROUP_NAME) `
+                 -ImageResourceGroupName $(ARM_RESOURCE_GROUP) `
                  -TempResourceGroupName "$(BUILD_TEMP_RESOURCE_GROUP_NAME_PREFIX)-${{ parameters.image_type }}-$([System.GUID]::NewGuid().ToString())" `
                  -ImageOS ${{ parameters.image_os }} `
                  -VirtualNetworkName $(VNET_NAME) `
