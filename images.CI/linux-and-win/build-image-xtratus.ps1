@@ -14,7 +14,7 @@ param(
 )
 
 if (-not (Test-Path $TemplatePath)) {
-    Write-Error "'-TemplatePath' parameter is not valid. You have to specify correct Template Path"
+    Write-Error "'-TemplatePath' parameter is not valid. You have to specify correct Template Path. [$TemplatePath]"
     exit 1
 }
 
