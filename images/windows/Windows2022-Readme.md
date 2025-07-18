@@ -509,7 +509,6 @@ Note: MSYS2 is pre-installed on image but not added to PATH.
 - PSWindowsUpdate: 2.2.1.5
 - SqlServer: 22.4.5.1
 - VSSetup: 2.2.16
-- PsDepend: 0.3.8
 
 ### Android
 | Package Name               | Version                                                                                                                                                                                                                                                                                                                                                       |

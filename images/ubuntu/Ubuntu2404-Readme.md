@@ -217,7 +217,6 @@ Use the following command as a part of your job to start the service: 'sudo syst
 - Microsoft.Graph: 2.29.0
 - Pester: 5.7.1
 - PSScriptAnalyzer: 1.24.0
-- PSDepend: 0.3.8
 - SqlServer: 22.3.0
 - PowerShellGet: 2.2.5
 

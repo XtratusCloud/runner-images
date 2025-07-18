@@ -85,8 +85,7 @@
         {"name": "SqlServer", "versions": ["22.2.0"]},
         {"name": "VSSetup"},
         {"name": "Microsoft.Graph"},
-        {"name": "AWSPowershell"},
-        {"name": "PsDepend"}
+        {"name": "AWSPowershell"}
     ],
     "azureModules": [
         {
