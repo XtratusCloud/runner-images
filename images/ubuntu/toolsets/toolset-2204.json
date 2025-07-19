@@ -96,11 +96,11 @@
         }
     },
     "powershellModules": [
-        {"name": "MarkdownPS"},
-        {"name": "Microsoft.Graph"},
-        {"name": "Pester"},
-        {"name": "PSScriptAnalyzer"},
-        {"name": "SqlServer"}
+        {"name": "MarkdownPS", "versions": ["1.10"]},
+        {"name": "Microsoft.Graph", "versions": ["2.29.0"]},
+        {"name": "Pester", "versions": ["5.7.1"]},
+        {"name": "PSScriptAnalyzer", "versions": ["1.24.0"]},
+        {"name": "SqlServer", "versions": ["22.3.0"]}
     ],
     "azureModules": [
         {
