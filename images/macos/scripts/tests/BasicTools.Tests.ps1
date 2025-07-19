@@ -2,13 +2,13 @@ Import-Module "$PSScriptRoot/../helpers/Common.Helpers.psm1"
 
 $os = Get-OSVersion
 
-Describe "Azure CLI" -Skip:($os.IsBigSur) {
+Describe "Azure CLI" {
     It "Azure CLI" {
         "az -v" | Should -ReturnZeroExitCode
     }
 }
 
-Describe "Azure DevOps CLI" -Skip:($os.IsBigSur) {
+Describe "Azure DevOps CLI" {
     It "az devops" {
         "az devops -h" | Should -ReturnZeroExitCode
     }
@@ -23,12 +23,6 @@ Describe "Carthage" {
 Describe "cmake" {
     It "cmake" {
         "cmake --version" | Should -ReturnZeroExitCode
-    }
-}
-
-Describe "Subversion" -Skip:($os.IsVentura -or $os.IsSonoma -or $os.IsSequoia) {
-    It "Subversion" {
-        "svn --version" | Should -ReturnZeroExitCode
     }
 }
 
@@ -69,13 +63,6 @@ Describe "Tcl/Tk" -Skip:($os.IsVenturaArm64 -or $os.IsSonomaArm64 -or $os.IsSequ
     }
 }
 
-Describe "Tcl/Tk" {
-    It "libtcl" {
-        "file /usr/local/lib/libtcl8.6.dylib" | Should -ReturnZeroExitCode
-        "file /usr/local/lib/libtk8.6.dylib" | Should -ReturnZeroExitCode
-    }
-}
-
 Describe "bazelisk" {
     It "bazelisk" {
         "bazelisk version" | Should -ReturnZeroExitCode
@@ -94,7 +81,7 @@ Describe "7-Zip" {
     }
 }
 
-Describe "Apache Ant" -Skip:($os.IsMonterey) {
+Describe "Apache Ant" {
     It "Apache Ant" {
         "ant -version" | Should -ReturnZeroExitCode
     }
@@ -118,12 +105,6 @@ Describe "bazel" {
     }
 }
 
-Describe "Julia" -Skip:($os.IsVentura -or $os.IsSonoma -or $os.IsSequoia) {
-    It "Julia" {
-        "julia --version" | Should -ReturnZeroExitCode
-    }
-}
-
 Describe "jq" {
     It "jq" {
         "jq --version" | Should -ReturnZeroExitCode
@@ -142,31 +123,13 @@ Describe "wget" {
     }
 }
 
-Describe "vagrant" -Skip:($os.IsVentura -or $os.IsSonoma -or $os.IsSequoia) {
-    It "vagrant" {
-        "vagrant --version" | Should -ReturnZeroExitCode
-    }
-}
-
-Describe "virtualbox" -Skip:($os.IsVentura -or $os.IsSonoma -or $os.IsSequoia) {
-    It "virtualbox" {
-        "vboxmanage -v" | Should -ReturnZeroExitCode
-    }
-}
-
-Describe "R" -Skip:($os.IsVentura -or $os.IsSonoma -or $os.IsSequoia) {
-    It "R" {
-        "R --version" | Should -ReturnZeroExitCode
-    }
-}
-
 Describe "Homebrew" {
     It "Homebrew" {
         "brew --version" | Should -ReturnZeroExitCode
     }
 }
 
-Describe "Kotlin" -Skip:($os.IsMonterey) {
+Describe "Kotlin" {
     $kotlinPackages = @("kapt", "kotlin", "kotlinc", "kotlinc-jvm", "kotlinc-js")
 
     It "<toolName> is available" -TestCases ($kotlinPackages | ForEach-Object { @{ toolName = $_ } }) {
@@ -180,14 +143,30 @@ Describe "yq" {
     }
 }
 
-Describe "imagemagick" -Skip:($os.IsVentura -or $os.IsSonoma -or $os.IsSequoia) {
-    It "imagemagick" {
-        "magick -version" | Should -ReturnZeroExitCode
-    }
-}
-
 Describe "pkgconf" {
     It "pkgconf" {
         "pkgconf --version" | Should -ReturnZeroExitCode
+    }
+}
+
+Describe "Ninja" {
+    New-item -Path "/tmp/ninjaproject" -ItemType Directory -Force
+    Set-Location '/tmp/ninjaproject'
+@'
+cmake_minimum_required(VERSION 3.10)
+project(NinjaTest NONE)
+'@ | Out-File -FilePath "./CMakeLists.txt"
+
+    It "Make a simple ninja project" {
+    "cmake -GNinja /tmp/ninjaproject" | Should -ReturnZeroExitCode
+    }
+
+    It "build.ninja file should exist" {
+        $buildFilePath = Join-Path "/tmp/ninjaproject" "build.ninja"
+        $buildFilePath | Should -Exist
+    }
+
+    It "Ninja" {
+        "ninja --version" | Should -ReturnZeroExitCode
     }
 }
