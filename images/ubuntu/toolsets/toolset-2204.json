@@ -100,7 +100,6 @@
         {"name": "Microsoft.Graph"},
         {"name": "Pester"},
         {"name": "PSScriptAnalyzer"},
-        {"name": "PowerShellGet"},
         {"name": "SqlServer"}
     ],
     "azureModules": [
