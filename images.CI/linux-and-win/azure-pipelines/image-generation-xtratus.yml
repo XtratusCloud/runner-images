@@ -60,9 +60,12 @@ jobs:
   - pwsh: |
       #get last version from tags
       $currentVersion = git describe --tags $(git rev-list --tags --max-count=1)
+      Write-Host "Current image version: $currentVersion"
       #get change type from current branch name
       $currentBranch = git rev-parse --abbrev-ref HEAD
       $changeType = ($currentBranch -split "/")[0]
+      Write-Host "Current branch: $currentBranch"
+      Write-Host "Change type: $changeType"
       #calculate new version
       switch ($changeType){
         { @("feat", "feature") -contains $_ } { $incrementPart = 1 }
@@ -73,7 +76,7 @@ jobs:
       if ($currentBranch -ne "main") {
         $version = "$version-$(Build.BuildNumber)"
       }
-      Write-Host "Image version that will be published: $version"
+      Write-Host "Image version that will be generated: $version"
       Write-Host "##vso[task.setvariable variable=ImageVersion;]$version"
       Write-Host "##vso[build.updatebuildnumber]$version"
     name: setvar
