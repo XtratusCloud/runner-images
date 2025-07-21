@@ -70,7 +70,7 @@ jobs:
         { @("fix", "hotfix") -contains $_ } { incrementPart = 2 }
         default { incrementPart = 0 }
       }
-      $version = .\increment-version.ps1 $currentVersion $incrementPart
+      $version = ./images.CI/increment-version.ps1 $currentVersion $incrementPart
       if ($(Build.SourceBranchName) -ne "main") {
         $version = "$version-$(Build.BuildNumber)"
       }
@@ -79,7 +79,6 @@ jobs:
       Write-Host "##vso[build.updatebuildnumber]$version"
     name: setvar
     displayName: 'devops: calculate image version'
-    workingDirectory: '$(Build.SourceBranch)/images.CI'
  
   - pwsh: |     
       $ImageType = "${{ parameters.image_type }}"
