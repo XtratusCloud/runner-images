@@ -70,7 +70,7 @@ jobs:
         default { $incrementPart = 0 }
       }
       $version = ./images.CI/increment-version.ps1 $currentVersion $incrementPart
-      if ($(Build.SourceBranchName) -ne "main") {
+      if ($currentBranch -ne "main") {
         $version = "$version-$(Build.BuildNumber)"
       }
       Write-Host "Image version that will be published: $version"
