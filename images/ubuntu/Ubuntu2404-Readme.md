@@ -215,10 +215,10 @@ Use the following command as a part of your job to start the service: 'sudo syst
 #### PowerShell Modules
 - Az: 12.5.0
 - MarkdownPS: 1.10
-- Microsoft.Graph: 2.29.0
+- Microsoft.Graph: 2.29.1
 - Pester: 5.7.1
 - PSScriptAnalyzer: 1.24.0
-- SqlServer: 22.3.0
+- SqlServer: 22.4.5.1
 
 ### Web Servers
 | Name    | Version | ConfigFile                | ServiceStatus | ListenPort |
