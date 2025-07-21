@@ -21,7 +21,16 @@ function Invoke-PesterTests {
 
     .EXAMPLE
         Invoke-PesterTests -TestFile "*"
-        Runs all tests Test-IsUbuntu20}.Tests.ps1"
+        Runs all tests from all test files
+
+    #>
+    Param(
+        [Parameter(Mandatory = $true)]
+        [string] $TestFile,
+        [string] $TestName
+    )
+
+    $testPath = "/imagegeneration/tests/${TestFile}.Tests.ps1"
     if (-not (Test-Path $testPath)) {
         throw "Unable to find test file '$TestFile' on '$testPath'."
     }
