@@ -87,8 +87,14 @@ jobs:
       $TemplateDirectoryName = if ($ImageType.StartsWith("ubuntu")) { "ubuntu" } else { "windows" }
       $TemplateDirectoryPath = Join-Path "images" $TemplateDirectoryName | Resolve-Path
       $TemplatePath = Join-Path $TemplateDirectoryPath templates
+      Write-Host "TemplateDirectoryPath: $TemplateDirectoryPath"
       Write-Host "##vso[task.setvariable variable=TemplateDirectoryPath;]$TemplateDirectoryPath"
       Write-Host "##vso[task.setvariable variable=TemplatePath;]$TemplatePath"
+
+      $folderGuid = $([System.GUID]::NewGuid().ToString())
+      $TempResourceGroupName = "$(BUILD_TEMP_RESOURCE_GROUP_NAME_PREFIX)-${{ parameters.image_type }}-$folderGuid"
+      Write-Host "TempResourceGroupName: $TempResourceGroupName"
+      Write-Host "##vso[task.setvariable variable=TempResourceGroupName;]$TempResourceGroupName"
     displayName: 'Set image template variables'
        
   - task: riezebosch.Packer.PackerTool.PackerTool@0
@@ -108,7 +114,7 @@ jobs:
                  -SubscriptionId $(ARM_SUBSCRIPTION_ID) `
                  -Location $(ARM_LOCATION) `
                  -ImageResourceGroupName $(ARM_RESOURCE_GROUP) `
-                 -TempResourceGroupName "$(BUILD_TEMP_RESOURCE_GROUP_NAME_PREFIX)-${{ parameters.image_type }}-$([System.GUID]::NewGuid().ToString())" `
+                 -TempResourceGroupName "$(TempResourceGroupName)" `
                  -ImageOS ${{ parameters.image_os }} `
                  -VirtualNetworkName $(VNET_NAME) `
                  -VirtualNetworkRG $(VNET_RESOURCE_GROUP) `
