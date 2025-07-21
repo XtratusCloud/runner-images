@@ -56,32 +56,36 @@ jobs:
       filePath: ./images.CI/download-repo.ps1
       arguments: -RepoUrl $(CUSTOM_REPOSITORY_URL) `
                  -RepoBranch $(CUSTOM_REPOSITORY_BRANCH)
-
-  - task: gittools.gittools.setup-gitversion-task.gitversion/setup@0
-    displayName: 'gitversion: install'
-    inputs:
-      versionSpec: 5.x
-
-  - task: gittools.gittools.execute-gitversion-task.gitversion/execute@0
-    displayName: 'gitversion: execute'
         
   - pwsh: |
-      Write-Host "Image version that will be published: $(GitVersion.SemVer)"
-      Write-Host "##vso[build.updatebuildnumber]$(GitVersion.SemVer)"
+      #get last version from tags
+      $currentVersion = git describe --tags $(git rev-list --tags --max-count=1)
+      #get change type from current branch name
+      $currentBranch = git rev-parse --abbrev-ref HEAD
+      $changeType = ($currentBranch -split "/")[0]
+      #calculate new version 
+      switch ($changeType){
+        { @("feat", "feature") -contains $_ } { $version = .\increment-version.ps1 $currentVersion 1 }
+        { @("fix", "hotfix") -contains $_ } { $version = .\increment-version.ps1 $currentVersion 2 }
+        default { $version = .\increment-version.ps1 $currentVersion 0 }
+      }
+      if ($(Build.SourceBranchName) -ne "main") {
+        $version = "$version-$(Build.BuildNumber)"
+      }
+      Write-Host "Image version that will be published: $version"
+      Write-Host "##vso[task.setvariable variable=ImageVersion;]$version"
+      Write-Host "##vso[build.updatebuildnumber]$version"
     name: setvar
-    displayName: 'devops: set build number'
+    displayName: 'devops: calculate image version'
  
-  - task: PowerShell@2
+  - pwsh: |     
+      $ImageType = "${{ parameters.image_type }}"
+      $TemplateDirectoryName = if ($ImageType.StartsWith("ubuntu")) { "ubuntu" } else { "windows" }
+      $TemplateDirectoryPath = Join-Path "images" $TemplateDirectoryName | Resolve-Path
+      $TemplatePath = Join-Path $TemplateDirectoryPath templates
+      Write-Host "##vso[task.setvariable variable=TemplateDirectoryPath;]$TemplateDirectoryPath"
+      Write-Host "##vso[task.setvariable variable=TemplatePath;]$TemplatePath"
     displayName: 'Set image template variables'
-    inputs:
-      targetType: 'inline'
-      script: |
-        $ImageType = "${{ parameters.image_type }}"
-        $TemplateDirectoryName = if ($ImageType.StartsWith("ubuntu")) { "ubuntu" } else { "windows" }
-        $TemplateDirectoryPath = Join-Path "images" $TemplateDirectoryName | Resolve-Path
-        $TemplatePath = Join-Path $TemplateDirectoryPath templates
-        Write-Host "##vso[task.setvariable variable=TemplateDirectoryPath;]$TemplateDirectoryPath"
-        Write-Host "##vso[task.setvariable variable=TemplatePath;]$TemplatePath"
        
   - task: riezebosch.Packer.PackerTool.PackerTool@0
     displayName: 'devops: download Packer'
@@ -105,7 +109,7 @@ jobs:
                  -VirtualNetworkName $(VNET_NAME) `
                  -VirtualNetworkRG $(VNET_RESOURCE_GROUP) `
                  -VirtualNetworkSubnet $(VNET_SUBNET) `
-                 -ImageName "$(managed_image_name)_$(GitVersion.SemVer)"
+                 -ImageName "$(managed_image_name)_$(ImageVersion)"
                  -TemplatePath $(TemplatePath) `
                  -BuildTemplateName  ${{ parameters.image_template_name }}
     env:
