@@ -59,7 +59,10 @@ jobs:
     - pwsh: |
         $imageFullName = "${{ parameters.source_managed_image }}" -split '/' | Select-Object -Last 1
         $buildVersion = $imageFullName -split '_' | Select-Object -Last 1
-        Write-Host "Image version that will be published: $buildVersion"
+        $publishVersion = $buildVersion -replace '(\d+\.\d+\.\d+).*', '$1'
+        Write-Host "Image version that will be used: $buildVersion"
+        Write-Host "Image version that will be published: $publishVersion"
+        Write-Host "##vso[task.setvariable variable=PublishVersion;]$publishVersion"
         Write-Host "##vso[build.updatebuildnumber]$buildVersion"
       name: setvar
       displayName: 'devops: set build number'
@@ -72,11 +75,10 @@ jobs:
         scriptLocation: 'inlineScript'
         inlineScript: |
           $params = New-Object System.Collections.ArrayList
-          $publishVersion = Get-Content -Path "$(Build.SourcesDirectory)/images.CI/version.txt"
           [void]$params.Add("--gallery-name"); [void]$params.Add("$(IMAGE_GALLERY_NAME)");
           [void]$params.Add("--resource-group"); [void]$params.Add("$(IMAGE_GALLERY_RESOURCE_GROUP)");
           [void]$params.Add("--gallery-image-definition"); [void]$params.Add("${{ parameters.managed_image_name }}");
-          [void]$params.Add("--gallery-image-version"); [void]$params.Add($publishVersion);
+          [void]$params.Add("--gallery-image-version"); [void]$params.Add($PublishVersion);
           [void]$params.Add("--subscription"); [void]$params.Add("$(IMAGE_GALLERY_SUBSCRIPTION_ID)");
           [void]$params.Add("--replica-count"); [void]$params.Add(${{ parameters.replica_count }});
           [void]$params.Add("--storage-account-type"); [void]$params.Add("$(IMAGE_GALLERY_REPLICATION)");
@@ -88,9 +90,8 @@ jobs:
           az sig image-version create @params --target-regions "West Europe" eastus2
 
     - script: |
-        $tagName = Get-Content -Path "$(Build.SourcesDirectory)/images.CI/version.txt"
         git config --global user.name "publisher"
-        git tag $tagName -a
-        git push origin $tagName
+        git tag $(PublishVersion) -a
+        git push origin $(PublishVersion)
       displayName: 'git: set tag'
       continueOnError: false
