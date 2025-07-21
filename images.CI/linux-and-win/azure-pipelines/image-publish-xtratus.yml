@@ -94,4 +94,5 @@ jobs:
         git tag $(PublishVersion)
         git push origin $(PublishVersion)
       displayName: 'git: set tag'
+      condition: eq(variables['Build.SourceBranchName'], 'main')
       continueOnError: false
