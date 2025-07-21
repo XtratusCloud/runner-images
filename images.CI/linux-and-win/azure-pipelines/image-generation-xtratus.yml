@@ -63,12 +63,14 @@ jobs:
       #get change type from current branch name
       $currentBranch = git rev-parse --abbrev-ref HEAD
       $changeType = ($currentBranch -split "/")[0]
-      #calculate new version 
+      #calculate new version
+      $incrementPart = 0
       switch ($changeType){
-        { @("feat", "feature") -contains $_ } { $version = .\increment-version.ps1 $currentVersion 1 }
-        { @("fix", "hotfix") -contains $_ } { $version = .\increment-version.ps1 $currentVersion 2 }
-        default { $version = .\increment-version.ps1 $currentVersion 0 }
+        { @("feat", "feature") -contains $_ } { incrementPart = 1 }
+        { @("fix", "hotfix") -contains $_ } { incrementPart = 2 }
+        default { incrementPart = 0 }
       }
+      $version = .\increment-version.ps1 $currentVersion $incrementPart
       if ($(Build.SourceBranchName) -ne "main") {
         $version = "$version-$(Build.BuildNumber)"
       }
