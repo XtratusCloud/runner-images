@@ -62,7 +62,7 @@ jobs:
       $currentVersion = git describe --tags $(git rev-list --tags --max-count=1)
       Write-Host "Current image version: $currentVersion"
       #get change type from current branch name
-      $currentBranch = "$(Build.SourceBranch)" -replace "refs/heads/", ""
+      $currentBranch = ("$(Build.SourceBranch)" -replace "refs/heads/", "")
       $changeType = ($currentBranch -split "/")[0]
       Write-Host "Current branch: $currentBranch"
       Write-Host "Change type: $changeType"
