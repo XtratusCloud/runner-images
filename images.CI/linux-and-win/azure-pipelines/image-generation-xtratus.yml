@@ -64,11 +64,10 @@ jobs:
       $currentBranch = git rev-parse --abbrev-ref HEAD
       $changeType = ($currentBranch -split "/")[0]
       #calculate new version
-      $incrementPart = 0
       switch ($changeType){
-        { @("feat", "feature") -contains $_ } { incrementPart = 1 }
-        { @("fix", "hotfix") -contains $_ } { incrementPart = 2 }
-        default { incrementPart = 0 }
+        { @("feat", "feature") -contains $_ } { $incrementPart = 1 }
+        { @("fix", "hotfix") -contains $_ } { $incrementPart = 2 }
+        default { $incrementPart = 0 }
       }
       $version = ./images.CI/increment-version.ps1 $currentVersion $incrementPart
       if ($(Build.SourceBranchName) -ne "main") {
