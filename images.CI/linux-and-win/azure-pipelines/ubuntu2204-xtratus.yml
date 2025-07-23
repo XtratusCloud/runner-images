@@ -13,9 +13,8 @@ trigger:
       - images/ubuntu/assets/post-gen/*
       - images/ubuntu/scripts/*      
       - images/ubuntu/assets/ubuntu2204.conf      
-      - images/ubuntu/templates/ubuntu-22.04.pkr.hcl
+      - images/ubuntu/templates/build.ubuntu-22_04.pkr.hcl
       - images/ubuntu/toolsets/toolset-2204.json
-      - images/ubuntu/ubuntu2204.pkr.hcl
       - images/ubuntu/Ubuntu2204-Readme.md
 
 stages:
@@ -28,8 +27,9 @@ stages:
         - template: image-generation-xtratus.yml
           parameters:
             image_type: ubuntu2204
+            image_os: ubuntu22
             image_readme_name: Ubuntu2204-Readme.md
-            image_template_name: ubuntu-22.04.pkr.hcl
+            image_template_name: build.ubuntu-22_04.pkr.hcl
             agent_pool: 'Xtratus-Tests'
             variable_group_name: 'devops-agents-generation-test'
             azureServiceConnection: 'umi-devops-gl-t-selfhosted-build-01'
@@ -38,8 +38,9 @@ stages:
         - template: image-generation-xtratus.yml
           parameters:
             image_type: ubuntu2204
+            image_os: ubuntu22
             image_readme_name: Ubuntu2204-Readme.md
-            image_template_name: ubuntu-22.04.pkr.hcl
+            image_template_name: build.ubuntu-22_04.pkr.hcl
             agent_pool: 
               name: Azure Pipelines
               vmImage: ubuntu-latest

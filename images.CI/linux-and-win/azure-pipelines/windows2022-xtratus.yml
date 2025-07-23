@@ -12,11 +12,10 @@ trigger:
     include:
       - images/windows/assets/post-gen/*
       - images/windows/scripts/*      
-      - images/windows/templates/windows-2022.pkr.hcl
+      - images/windows/templates/build.windows-2022.pkr.hcl
       - images/windows/toolsets/toolset-2022.json
-      - images/windows/windows2022.pkr.hcl
       - images/windows/Windows2022-Readme.md
-
+      
 stages:
   - stage: image_generation
     variables:
@@ -27,8 +26,9 @@ stages:
         - template: image-generation-xtratus.yml
           parameters:
             image_type: windows2022
+            image_os: win22
             image_readme_name: Windows2022-Readme.md
-            image_template_name: windows-2022.pkr.hcl
+            image_template_name: build.windows-2022.pkr.hcl
             agent_pool: 'Xtratus-Tests'
             variable_group_name: 'devops-agents-generation-test'
             azureServiceConnection: 'umi-devops-gl-t-selfhosted-build-01'
@@ -37,8 +37,9 @@ stages:
         - template: image-generation-xtratus.yml
           parameters:
             image_type: windows2022
+            image_os: win22
             image_readme_name: Windows2022-Readme.md
-            image_template_name: windows-2022.pkr.hcl
+            image_template_name: build.windows-2022.pkr.hcl
             agent_pool: 
               name: Azure Pipelines
               vmImage: ubuntu-latest
