@@ -9,4 +9,4 @@ Before submitting this PR, please make sure:
 - [ ] Tests are written (if applicable)
 - [ ] Documentation is updated (if applicable)
 
-**IMPORTANT!!** Add this to PR title: [+semver:patch]
+**IMPORTANT!!** Ensure that the PR title has the following format: FIX/[your PR brief description]

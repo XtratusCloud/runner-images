@@ -75,12 +75,12 @@ jobs:
       Write-Host "Change type: $changeType"
       #calculate new version
       switch ($changeType){
-        { @("feat", "feature") -contains $_ } { $incrementPart = 1 }
-        { @("fix", "hotfix") -contains $_ } { $incrementPart = 2 }
+        { @("feat", "feature", "FEAT") -contains $_ } { $incrementPart = 1 }
+        { @("fix", "hotfix", "FIX") -contains $_ } { $incrementPart = 2 }
         default { $incrementPart = 0 }
       }
       $version = ./images.CI/increment-version.ps1 $currentVersion $incrementPart
-      if ($currentBranch -ne "main") {
+      if ($currentBranch -ne "xtratus") {
         $version = "$version-$(Build.BuildNumber)"
       }
       Write-Host "Image version that will be generated: $version"
