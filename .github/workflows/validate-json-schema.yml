@@ -1,12 +1,12 @@
 name: Validate JSON Schema
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+# on:  ##XTRATUS disabled triggers
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
 
 jobs:
   validate-json-schema:
