@@ -7,9 +7,11 @@ resources:
       trigger:
         branches:
           include:
-            - xtratus
+           - xtratus
             - feature/*
+            - feat/*
             - hotfix/*
+            - fix/*
           exclude:
             - main
 
