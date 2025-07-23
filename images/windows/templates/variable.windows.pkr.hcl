@@ -158,7 +158,7 @@ variable "image_os" {
 }
 variable "image_version" {
   type    = string
-  default = "dev"
+  default = "xtratus" ##XTRATUS
 }
 variable "imagedata_file" {
   type    = string
