@@ -38,7 +38,10 @@ stages:
           parameters:
             image_type: 'Windows2022'
             managed_image_name: '$(managed_image_name)'
-            agent_pool: 'Agent Pool Linux'
+            agent_pool: 
+              name: Xtratus-Managed-Europe
+              demands:
+                - ImageOverride -equals xtratus-ubuntu-latest
             variable_group_name: 'devops-agents-generation-shared'
             azureServiceConnection: 'umi-devops-gl-a-selfhosted-build-01'
             source_managed_image: '/subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(ARM_RESOURCE_GROUP)/providers/Microsoft.Compute/images/$(managed_image_name_full)'

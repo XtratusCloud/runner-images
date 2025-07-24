@@ -44,8 +44,7 @@ stages:
             image_readme_name: Ubuntu2204-Readme.md
             image_template_name: build.ubuntu-22_04.pkr.hcl
             agent_pool: 
-              name: Xtratus-Managed-Europe
-              demands:
-                - ImageOverride -equals xtratus-ubuntu-latest
+              name: Azure Pipelines
+              vmImage: ubuntu-latest ##Use ms-hosted agents to avoid proxy or firewall network-related issues
             variable_group_name: 'devops-agents-generation-shared'
             azureServiceConnection: 'umi-devops-gl-a-selfhosted-build-01'
