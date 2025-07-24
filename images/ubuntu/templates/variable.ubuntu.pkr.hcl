@@ -120,7 +120,7 @@ variable "virtual_network_subnet_name" {
 }
 variable "vm_size" {
   type    = string
-  default = "Standard_D4s_v4"
+  default = "Standard_D4s_v3" ##XTRATUS
 }
 variable "winrm_username" {         // The username used to connect to the VM via WinRM
     type    = string                // Also applies to the username used to create the VM
@@ -150,7 +150,7 @@ variable "image_os" {
 }
 variable "image_version" {
   type    = string
-  default = "dev"
+  default = "xtratus" ##XTRATUS
 }
 variable "imagedata_file" {
   type    = string

@@ -61,19 +61,26 @@ jobs:
       #get last version from tags
       $currentVersion = git describe --tags $(git rev-list --tags --max-count=1)
       Write-Host "Current image version: $currentVersion"
-      #get change type from current branch name
-      $currentBranch = ("$(Build.SourceBranch)" -replace "refs/heads/", "")
-      $changeType = ($currentBranch -split "/")[0]
-      Write-Host "Current branch: $currentBranch"
+      if ("$(Build.SourceBranch)" -eq "refs/heads/xtratus") {
+        #get change type from current commit message (PR title)
+        $commitMessage = (git log -1 --pretty=%s)
+        $changeType = ($commitMessage -split "/")[0]
+        Write-Host "Current branch: xtratus"
+      } else  {
+        #get change type from current branch name
+        $currentBranch = ("$(Build.SourceBranch)" -replace "refs/heads/", "")
+        $changeType = ($currentBranch -split "/")[0]
+        Write-Host "Current branch: $currentBranch"
+      }
       Write-Host "Change type: $changeType"
       #calculate new version
       switch ($changeType){
-        { @("feat", "feature") -contains $_ } { $incrementPart = 1 }
-        { @("fix", "hotfix") -contains $_ } { $incrementPart = 2 }
+        { @("feat", "feature", "FEAT") -contains $_ } { $incrementPart = 1 }
+        { @("fix", "hotfix", "FIX") -contains $_ } { $incrementPart = 2 }
         default { $incrementPart = 0 }
       }
       $version = ./images.CI/increment-version.ps1 $currentVersion $incrementPart
-      if ($currentBranch -ne "main") {
+      if ($currentBranch -ne "xtratus") {
         $version = "$version-$(Build.BuildNumber)"
       }
       Write-Host "Image version that will be generated: $version"

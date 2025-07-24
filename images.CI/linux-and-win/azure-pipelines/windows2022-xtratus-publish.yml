@@ -9,7 +9,9 @@ resources:
           include:
             - xtratus
             - feature/*
+            - feat/*
             - hotfix/*
+            - fix/*
           exclude:
             - main
             

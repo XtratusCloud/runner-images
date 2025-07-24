@@ -94,5 +94,5 @@ jobs:
         git tag $(PublishVersion)
         git push origin $(PublishVersion)
       displayName: 'git: set tag'
-      condition: eq(variables['Build.SourceBranchName'], 'main')
+      condition: eq(variables['Build.SourceBranchName'], 'xtratus')
       continueOnError: false
