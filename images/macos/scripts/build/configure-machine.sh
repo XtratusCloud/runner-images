@@ -10,8 +10,11 @@ echo "Enabling developer mode..."
 sudo /usr/sbin/DevToolsSecurity --enable
 
 # Turn off hibernation and get rid of the sleepimage
-sudo pmset hibernatemode 0
+sudo pmset -a hibernatemode 0
 sudo rm -f /var/vm/sleepimage
+
+# Set computer, disk, and display sleep to never
+sudo pmset -a sleep 0 disksleep 0 displaysleep 0
 
 # Disable App Nap System Wide
 defaults write NSGlobalDomain NSAppSleepDisabled -bool YES
@@ -103,3 +106,7 @@ if [[ ! -d "/usr/local/bin" ]];then
 fi
 chmod +x $HOME/utils/invoke-tests.sh
 sudo ln -s $HOME/utils/invoke-tests.sh /usr/local/bin/invoke_tests
+
+# Fix share dir permissions
+sudo chown "$USER":admin /usr/local/share
+sudo chmod 775 /usr/local/share

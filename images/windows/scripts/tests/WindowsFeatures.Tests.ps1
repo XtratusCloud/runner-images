@@ -20,11 +20,12 @@ Describe "WindowsFeatures" {
 }
 
 Describe "DiskSpace" {
-    It "The image has enough disk space"{
-        $availableSpaceMB = [math]::Round((Get-PSDrive -Name C).Free / 1MB)
-        $minimumFreeSpaceMB = 18 * 1024
-
-        $availableSpaceMB | Should -BeGreaterThan $minimumFreeSpaceMB
+    It "The image has enough disk space" {
+        $diskInfo = Get-PSDrive -Name C
+        $totalSpaceGB = [math]::Floor(($diskInfo.Used + $diskInfo.Free) / 1GB)
+        $freeSpaceGB = [math]::Floor($diskInfo.Free / 1GB)
+        Write-Host "  [i] Disk size: ${totalSpaceGB} GB; Free space: ${freeSpaceGB} GB"
+        $freeSpaceGB | Should -BeGreaterOrEqual 18
     }
 }
 
@@ -83,7 +84,7 @@ Describe "Windows Updates" {
     }
 }
 
-Describe "WSL2" -Skip:((Test-IsWin19) -or (Test-IsWin22)) {
+Describe "WSL2" -Skip:(Test-IsWin22) {
     It "WSL status should return zero exit code" {
         "wsl --status" | Should -ReturnZeroExitCode
     }
