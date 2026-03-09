@@ -47,7 +47,7 @@
 ### Project Management
 - Ant 1.10.15
 - Gradle 9.3
-- Maven 3.9.12
+- Maven 3.9.13
 - sbt 1.12.4
 
 ### Tools
@@ -489,4 +489,3 @@ Note: MSYS2 is pre-installed on image but not added to PATH.
 | ANDROID_NDK_LATEST_HOME | C:\Android\android-sdk\ndk\29.0.14206865 |
 | ANDROID_NDK_ROOT        | C:\Android\android-sdk\ndk\27.3.13750724 |
 | ANDROID_SDK_ROOT        | C:\Android\android-sdk                   |
-
