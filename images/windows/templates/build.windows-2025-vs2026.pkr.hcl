@@ -1,10 +1,6 @@
 build {
   sources = ["source.azure-arm.image"]
-<<<<<<<< HEAD:images/windows/templates/build.windows-2019.pkr.hcl
-  name = "windows-2019"
-========
   name = "windows-2025-vs2026"
->>>>>>>> main:images/windows/templates/build.windows-2025-vs2026.pkr.hcl
 
   provisioner "powershell" {
     inline = [
