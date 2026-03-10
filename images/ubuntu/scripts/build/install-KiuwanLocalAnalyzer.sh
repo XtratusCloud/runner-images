@@ -35,8 +35,8 @@ mkdir -p "$install_dir"
 
 unzip -qq "$archive_path" -d "$install_dir"
 
-if [[ ! -f "$install_dir/KiuwanLocalAnalyzer/kiuwan.sh" ]]; then
-    echo "KiuwanLocalAnalyzer/kiuwan.sh not found after extracting $archive_path" >&2
+if [[ ! -f "$install_dir/kiuwan.sh" ]]; then
+    echo "kiuwan.sh not found after extracting $archive_path" >&2
     exit 1
 fi
 

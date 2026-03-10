@@ -6,7 +6,7 @@
 Write-Host "Installing Kiuwan Local Analyzer"
 
 # Following Azure Pipelines Tool Cache structure:
-# $AGENT_TOOLSDIRECTORY/KiuwanLocalAnalyzer/1.0.0/x64/KiuwanLocalAnalyzer/
+# $AGENT_TOOLSDIRECTORY/KiuwanLocalAnalyzer/1.0.0/x64/
 
 $toolName = "KiuwanLocalAnalyzer"
 $toolVersion = "1.0.0"
@@ -37,9 +37,9 @@ Write-Host "Extracting Kiuwan Local Analyzer to $installDir"
 Expand-7ZipArchive -Path $archivePath -DestinationPath $installDir
 
 # Verify installation
-$kiuwanCmdPath = Join-Path $installDir "KiuwanLocalAnalyzer\kiuwan.cmd"
+$kiuwanCmdPath = Join-Path $installDir "kiuwan.cmd"
 if (-not (Test-Path $kiuwanCmdPath)) {
-    Write-Error "KiuwanLocalAnalyzer\kiuwan.cmd not found after extracting $archivePath"
+    Write-Error "kiuwan.cmd not found after extracting $archivePath"
     exit 1
 }
 
