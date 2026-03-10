@@ -132,6 +132,7 @@ provisioner "shell" {
       "${path.root}/../scripts/build/install-miniconda.sh",
       "${path.root}/../scripts/build/install-kotlin.sh",
       "${path.root}/../scripts/build/install-KiuwanLocalAnalyzer.sh",
+      "${path.root}/../scripts/build/install-sapjco3.sh",
       "${path.root}/../scripts/build/install-mysql.sh",
       "${path.root}/../scripts/build/install-nginx.sh",
       "${path.root}/../scripts/build/install-nvm.sh",

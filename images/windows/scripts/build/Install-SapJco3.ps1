@@ -1,0 +1,54 @@
+################################################################################
+##  File:  Install-SapJco3.ps1
+##  Desc:  Install SAP JCo3
+################################################################################
+
+Write-Host "Installing SAP JCo3"
+
+# Following Azure Pipelines Tool Cache structure:
+# $AGENT_TOOLSDIRECTORY/sapjco3/3.1.13/x64/sapjco3/
+
+$toolName = "sapjco3"
+$toolVersion = "3.1.13"
+$toolPlatform = "x64"
+
+# Determine tools directory
+$toolsDir = $env:AGENT_TOOLSDIRECTORY
+if ([string]::IsNullOrEmpty($toolsDir)) {
+    $toolsDir = "C:\hostedtoolcache"
+}
+
+$archivePath = Join-Path $env:INSTALLER_SCRIPT_FOLDER "libraries\sapjco3-windows-$toolVersion.zip"
+
+if (-not (Test-Path $archivePath)) {
+    Write-Error "File not found: $archivePath"
+    exit 1
+}
+
+$installDir = Join-Path $toolsDir $toolName $toolVersion $toolPlatform
+
+# Remove existing installation and create new directory
+if (Test-Path $installDir) {
+    Remove-Item -Path $installDir -Recurse -Force
+}
+New-Item -Path $installDir -ItemType Directory -Force | Out-Null
+
+Write-Host "Extracting SAP JCo3 to $installDir"
+Expand-7ZipArchive -Path $archivePath -DestinationPath $installDir
+
+# Verify installation
+$sapjco3JarPath = Join-Path $installDir "sapjco3.jar"
+if (-not (Test-Path $sapjco3JarPath)) {
+    Write-Error "sapjco3.jar not found after extracting $archivePath"
+    exit 1
+}
+
+# Configure environment variables
+$env:LD_LIBRARY_PATH = "$installDir;$($env:LD_LIBRARY_PATH)"
+$env:CLASSPATH = "$installDir;$($env:CLASSPATH)"
+
+# Create the .complete marker file
+$completeMarker = Join-Path $toolsDir $toolName $toolVersion "$toolPlatform.complete"
+New-Item -Path $completeMarker -ItemType File -Force | Out-Null
+
+Write-Host "SAP JCo3 installed successfully at $installDir"
