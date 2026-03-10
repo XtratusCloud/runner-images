@@ -460,13 +460,13 @@ Describe "SAP JCo3" {
     It "LD_LIBRARY_PATH environment variable is set" {
         $ldLibraryPath = [System.Environment]::GetEnvironmentVariable("LD_LIBRARY_PATH")
         $ldLibraryPath | Should -Not -BeNullOrEmpty
-        $ldLibraryPath | Should -Contain $sapjco3Path
+        $ldLibraryPath | Should -Match ([regex]::Escape($sapjco3Path))
     }
 
     It "CLASSPATH environment variable is set" {
         $classpath = [System.Environment]::GetEnvironmentVariable("CLASSPATH")
         $classpath | Should -Not -BeNullOrEmpty
-        $classpath | Should -Contain (Join-Path $sapjco3Path "sapjco3.jar")
+        $classpath | Should -Match ([regex]::Escape((Join-Path $sapjco3Path "sapjco3.jar")))
     }
 
     It ".complete marker file exists" {
