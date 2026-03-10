@@ -31,8 +31,6 @@ fi
 
 install_dir="${tools_dir}/${tool_name}/${tool_version}/${tool_platform}"
 rm -rf "$install_dir"
-mkdir -p "$install_dir"
-
 unzip -qq "$archive_path" -d "$install_dir"
 
 if [[ ! -f "$install_dir/sapjco3.jar" ]]; then
