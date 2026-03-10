@@ -47,7 +47,7 @@ Write-Host "Download packer plugins"
 packer plugins install github.com/hashicorp/azure $pluginVersion
 
 Write-Host "Validate packer template"
-packer validate -syntax-only -only "$buildName.*" $TemplatePath
+packer validate -syntax-only -only "$buildName.*" $TemplatePath ##XTRATUS .*
 
 Write-Host "Build $buildName VM"
 packer build    -only "$buildName.*" `

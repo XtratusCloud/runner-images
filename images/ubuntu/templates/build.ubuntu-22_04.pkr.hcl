@@ -52,6 +52,11 @@ build {
   }
 
   provisioner "file" {
+    destination = "${var.installer_script_folder}/libraries"
+    source      = "${path.root}/../../../libraries"
+  }
+
+  provisioner "file" {
     destination = "${var.installer_script_folder}/toolset.json"
     source      = "${path.root}/../toolsets/toolset-2204.json"
   }
@@ -131,6 +136,7 @@ build {
       "${path.root}/../scripts/build/install-miniconda.sh",
       "${path.root}/../scripts/build/install-mono.sh",
       "${path.root}/../scripts/build/install-kotlin.sh",
+      "${path.root}/../scripts/build/install-KiuwanLocalAnalyzer.sh",
       "${path.root}/../scripts/build/install-mysql.sh",
       "${path.root}/../scripts/build/install-mssql-tools.sh",
       "${path.root}/../scripts/build/install-sqlpackage.sh",

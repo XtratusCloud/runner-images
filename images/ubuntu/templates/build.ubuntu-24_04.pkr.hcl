@@ -52,6 +52,11 @@ build {
   }
 
   provisioner "file" {
+    destination = "${var.installer_script_folder}/libraries"
+    source      = "${path.root}/../../../libraries"
+  }
+
+  provisioner "file" {
     destination = "${var.installer_script_folder}/toolset.json"
     source      = "${path.root}/../toolsets/toolset-2404.json"
   }
@@ -126,6 +131,7 @@ provisioner "shell" {
       "${path.root}/../scripts/build/install-kubernetes-tools.sh",
       "${path.root}/../scripts/build/install-miniconda.sh",
       "${path.root}/../scripts/build/install-kotlin.sh",
+      "${path.root}/../scripts/build/install-KiuwanLocalAnalyzer.sh",
       "${path.root}/../scripts/build/install-mysql.sh",
       "${path.root}/../scripts/build/install-nginx.sh",
       "${path.root}/../scripts/build/install-nvm.sh",

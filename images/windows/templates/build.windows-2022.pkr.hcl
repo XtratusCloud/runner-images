@@ -19,6 +19,11 @@ build {
   }
 
   provisioner "file" {
+    destination = "${var.image_folder}\\libraries"
+    source      = "${path.root}/../../../libraries"
+  }
+
+  provisioner "file" {
     destination = "${var.image_folder}\\scripts\\docs-gen\\"
     source      = "${path.root}/../../../helpers/software-report-base"
   }
@@ -190,6 +195,7 @@ build {
       "${path.root}/../scripts/build/Install-PostgreSQL.ps1",
       "${path.root}/../scripts/build/Install-Bazel.ps1",
       "${path.root}/../scripts/build/Install-AliyunCli.ps1",
+      "${path.root}/../scripts/build/Install-KiuwanLocalAnalyzer.ps1",
       "${path.root}/../scripts/build/Install-RootCA.ps1",
       "${path.root}/../scripts/build/Install-MongoDB.ps1",
       "${path.root}/../scripts/build/Install-CodeQLBundle.ps1",

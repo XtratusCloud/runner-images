@@ -1,0 +1,50 @@
+################################################################################
+##  File:  Install-KiuwanLocalAnalyzer.ps1
+##  Desc:  Install Kiuwan Local Analyzer
+################################################################################
+
+Write-Host "Installing Kiuwan Local Analyzer"
+
+# Following Azure Pipelines Tool Cache structure:
+# $AGENT_TOOLSDIRECTORY/KiuwanLocalAnalyzer/1.0.0/x64/KiuwanLocalAnalyzer/
+
+$toolName = "KiuwanLocalAnalyzer"
+$toolVersion = "1.0.0"
+$toolPlatform = "x64"
+
+# Determine tools directory
+$toolsDir = $env:AGENT_TOOLSDIRECTORY
+if ([string]::IsNullOrEmpty($toolsDir)) {
+    $toolsDir = "C:\hostedtoolcache"
+}
+
+$archivePath = Join-Path $env:INSTALLER_SCRIPT_FOLDER "libraries\KiuwanLocalAnalyzer.zip"
+
+if (-not (Test-Path $archivePath)) {
+    Write-Error "File not found: $archivePath"
+    exit 1
+}
+
+$installDir = Join-Path $toolsDir $toolName $toolVersion $toolPlatform
+
+# Remove existing installation and create new directory
+if (Test-Path $installDir) {
+    Remove-Item -Path $installDir -Recurse -Force
+}
+New-Item -Path $installDir -ItemType Directory -Force | Out-Null
+
+Write-Host "Extracting Kiuwan Local Analyzer to $installDir"
+Expand-7ZipArchive -Path $archivePath -DestinationPath $installDir
+
+# Verify installation
+$kiuwanCmdPath = Join-Path $installDir "KiuwanLocalAnalyzer\kiuwan.cmd"
+if (-not (Test-Path $kiuwanCmdPath)) {
+    Write-Error "KiuwanLocalAnalyzer\kiuwan.cmd not found after extracting $archivePath"
+    exit 1
+}
+
+# Create the .complete marker file
+$completeMarker = Join-Path $toolsDir $toolName $toolVersion "$toolPlatform.complete"
+New-Item -Path $completeMarker -ItemType File -Force | Out-Null
+
+Write-Host "Kiuwan Local Analyzer installed successfully at $installDir"
