@@ -36,13 +36,6 @@ New-Item -Path $installDir -ItemType Directory -Force | Out-Null
 Write-Host "Extracting SAP JCo3 to $installDir"
 Expand-7ZipArchive -Path $archivePath -DestinationPath $installDir
 
-# Verify installation
-$sapjco3JarPath = Join-Path $installDir "sapjco3.jar"
-if (-not (Test-Path $sapjco3JarPath)) {
-    Write-Error "sapjco3.jar not found after extracting $archivePath"
-    exit 1
-}
-
 # Configure environment variables
 $env:LD_LIBRARY_PATH = "$installDir;$($env:LD_LIBRARY_PATH)"
 $env:CLASSPATH = "$installDir;$($env:CLASSPATH)"
@@ -52,3 +45,6 @@ $completeMarker = Join-Path $toolsDir $toolName $toolVersion "$toolPlatform.comp
 New-Item -Path $completeMarker -ItemType File -Force | Out-Null
 
 Write-Host "SAP JCo3 installed successfully at $installDir"
+
+# Run tests
+invoke_tests "Tools" "SAP JCo3"

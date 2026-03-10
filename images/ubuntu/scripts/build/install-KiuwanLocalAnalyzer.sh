@@ -39,11 +39,6 @@ mkdir -p "$install_dir"
 
 unzip -qq "$archive_path" -d "$install_dir"
 
-if [[ ! -f "$install_dir/kiuwan.sh" ]]; then
-    echo "kiuwan.sh not found after extracting $archive_path" >&2
-    exit 1
-fi
-
 # Make all shell scripts executable
 find "$install_dir" -type f -name "*.sh" -exec chmod +x {} \;
 
@@ -52,3 +47,6 @@ chmod -R a+rwX "$install_dir"
 
 # Create the .complete marker file
 touch "${tools_dir}/${tool_name}/${tool_version}/${tool_platform}.complete"
+
+# Run tests
+invoke_tests "Tools" "Kiuwan Local Analyzer"

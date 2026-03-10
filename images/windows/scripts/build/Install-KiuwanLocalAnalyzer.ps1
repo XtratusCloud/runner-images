@@ -36,15 +36,11 @@ New-Item -Path $installDir -ItemType Directory -Force | Out-Null
 Write-Host "Extracting Kiuwan Local Analyzer to $installDir"
 Expand-7ZipArchive -Path $archivePath -DestinationPath $installDir
 
-# Verify installation
-$kiuwanCmdPath = Join-Path $installDir "kiuwan.cmd"
-if (-not (Test-Path $kiuwanCmdPath)) {
-    Write-Error "kiuwan.cmd not found after extracting $archivePath"
-    exit 1
-}
-
 # Create the .complete marker file
 $completeMarker = Join-Path $toolsDir $toolName $toolVersion "$toolPlatform.complete"
 New-Item -Path $completeMarker -ItemType File -Force | Out-Null
 
 Write-Host "Kiuwan Local Analyzer installed successfully at $installDir"
+
+# Run tests
+invoke_tests "Tools" "Kiuwan Local Analyzer"

@@ -409,3 +409,69 @@ project(NinjaTest NONE)
         Remove-Item -Path "/tmp/ninjaproject" -Recurse -Force
     }
 }
+##XTRATUS START
+Describe "Kiuwan Local Analyzer" {
+    BeforeAll {
+        $toolsDir = $env:AGENT_TOOLSDIRECTORY
+        if ([string]::IsNullOrEmpty($toolsDir)) {
+            $toolsDir = "/opt/hostedtoolcache"
+        }
+        $kiuwanPath = Join-Path $toolsDir "KiuwanLocalAnalyzer/1.0.0/x64"
+    }
+
+    It "Kiuwan Local Analyzer directory exists" {
+        $kiuwanPath | Should -Exist
+    }
+
+    It "kiuwan.sh script exists" {
+        $kiuwanScript = Join-Path $kiuwanPath "kiuwan.sh"
+        $kiuwanScript | Should -Exist
+    }
+
+    It "kiuwan.sh is executable" {
+        $kiuwanScript = Join-Path $kiuwanPath "kiuwan.sh"
+        "test -x '$kiuwanScript'" | Should -ReturnZeroExitCode
+    }
+
+    It ".complete marker file exists" {
+        $completeMarker = Join-Path $toolsDir "KiuwanLocalAnalyzer/1.0.0/x64.complete"
+        $completeMarker | Should -Exist
+    }
+}
+
+Describe "SAP JCo3" {
+    BeforeAll {
+        $toolsDir = $env:AGENT_TOOLSDIRECTORY
+        if ([string]::IsNullOrEmpty($toolsDir)) {
+            $toolsDir = "/opt/hostedtoolcache"
+        }
+        $sapjco3Path = Join-Path $toolsDir "sapjco3/3.1.13/x64"
+    }
+
+    It "SAP JCo3 directory exists" {
+        $sapjco3Path | Should -Exist
+    }
+
+    It "sapjco3.jar exists" {
+        $jarFile = Join-Path $sapjco3Path "sapjco3.jar"
+        $jarFile | Should -Exist
+    }
+
+    It "LD_LIBRARY_PATH environment variable is set" {
+        $ldLibraryPath = [System.Environment]::GetEnvironmentVariable("LD_LIBRARY_PATH")
+        $ldLibraryPath | Should -Not -BeNullOrEmpty
+        $ldLibraryPath | Should -Contain $sapjco3Path
+    }
+
+    It "CLASSPATH environment variable is set" {
+        $classpath = [System.Environment]::GetEnvironmentVariable("CLASSPATH")
+        $classpath | Should -Not -BeNullOrEmpty
+        $classpath | Should -Contain (Join-Path $sapjco3Path "sapjco3.jar")
+    }
+
+    It ".complete marker file exists" {
+        $completeMarker = Join-Path $toolsDir "sapjco3/3.1.13/x64.complete"
+        $completeMarker | Should -Exist
+    }
+}
+##XTRATUS END

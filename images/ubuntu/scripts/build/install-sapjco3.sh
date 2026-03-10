@@ -38,11 +38,6 @@ rm -rf "$install_dir"
 mkdir -p "$install_dir"
 unzip -qq "$archive_path" -d "$install_dir"
 
-if [[ ! -f "$install_dir/sapjco3.jar" ]]; then
-    echo "sapjco3.jar not found after extracting $archive_path" >&2
-    exit 1
-fi
-
 # Make all shell scripts executable
 find "$install_dir" -type f -name "*.sh" -exec chmod +x {} \;
 
@@ -55,3 +50,6 @@ export CLASSPATH="${install_dir}/sapjco3.jar:$CLASSPATH"
 
 # Create the .complete marker file
 touch "${tools_dir}/${tool_name}/${tool_version}/${tool_platform}.complete"
+
+# Run tests
+invoke_tests "Tools" "SAP JCo3"
