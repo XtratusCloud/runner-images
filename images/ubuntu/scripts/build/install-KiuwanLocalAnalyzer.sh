@@ -7,10 +7,14 @@
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh
+source $HELPER_SCRIPTS/etc-environment.sh
+
+# Load environment variables
+reload_etc_environment
 
 # Install KiuwanLocalAnalyzer
 # Following Azure Pipelines Tool Cache structure:
-# $AGENT_TOOLSDIRECTORY/KiuwanLocalAnalyzer/1.0.0/x64/KiuwanLocalAnalyzer/
+# $AGENT_TOOLSDIRECTORY/KiuwanLocalAnalyzer/1.0.0/x64/
 
 archive_path="${INSTALLER_SCRIPT_FOLDER}/libraries/KiuwanLocalAnalyzer.zip"
 

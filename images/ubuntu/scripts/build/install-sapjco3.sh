@@ -7,10 +7,14 @@
 # Source the helpers for use with the script
 source $HELPER_SCRIPTS/os.sh
 source $HELPER_SCRIPTS/install.sh
+source $HELPER_SCRIPTS/etc-environment.sh
+
+# Load environment variables
+reload_etc_environment
 
 # Install SAP JCo3
 # Following Azure Pipelines Tool Cache structure:
-# $AGENT_TOOLSDIRECTORY/sapjco3/3.1.13/x64/sapjco3/
+# $AGENT_TOOLSDIRECTORY/sapjco3/3.1.13/x64/
 
 tool_name="sapjco3"
 tool_version="3.1.13"
@@ -31,6 +35,7 @@ fi
 
 install_dir="${tools_dir}/${tool_name}/${tool_version}/${tool_platform}"
 rm -rf "$install_dir"
+mkdir -p "$install_dir"
 unzip -qq "$archive_path" -d "$install_dir"
 
 if [[ ! -f "$install_dir/sapjco3.jar" ]]; then
