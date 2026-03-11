@@ -45,8 +45,8 @@ find "$install_dir" -type f -name "*.sh" -exec chmod +x {} \;
 chmod -R a+rwX "$install_dir"
 
 # Configure environment variables
-export LD_LIBRARY_PATH="${install_dir}:$LD_LIBRARY_PATH"
-export CLASSPATH="${install_dir}/sapjco3.jar:$CLASSPATH"
+prepend_etc_environment_variable "LD_LIBRARY_PATH" "${install_dir}"
+prepend_etc_environment_variable "CLASSPATH" "${install_dir}/sapjco3.jar"
 
 # Create the .complete marker file
 touch "${tools_dir}/${tool_name}/${tool_version}/${tool_platform}.complete"

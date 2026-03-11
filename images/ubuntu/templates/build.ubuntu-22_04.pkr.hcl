@@ -136,8 +136,6 @@ build {
       "${path.root}/../scripts/build/install-miniconda.sh",
       "${path.root}/../scripts/build/install-mono.sh",
       "${path.root}/../scripts/build/install-kotlin.sh",
-      "${path.root}/../scripts/build/install-KiuwanLocalAnalyzer.sh",
-      "${path.root}/../scripts/build/install-sapjco3.sh",
       "${path.root}/../scripts/build/install-mysql.sh",
       "${path.root}/../scripts/build/install-mssql-tools.sh",
       "${path.root}/../scripts/build/install-sqlpackage.sh",
@@ -167,6 +165,17 @@ build {
       "${path.root}/../scripts/build/install-ninja.sh"
     ]
   }
+
+  ##XTRATUS START
+  provisioner "shell" {
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    scripts          = [
+      "${path.root}/../scripts/build/install-KiuwanLocalAnalyzer.sh",
+      "${path.root}/../scripts/build/install-sapjco3.sh"
+    ]
+  }
+  ##XTRATUS END
 
   provisioner "shell" {
     environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]

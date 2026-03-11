@@ -186,14 +186,22 @@ build {
       "${path.root}/../scripts/build/Install-Zstd.ps1",
       "${path.root}/../scripts/build/Install-Vcpkg.ps1",
       "${path.root}/../scripts/build/Install-Bazel.ps1",
-      "${path.root}/../scripts/build/Install-KiuwanLocalAnalyzer.ps1",
-      "${path.root}/../scripts/build/Install-SapJco3.ps1",
       "${path.root}/../scripts/build/Install-RootCA.ps1",
       "${path.root}/../scripts/build/Install-MongoDB.ps1",
       "${path.root}/../scripts/build/Install-CodeQLBundle.ps1",
       "${path.root}/../scripts/build/Configure-Diagnostics.ps1"
     ]
   }
+
+  ##XTRATUS START
+  provisioner "powershell" {
+    environment_vars = ["IMAGE_FOLDER=${var.image_folder}", "INSTALLER_SCRIPT_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
+    scripts          = [
+      "${path.root}/../scripts/build/Install-KiuwanLocalAnalyzer.ps1",
+      "${path.root}/../scripts/build/Install-SapJco3.ps1"
+    ]
+  }
+  ##XTRATUS END
 
   provisioner "powershell" {
     elevated_password = "${var.install_password}"
