@@ -48,6 +48,9 @@ chmod -R a+rwX "$install_dir"
 prepend_etc_environment_variable "LD_LIBRARY_PATH" "${install_dir}"
 prepend_etc_environment_variable "CLASSPATH" "${install_dir}/sapjco3.jar"
 
+# Reload environment variables to make them available in the current session
+reload_etc_environment
+
 # Create the .complete marker file
 touch "${tools_dir}/${tool_name}/${tool_version}/${tool_platform}.complete"
 
