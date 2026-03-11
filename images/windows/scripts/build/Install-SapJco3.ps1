@@ -18,7 +18,7 @@ if ([string]::IsNullOrEmpty($toolsDir)) {
     $toolsDir = "C:\hostedtoolcache"
 }
 
-$archivePath = Join-Path $env:INSTALLER_SCRIPT_FOLDER "libraries\sapjco3-windows-$toolVersion.zip"
+$archivePath = Join-Path $env:IMAGE_FOLDER "libraries\sapjco3-ntamd64-$toolVersion.zip"
 
 if (-not (Test-Path $archivePath)) {
     Write-Error "File not found: $archivePath"

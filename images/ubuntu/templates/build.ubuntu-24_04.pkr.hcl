@@ -52,11 +52,6 @@ build {
   }
 
   provisioner "file" {
-    destination = "${var.installer_script_folder}/libraries"
-    source      = "${path.root}/../../../libraries"
-  }
-
-  provisioner "file" {
     destination = "${var.installer_script_folder}/toolset.json"
     source      = "${path.root}/../toolsets/toolset-2404.json"
   }
@@ -156,6 +151,10 @@ provisioner "shell" {
   }
 
   ##XTRATUS START
+  provisioner "file" {
+    destination = "${var.installer_script_folder}/libraries"
+    source      = "${path.root}/../../../libraries"
+  }
   provisioner "shell" {
     environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"

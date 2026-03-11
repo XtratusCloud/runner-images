@@ -19,11 +19,6 @@ build {
   }
 
   provisioner "file" {
-    destination = "${var.image_folder}\\libraries"
-    source      = "${path.root}/../../../libraries"
-  }
-
-  provisioner "file" {
     destination = "${var.image_folder}\\scripts\\docs-gen\\"
     source      = "${path.root}/../../../helpers/software-report-base"
   }
@@ -203,8 +198,12 @@ build {
   }
 
   ##XTRATUS START
+  provisioner "file" {
+    destination = "${var.image_folder}\\libraries"
+    source      = "${path.root}/../../../libraries"
+  }
   provisioner "powershell" {
-    environment_vars = ["IMAGE_FOLDER=${var.image_folder}", "INSTALLER_SCRIPT_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
+    environment_vars = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
     scripts          = [
       "${path.root}/../scripts/build/Install-KiuwanLocalAnalyzer.ps1",
       "${path.root}/../scripts/build/Install-SapJco3.ps1"
