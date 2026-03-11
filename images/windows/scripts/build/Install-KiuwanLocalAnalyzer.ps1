@@ -22,6 +22,9 @@ $archivePath = Join-Path $env:IMAGE_FOLDER "libraries\KiuwanLocalAnalyzer.zip"
 
 if (-not (Test-Path $archivePath)) {
     Write-Error "File not found: $archivePath"
+    Write-Error "IMAGE_FOLDER: $env:IMAGE_FOLDER"
+    Write-Error "Contents of IMAGE_FOLDER:"
+    Get-ChildItem -Path $env:IMAGE_FOLDER -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
     exit 1
 }
 
