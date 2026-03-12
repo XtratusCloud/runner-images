@@ -199,7 +199,7 @@ build {
 
   ##XTRATUS START
   provisioner "file" {
-    destination = "${var.image_folder}\\libraries"
+    destination = "${var.image_folder}\\libraries\\"
     source      = "${path.root}/../../../libraries"
   }
   provisioner "powershell" {

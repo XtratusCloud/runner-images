@@ -18,13 +18,25 @@ if ([string]::IsNullOrEmpty($toolsDir)) {
     $toolsDir = "C:\hostedtoolcache"
 }
 
+Write-Host "IMAGE_FOLDER: $env:IMAGE_FOLDER"
+Write-Host "Looking for libraries in: $env:IMAGE_FOLDER\libraries"
+
 $archivePath = Join-Path $env:IMAGE_FOLDER "libraries\sapjco3-ntamd64-$toolVersion.zip"
+
+Write-Host "Archive path: $archivePath"
 
 if (-not (Test-Path $archivePath)) {
     Write-Error "File not found: $archivePath"
-    Write-Error "IMAGE_FOLDER: $env:IMAGE_FOLDER"
-    Write-Error "Contents of IMAGE_FOLDER:"
-    Get-ChildItem -Path $env:IMAGE_FOLDER -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
+    Write-Host "Checking if libraries directory exists:"
+    $librariesPath = Join-Path $env:IMAGE_FOLDER "libraries"
+    if (Test-Path $librariesPath) {
+        Write-Host "Libraries directory exists. Contents:"
+        Get-ChildItem -Path $librariesPath -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "  $_" }
+    } else {
+        Write-Host "Libraries directory does not exist at: $librariesPath"
+    }
+    Write-Host "Contents of IMAGE_FOLDER:"
+    Get-ChildItem -Path $env:IMAGE_FOLDER -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "  $_" }
     exit 1
 }
 
