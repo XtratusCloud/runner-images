@@ -203,7 +203,11 @@ build {
     source      = "${path.root}/../../../libraries"
   }
   provisioner "powershell" {
-    inline = ["Start-Sleep -Seconds 5"]
+    inline = [
+      "Start-Sleep -Seconds 5",
+      "Write-Host 'Contents of libraries folder:'",
+      "Get-ChildItem -Path '${var.image_folder}\\libraries' -ErrorAction SilentlyContinue | ForEach-Object { Write-Host \"  $_\" }"
+    ]
   }
   provisioner "powershell" {
     environment_vars = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]

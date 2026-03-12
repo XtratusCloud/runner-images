@@ -12,21 +12,14 @@ $toolName = "sapjco3"
 $toolVersion = "3.1.13"
 $toolPlatform = "x64"
 
-# Determine tools directory
-$toolsDir = $env:AGENT_TOOLSDIRECTORY
-if ([string]::IsNullOrEmpty($toolsDir)) {
-    $toolsDir = "C:\hostedtoolcache"
-}
+$archivePath = Join-Path $env:IMAGE_FOLDER "libraries\sapjco3-ntamd64-$toolVersion.zip"
 
 Write-Host "IMAGE_FOLDER: $env:IMAGE_FOLDER"
 Write-Host "Looking for libraries in: $env:IMAGE_FOLDER\libraries"
-
-$archivePath = Join-Path $env:IMAGE_FOLDER "libraries\sapjco3-ntamd64-$toolVersion.zip"
-
 Write-Host "Archive path: $archivePath"
 
 if (-not (Test-Path $archivePath)) {
-    Write-Error "File not found: $archivePath"
+    Write-Host "ERROR: File not found: $archivePath"
     Write-Host "Checking if libraries directory exists:"
     $librariesPath = Join-Path $env:IMAGE_FOLDER "libraries"
     if (Test-Path $librariesPath) {
@@ -37,9 +30,15 @@ if (-not (Test-Path $archivePath)) {
     }
     Write-Host "Contents of IMAGE_FOLDER:"
     Get-ChildItem -Path $env:IMAGE_FOLDER -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "  $_" }
+    Write-Error "File not found: $archivePath"
     exit 1
 }
 
+# Determine tools directory
+$toolsDir = $env:AGENT_TOOLSDIRECTORY
+if ([string]::IsNullOrEmpty($toolsDir)) {
+    $toolsDir = "C:\hostedtoolcache"
+}
 $installDir = Join-Path $toolsDir $toolName $toolVersion $toolPlatform
 
 # Remove existing installation and create new directory
