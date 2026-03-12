@@ -39,7 +39,7 @@ $toolsDir = $env:AGENT_TOOLSDIRECTORY
 if ([string]::IsNullOrEmpty($toolsDir)) {
     $toolsDir = "C:\hostedtoolcache"
 }
-$installDir = Join-Path $toolsDir $toolName $toolVersion $toolPlatform
+$installDir = Join-Path $toolsDir $toolName | Join-Path -ChildPath $toolVersion | Join-Path -ChildPath $toolPlatform
 
 # Remove existing installation and create new directory
 if (Test-Path $installDir) {
