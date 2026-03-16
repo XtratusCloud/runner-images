@@ -218,6 +218,7 @@ build {
   }
 
   provisioner "shell" {
+    environment_vars = ["IMAGE_VERSION=${var.image_version}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"] ##XTRATUS
     execute_command     = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     pause_before        = "5m0s"
     scripts             = ["${path.root}/../scripts/build/cleanup.sh"]

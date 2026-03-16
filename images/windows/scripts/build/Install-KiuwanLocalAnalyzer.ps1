@@ -12,26 +12,11 @@ $toolName = "KiuwanLocalAnalyzer"
 $toolVersion = "1.0.0"
 $toolPlatform = "x64"
 
-Write-Host "IMAGE_FOLDER: $env:IMAGE_FOLDER"
-Write-Host "Looking for libraries in: $env:IMAGE_FOLDER\libraries"
-
-$archivePath = Join-Path $env:IMAGE_FOLDER "libraries\KiuwanLocalAnalyzer.zip"
-
-Write-Host "Archive path: $archivePath"
+$archivePath = "$env:IMAGE_FOLDER\libraries\KiuwanLocalAnalyzer.zip"
 
 if (-not (Test-Path $archivePath)) {
-    Write-Host "ERROR: File not found: $archivePath"
-    Write-Host "Checking if libraries directory exists:"
-    $librariesPath = Join-Path $env:IMAGE_FOLDER "libraries"
-    if (Test-Path $librariesPath) {
-        Write-Host "Libraries directory exists. Contents:"
-        Get-ChildItem -Path $librariesPath -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "  $_" }
-    } else {
-        Write-Host "Libraries directory does not exist at: $librariesPath"
-    }
-    Write-Host "Contents of IMAGE_FOLDER:"
-    Get-ChildItem -Path $env:IMAGE_FOLDER -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "  $_" }
     Write-Error "File not found: $archivePath"
+    exit 1
 }
 
 # Determine tools directory
@@ -40,7 +25,7 @@ if ([string]::IsNullOrEmpty($toolsDir)) {
     $toolsDir = "C:\hostedtoolcache"
 }
 
-$installDir = Join-Path $toolsDir $toolName | Join-Path -ChildPath $toolVersion | Join-Path -ChildPath $toolPlatform
+$installDir = "$toolsDir\$toolName\$toolVersion\$toolPlatform"
 
 # Remove existing installation and create new directory
 if (Test-Path $installDir) {
@@ -52,7 +37,7 @@ Write-Host "Extracting Kiuwan Local Analyzer to $installDir"
 Expand-7ZipArchive -Path $archivePath -DestinationPath $installDir
 
 # Create the .complete marker file
-$completeMarker = Join-Path $toolsDir $toolName $toolVersion "$toolPlatform.complete"
+$completeMarker = "$toolsDir\$toolName\$toolVersion\$toolPlatform.complete"
 New-Item -Path $completeMarker -ItemType File -Force | Out-Null
 
 Write-Host "Kiuwan Local Analyzer installed successfully at $installDir"

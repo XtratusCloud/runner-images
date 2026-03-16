@@ -12,6 +12,7 @@ before=$(df / -Pm | awk 'NR==2{print $4}')
 apt-get clean
 rm -rf /tmp/*
 rm -rf /root/.cache
+rm -rf "${INSTALLER_SCRIPT_FOLDER}/libraries" ##XTRATUS
 
 # journalctl
 if command -v journalctl; then
