@@ -43,7 +43,7 @@
 
 ### Project Management
 - Apache Ant 1.10.15
-- Apache Maven 3.9.13
+- Apache Maven 3.9.14
 - Gradle 9.3.1
 
 ### Utilities
