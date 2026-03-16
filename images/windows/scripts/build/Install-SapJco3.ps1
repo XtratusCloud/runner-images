@@ -46,5 +46,4 @@ New-Item -Path $completeMarker -ItemType File -Force | Out-Null
 
 Write-Host "SAP JCo3 installed successfully at $installDir"
 
-# Run tests
-invoke_tests "Tools" "SAP JCo3"
+Invoke-PesterTests -TestFile "Tools" -TestName "SAP JCo3"

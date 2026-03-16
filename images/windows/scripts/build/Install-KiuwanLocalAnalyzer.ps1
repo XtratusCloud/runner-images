@@ -42,5 +42,4 @@ New-Item -Path $completeMarker -ItemType File -Force | Out-Null
 
 Write-Host "Kiuwan Local Analyzer installed successfully at $installDir"
 
-# Run tests
-invoke_tests "Tools" "Kiuwan Local Analyzer"
+Invoke-PesterTests -TestFile "Tools" -TestName "Kiuwan Local Analyzer"
