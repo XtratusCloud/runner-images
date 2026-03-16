@@ -74,6 +74,8 @@ to accomplish this.
 - Docker Client 28.0.4
 - Docker Server 28.0.4
 - Fastlane 2.232.2
+- Kiuwan Local Analyzer 1.0.0  #XTRATUS
+- SAP JCo3 3.1.13  #XTRATUS
 - Git 2.53.0
 - Git LFS 3.7.1
 - Git-ftp 1.6.0

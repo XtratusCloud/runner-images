@@ -61,6 +61,8 @@
 - CodeQL Action Bundle 2.24.2
 - Docker 29.1.5
 - Docker Compose v2 2.40.3
+- Kiuwan Local Analyzer 1.0.0  #XTRATUS
+- SAP JCo3 3.1.13  #XTRATUS
 - Docker-wincred 0.9.5
 - ghc 9.14.1
 - Git 2.53.0.windows.1
