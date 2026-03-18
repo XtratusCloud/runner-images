@@ -41,9 +41,10 @@ Expand-7ZipArchive -Path $archivePath -DestinationPath $installDir
 # Make variable available in the current session
 $env:LD_LIBRARY_PATH = "$installDir;$($env:LD_LIBRARY_PATH)"
 
-[Environment]::SetEnvironmentVariable("CLASSPATH", "$installDir;$($env:CLASSPATH)", "Machine")
+$jarPath = "$installDir\sapjco3.jar"
+[Environment]::SetEnvironmentVariable("CLASSPATH", "$jarPath;$($env:CLASSPATH)", "Machine")
 # Make variable available in the current session
-$env:CLASSPATH = "$installDir;$($env:CLASSPATH)"
+$env:CLASSPATH = "$jarPath;$($env:CLASSPATH)"
 
 # Create the .complete marker file
 $completeMarker = "$toolsDir\$toolName\$toolVersion\$toolPlatform.complete"
