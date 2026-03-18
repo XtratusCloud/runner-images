@@ -37,7 +37,12 @@ Write-Host "Extracting SAP JCo3 to $installDir"
 Expand-7ZipArchive -Path $archivePath -DestinationPath $installDir
 
 # Configure environment variables
+[Environment]::SetEnvironmentVariable("LD_LIBRARY_PATH", "$installDir;$($env:LD_LIBRARY_PATH)", "Machine")
+# Make variable available in the current session
 $env:LD_LIBRARY_PATH = "$installDir;$($env:LD_LIBRARY_PATH)"
+
+[Environment]::SetEnvironmentVariable("CLASSPATH", "$installDir;$($env:CLASSPATH)", "Machine")
+# Make variable available in the current session
 $env:CLASSPATH = "$installDir;$($env:CLASSPATH)"
 
 # Create the .complete marker file
