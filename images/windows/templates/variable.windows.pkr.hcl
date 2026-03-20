@@ -128,7 +128,7 @@ variable "virtual_network_subnet_name" {
 }
 variable "vm_size" {
   type    = string
-  default = "Standard_D8s_v3" ##XTRATUS
+  default = "Standard_D8ds_v5" ##XTRATUS
 }
 variable "winrm_expiration_time" {  // A time duration with which to set the WinRM certificate to expire
   type    = string                  // Also applies to key vault secret expiration time

@@ -51,7 +51,7 @@ build {
     inline = ["if (-not ((net localgroup Administrators) -contains '${var.install_user}')) { exit 1 }"]
   }
 
-provisioner "powershell" {
+  provisioner "powershell" {
     elevated_password = "${var.install_password}"
     elevated_user     = "${var.install_user}"
     inline            = ["bcdedit.exe /set TESTSIGNING ON"]
@@ -91,8 +91,7 @@ provisioner "powershell" {
       "${path.root}/../scripts/build/Install-DockerWinCred.ps1",
       "${path.root}/../scripts/build/Install-DockerCompose.ps1",
       "${path.root}/../scripts/build/Install-PowershellCore.ps1",
-      "${path.root}/../scripts/build/Install-WebPlatformInstaller.ps1",
-      "${path.root}/../scripts/build/Install-Runner.ps1"
+      "${path.root}/../scripts/build/Install-WebPlatformInstaller.ps1"
     ]
   }
 
@@ -188,6 +187,20 @@ provisioner "powershell" {
       "${path.root}/../scripts/build/Configure-Diagnostics.ps1"
     ]
   }
+
+  ##XTRATUS START
+  provisioner "file" {
+    destination = "${var.image_folder}\\libraries\\"
+    source      = "${path.root}/../../../libraries/"
+  }
+  provisioner "powershell" {
+    environment_vars = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
+    scripts          = [
+      "${path.root}/../scripts/build/Install-KiuwanLocalAnalyzer.ps1",
+      "${path.root}/../scripts/build/Install-SapJco3.ps1"
+    ]
+  }
+  ##XTRATUS END
 
   provisioner "powershell" {
     elevated_password = "${var.install_password}"

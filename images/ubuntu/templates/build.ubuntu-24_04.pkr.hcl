@@ -99,7 +99,6 @@ provisioner "shell" {
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = [
       "${path.root}/../scripts/build/install-actions-cache.sh",
-      "${path.root}/../scripts/build/install-runner-package.sh",
       "${path.root}/../scripts/build/install-apt-common.sh",
       "${path.root}/../scripts/build/install-azcopy.sh",
       "${path.root}/../scripts/build/install-azure-cli.sh",
@@ -151,8 +150,23 @@ provisioner "shell" {
     ]
   }
 
+  ##XTRATUS START
+  provisioner "file" {
+    destination = "${var.installer_script_folder}/libraries"
+    source      = "${path.root}/../../../libraries"
+  }
   provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_PULL_IMAGES=NO"]
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
+    execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    scripts          = [
+      "${path.root}/../scripts/build/install-KiuwanLocalAnalyzer.sh",
+      "${path.root}/../scripts/build/install-sapjco3.sh"
+    ]
+  }
+  ##XTRATUS END
+
+  provisioner "shell" {
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = ["${path.root}/../scripts/build/install-docker.sh"]
   }
@@ -182,6 +196,11 @@ provisioner "shell" {
   }
 
   provisioner "shell" {
+    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    script          = "${path.root}/../scripts/build/list-dpkg.sh"
+  }
+
+  provisioner "shell" {
     execute_command   = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     expect_disconnect = true
     inline            = ["echo 'Reboot VM'", "sudo reboot"]
@@ -189,7 +208,7 @@ provisioner "shell" {
 
   provisioner "shell" {
     execute_command     = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    pause_before        = "2m0s" ##XTRATUS
+    pause_before        = "5m0s"
     scripts             = ["${path.root}/../scripts/build/cleanup.sh"]
     start_retry_timeout = "10m"
   }

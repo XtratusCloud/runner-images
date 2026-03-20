@@ -19,7 +19,8 @@ Write-Host "Clean up various directories"
     "$env:TEMP",
     "$env:AZURE_CONFIG_DIR\logs",
     "$env:AZURE_CONFIG_DIR\commands",
-    "$env:AZURE_CONFIG_DIR\telemetry"
+    "$env:AZURE_CONFIG_DIR\telemetry",
+    "$env:IMAGE_FOLDER\libraries" ##XTRATUWS
 ) | ForEach-Object {
     if (Test-Path $_) {
         Write-Host "Removing $_"

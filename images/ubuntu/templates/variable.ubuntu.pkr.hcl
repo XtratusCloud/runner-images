@@ -102,6 +102,10 @@ variable "source_image_version" {
   type    = string
   default = "latest"
 }
+variable "ssh_clear_authorized_keys" {
+  type    = bool
+  default = true
+}
 variable "temp_resource_group_name" {
   type    = string
   default = "${env("TEMP_RESOURCE_GROUP_NAME")}"
@@ -120,7 +124,7 @@ variable "virtual_network_subnet_name" {
 }
 variable "vm_size" {
   type    = string
-  default = "Standard_D4s_v3" ##XTRATUS
+  default = "Standard_D4s_v5"
 }
 variable "winrm_username" {         // The username used to connect to the VM via WinRM
     type    = string                // Also applies to the username used to create the VM
@@ -128,14 +132,6 @@ variable "winrm_username" {         // The username used to connect to the VM vi
 }
 
 // Image related variables
-variable "dockerhub_login" {
-  type    = string
-  default = "${env("DOCKERHUB_LOGIN")}"
-}
-variable "dockerhub_password" {
-  type    = string
-  default = "${env("DOCKERHUB_PASSWORD")}"
-}
 variable "helper_script_folder" {
   type    = string
   default = "/imagegeneration/helpers"

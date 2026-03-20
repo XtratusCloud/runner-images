@@ -54,17 +54,6 @@ Describe "DACFx" {
         $sqlPackagePath = 'C:\Program Files\Microsoft SQL Server\170\DAC\bin\SqlPackage.exe'
         "${sqlPackagePath}" | Should -Exist
     }
-
-    It "SqlLocalDB" -Skip:(-not (Test-IsWin19)) {
-        $sqlLocalDBPath = 'C:\Program Files\Microsoft SQL Server\130\Tools\Binn\SqlLocalDB.exe'
-        "${sqlLocalDBPath}" | Should -Exist
-    }
-}
-
-Describe "DotnetTLS" -Skip:(-not (Test-IsWin19)) {
-    It "Tls 1.2 is enabled" {
-        [Net.ServicePointManager]::SecurityProtocol -band "Tls12" | Should -Be Tls12
-    }
 }
 
 Describe "Mercurial" -Skip:(Test-IsWin25) {
@@ -98,16 +87,6 @@ Describe "Mingw64" {
         @{ ToolName = "make" }
     ) {
         "$ToolName --version" | Should -ReturnZeroExitCode
-    }
-}
-
-Describe "GoogleCloudCLI" -Skip:(-not (Test-IsWin19)) {
-    It "<ToolName>" -TestCases @(
-        @{ ToolName = "bq" }
-        @{ ToolName = "gcloud" }
-        @{ ToolName = "gsutil" }
-    ) {
-        "$ToolName version" | Should -ReturnZeroExitCode
     }
 }
 
@@ -175,13 +154,6 @@ Describe "Vcpkg" {
     }
 }
 
-Describe "VCRedist" -Skip:(-not (Test-IsWin19)) {
-    It "vcredist_2010_x64" {
-        "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1D8E6291-B0D5-35EC-8441-6616F567A0F7}" | Should -Exist
-        "C:\Windows\System32\msvcr100.dll" | Should -Exist
-    }
-}
-
 Describe "WebPlatformInstaller" {
     It "WebPlatformInstaller" {
         "WebPICMD" | Should -ReturnZeroExitCode
@@ -213,8 +185,12 @@ Describe "Kotlin" {
 }
 
 Describe "SQL OLEDB Driver" {
-    It "SQL OLEDB Driver" {
+    It "SQL OLEDB Driver 18" {
         "HKLM:\SOFTWARE\Microsoft\MSOLEDBSQL" | Should -Exist
+    }
+
+    It "SQL OLEDB Driver 19" {
+        "HKLM:\SOFTWARE\Microsoft\MSOLEDBSQL19" | Should -Exist
     }
 }
 
@@ -231,4 +207,70 @@ Describe "OpenSSL" {
     It "OpenSSL Full package" {
         Join-Path ${env:ProgramFiles} 'OpenSSL\include' | Should -Exist
     }
+
+    It "OpenSSL DLLs not in System32" {
+        Get-ChildItem -Path "$env:SystemRoot\System32" -Filter "libcrypto-*.dll" -File -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+	    Get-ChildItem -Path "$env:SystemRoot\System32" -Filter "libssl-*.dll" -File -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+    }
 }
+##XTRATUS START
+Describe "Kiuwan Local Analyzer" {
+    BeforeAll {
+        $toolsDir = $env:AGENT_TOOLSDIRECTORY
+        if ([string]::IsNullOrEmpty($toolsDir)) {
+            $toolsDir = "C:\hostedtoolcache"
+        }
+        $kiuwanPath = Join-Path $toolsDir "KiuwanLocalAnalyzer\1.0.0\x64"
+    }
+
+    It "Kiuwan Local Analyzer directory exists" {
+        $kiuwanPath | Should -Exist
+    }
+
+    It "kiuwan.cmd script exists" {
+        $kiuwanCmd = Join-Path $kiuwanPath "kiuwan.cmd"
+        $kiuwanCmd | Should -Exist
+    }
+
+    It ".complete marker file exists" {
+        $completeMarker = Join-Path $toolsDir "KiuwanLocalAnalyzer\1.0.0\x64.complete"
+        $completeMarker | Should -Exist
+    }
+}
+
+Describe "SAP JCo3" {
+    BeforeAll {
+        $toolsDir = $env:AGENT_TOOLSDIRECTORY
+        if ([string]::IsNullOrEmpty($toolsDir)) {
+            $toolsDir = "C:\hostedtoolcache"
+        }
+        $sapjco3Path = Join-Path $toolsDir "sapjco3\3.1.13\x64"
+    }
+
+    It "SAP JCo3 directory exists" {
+        $sapjco3Path | Should -Exist
+    }
+
+    It "sapjco3.jar exists" {
+        $jarFile = Join-Path $sapjco3Path "sapjco3.jar"
+        $jarFile | Should -Exist
+    }
+
+    It "LD_LIBRARY_PATH environment variable is set" {
+        $ldLibraryPath = [System.Environment]::GetEnvironmentVariable("LD_LIBRARY_PATH", "Machine")
+        $ldLibraryPath | Should -Not -BeNullOrEmpty
+        $ldLibraryPath | Should -Match ([regex]::Escape($sapjco3Path))
+    }
+
+    It "CLASSPATH environment variable is set" {
+        $classpath = [System.Environment]::GetEnvironmentVariable("CLASSPATH", "Machine")
+        $classpath | Should -Not -BeNullOrEmpty
+        $classpath | Should -Match ([regex]::Escape((Join-Path $sapjco3Path "sapjco3.jar")))
+    }
+
+    It ".complete marker file exists" {
+        $completeMarker = Join-Path $toolsDir "sapjco3\3.1.13\x64.complete"
+        $completeMarker | Should -Exist
+    }
+}
+##XTRATUS END

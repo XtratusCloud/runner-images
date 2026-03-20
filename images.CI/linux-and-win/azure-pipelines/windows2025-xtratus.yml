@@ -15,6 +15,7 @@ trigger:
       - images/windows/assets/post-gen/*
       - images/windows/scripts/*      
       - images/windows/templates/build.windows-2025.pkr.hcl
+      - images/windows/templates/build.windows-2025-vs2026.pkr.hcl
       - images/windows/toolsets/toolset-2025.json
       - images/windows/Windows2025-Readme.md
 
