@@ -74,6 +74,8 @@ to accomplish this.
 - Docker-Buildx 0.38.2
 - Docker Client 29.4.2
 - Docker Server 29.4.2
+- Kiuwan Local Analyzer 1.0.0  #XTRATUS
+- SAP JCo3 3.1.13  #XTRATUS
 - Git 2.56.1
 - Git LFS 3.8.1
 - Git-ftp 1.6.0
