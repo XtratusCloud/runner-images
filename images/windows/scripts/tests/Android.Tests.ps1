@@ -1,31 +1,37 @@
-Describe "Android SDK" {
-    $androidToolset = (Get-ToolsetContent).android
-    $androidInstalledPackages = Get-AndroidInstalledPackages
+Describe "Android SDK" -Skip:(Test-IsArm64) {
+    BeforeDiscovery {
+        if (Test-IsArm64) {
+            return
+        }
 
-    $platformList = Get-AndroidPlatformPackages -minVersion $androidToolset.platform_min_version
-    $platformTestCases = $platformList | ForEach-Object {
-        @{ platformVersion = $_; installedPackages = $androidInstalledPackages }
-    }
+        $androidToolset = (Get-ToolsetContent).android
+        $androidInstalledPackages = Get-AndroidInstalledPackages
 
-    $buildToolsList = Get-AndroidBuildToolPackages -minVersion $androidToolset.build_tools_min_version
-    $buildToolsTestCases = $buildToolsList | ForEach-Object {
-        @{ buildToolsVersion = $_; installedPackages = $androidInstalledPackages }
-    }
+        $platformList = Get-AndroidPlatformPackages -minVersion $androidToolset.platform_min_version
+        $platformTestCases = $platformList | ForEach-Object {
+            @{ platformVersion = $_; installedPackages = $androidInstalledPackages }
+        }
 
-    $extraPackagesTestCases = $androidToolset.extra_list | ForEach-Object {
-        @{ extraPackage = $_; installedPackages = $androidInstalledPackages }
-    }
+        $buildToolsList = Get-AndroidBuildToolPackages -minVersion $androidToolset.build_tools_min_version
+        $buildToolsTestCases = $buildToolsList | ForEach-Object {
+            @{ buildToolsVersion = $_; installedPackages = $androidInstalledPackages }
+        }
 
-    $addonsTestCases = $androidToolset.addon_list | ForEach-Object {
-        @{ addonPackage = $_; installedPackages = $androidInstalledPackages }
-    }
+        $extraPackagesTestCases = $androidToolset.extra_list | ForEach-Object {
+            @{ extraPackage = $_; installedPackages = $androidInstalledPackages }
+        }
 
-    $additionalToolsTestCases = $androidToolset.additional_tools | ForEach-Object {
-        @{ additionalToolVersion = $_; installedPackages = $androidInstalledPackages }
-    }
+        $addonsTestCases = $androidToolset.addon_list | ForEach-Object {
+            @{ addonPackage = $_; installedPackages = $androidInstalledPackages }
+        }
 
-    $ndkPackagesTestCases = $androidToolset.ndk.versions | ForEach-Object {
-        @{ ndkPackage = $_; installedPackages = $androidInstalledPackages }
+        $additionalToolsTestCases = $androidToolset.additional_tools | ForEach-Object {
+            @{ additionalToolVersion = $_; installedPackages = $androidInstalledPackages }
+        }
+
+        $ndkPackagesTestCases = $androidToolset.ndk.versions | ForEach-Object {
+            @{ ndkPackage = $_; installedPackages = $androidInstalledPackages }
+        }
     }
 
     Context "SDKManagers" {
@@ -42,20 +48,27 @@ Describe "Android SDK" {
     }
 
     Context "Packages" {
-        It "Platform version <platformVersion> is installed" -TestCases $platformTestCases {
-            "$installedPackages" | Should -Match "$platformVersion"
-        }
+        if (-not (Test-IsArm64)) {
+            It "Platform version <platformVersion> is installed" -TestCases $platformTestCases {
+                "$installedPackages" | Should -Match "$platformVersion"
+            }
 
-        It "Platform build tools <buildToolsVersion> is installed" -TestCases $buildToolsTestCases {
-            "$installedPackages" | Should -Match "$buildToolsVersion"
-        }
+            It "Packages are installed in expected locations" {
+                $sdkManager = "$env:ANDROID_HOME\cmdline-tools\latest\bin\sdkmanager.bat"
+                "$(cmd /c "$sdkManager --list_installed 2>&1")" | Should -Not -Match "inconsistent location"
+            }
 
-        It "Additional tool <additionalToolVersion> is installed" -TestCases $additionalToolsTestCases {
-            "$installedPackages" | Should -Match $additionalToolVersion
-        }
+            It "Platform build tools <buildToolsVersion> is installed" -TestCases $buildToolsTestCases {
+                "$installedPackages" | Should -Match "$buildToolsVersion"
+            }
 
-        It "NDK <ndkPackage> is installed" -TestCases $ndkPackagesTestCases {
-            "$installedPackages" | Should -Match "ndk;$ndkPackage"
+            It "Additional tool <additionalToolVersion> is installed" -TestCases $additionalToolsTestCases {
+                "$installedPackages" | Should -Match $additionalToolVersion
+            }
+
+            It "NDK <ndkPackage> is installed" -TestCases $ndkPackagesTestCases {
+                "$installedPackages" | Should -Match "ndk;$ndkPackage"
+            }
         }
     }
 }
