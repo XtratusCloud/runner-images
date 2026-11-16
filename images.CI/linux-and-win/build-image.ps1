@@ -68,7 +68,6 @@ packer build    -only "$buildName.*" `
                 -var "allowed_inbound_ip_addresses=$($AllowedInboundIpAddresses)" `
                 -var "use_azure_cli_auth=$UseAzureCliAuth" `
                 -var "azure_tags=$azure_tags" `
-                ##XTRATUS internal CA certificates
                 -var "internal_certs_folder=$InternalCertsFolder" `
                 -color=false `
                 $TemplatePath `
