@@ -107,6 +107,30 @@ jobs:
   - task: riezebosch.Packer.PackerTool.PackerTool@0
     displayName: 'devops: download Packer'
 
+  ##XTRATUS START
+  - task: DownloadSecureFile@1
+    name: internalCARoot
+    displayName: 'devops: download internal CA root certificate'
+    inputs:
+      secureFile: 'Ferrovial Root CA.pem'
+
+  - task: DownloadSecureFile@1
+    name: internalCAIntermediate
+    displayName: 'devops: download internal CA intermediate certificate'
+    inputs:
+      secureFile: 'Ferrovial Organization Validation L2 CA.pem'
+
+  - pwsh: |
+      $certsFolder = Join-Path "$(Agent.TempDirectory)" "internal-certs"
+      New-Item -ItemType Directory -Force -Path (Join-Path $certsFolder "root") | Out-Null
+      New-Item -ItemType Directory -Force -Path (Join-Path $certsFolder "intermediate") | Out-Null
+      Copy-Item "$(internalCARoot.secureFilePath)" (Join-Path $certsFolder "root")
+      Copy-Item "$(internalCAIntermediate.secureFilePath)" (Join-Path $certsFolder "intermediate")
+      Write-Host "Internal CA certs staged at: $certsFolder"
+      Write-Host "##vso[task.setvariable variable=InternalCertsFolder;]$certsFolder"
+    displayName: 'devops: stage internal CA certificates'
+  ##XTRATUS END
+
   - task: AzureCLI@2
     displayName: 'az: Build VM'
     inputs:
@@ -128,7 +152,8 @@ jobs:
                  -VirtualNetworkSubnet $(VNET_SUBNET) `
                  -ImageName "$(managed_image_name)_$(ImageVersion)"
                  -TemplatePath $(TemplatePath) `
-                 -BuildTemplateName  ${{ parameters.image_template_name }}
+                 -BuildTemplateName  ${{ parameters.image_template_name }} `
+                 -InternalCertsFolder "$(InternalCertsFolder)" ##XTRATUS
     env:
       PACKER_LOG: 1
       PACKER_LOG_PATH: "$(Agent.TempDirectory)/packer-log.txt"

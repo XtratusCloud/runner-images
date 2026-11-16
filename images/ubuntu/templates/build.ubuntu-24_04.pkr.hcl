@@ -157,12 +157,17 @@ provisioner "shell" {
     destination = "${var.installer_script_folder}/libraries"
     source      = "${path.root}/../../../libraries"
   }
+  provisioner "file" {
+    destination = "${var.installer_script_folder}/certs"
+    source      = "${var.internal_certs_folder}"
+  }
   provisioner "shell" {
     environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = [
       "${path.root}/../scripts/build/install-KiuwanLocalAnalyzer.sh",
-      "${path.root}/../scripts/build/install-sapjco3.sh"
+      "${path.root}/../scripts/build/install-sapjco3.sh",
+      "${path.root}/../scripts/build/install-internal-ca.sh"
     ]
   }
   ##XTRATUS END

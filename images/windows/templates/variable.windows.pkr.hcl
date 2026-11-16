@@ -182,3 +182,10 @@ variable "temp_dir" {
   type    = string
   default = "D:\\temp"
 }
+
+##XTRATUS START
+variable "internal_certs_folder" {
+  type    = string
+  default = ""
+}
+##XTRATUS END

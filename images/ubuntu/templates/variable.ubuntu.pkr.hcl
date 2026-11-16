@@ -170,3 +170,10 @@ variable "install_user" {
   type    = string
   default = "installer"
 }
+
+##XTRATUS START
+variable "internal_certs_folder" {
+  type    = string
+  default = ""
+}
+##XTRATUS END

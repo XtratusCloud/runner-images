@@ -16,6 +16,7 @@ param(
     [String] [Parameter (Mandatory=$false)] $VirtualNetworkRG,
     [String] [Parameter (Mandatory=$false)] $VirtualNetworkSubnet,
     [String] [Parameter (Mandatory=$false)] $AllowedInboundIpAddresses = "[]",
+    [String] [Parameter (Mandatory=$false)] $InternalCertsFolder, ##XTRATUS folder with internal CA certificates (root + intermediate)
     [hashtable] [Parameter (Mandatory=$false)] $Tags = @{}
 )
 
@@ -67,6 +68,8 @@ packer build    -only "$buildName.*" `
                 -var "allowed_inbound_ip_addresses=$($AllowedInboundIpAddresses)" `
                 -var "use_azure_cli_auth=$UseAzureCliAuth" `
                 -var "azure_tags=$azure_tags" `
+                ##XTRATUS internal CA certificates
+                -var "internal_certs_folder=$InternalCertsFolder" `
                 -color=false `
                 $TemplatePath `
         | Where-Object {
