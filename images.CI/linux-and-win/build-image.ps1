@@ -16,6 +16,7 @@ param(
     [String] [Parameter (Mandatory=$false)] $VirtualNetworkRG,
     [String] [Parameter (Mandatory=$false)] $VirtualNetworkSubnet,
     [String] [Parameter (Mandatory=$false)] $AllowedInboundIpAddresses = "[]",
+    [String] [Parameter (Mandatory=$false)] $InternalCertsFolder, ##XTRATUS folder with internal CA certificates (root + intermediate)
     [hashtable] [Parameter (Mandatory=$false)] $Tags = @{}
 )
 
@@ -47,7 +48,7 @@ Write-Host "Download packer plugins"
 packer plugins install github.com/hashicorp/azure $pluginVersion
 
 Write-Host "Validate packer template"
-packer validate -syntax-only -only "$buildName.*" $TemplatePath ##XTRATUS .*
+packer validate -syntax-only -only "$buildName.*" $TemplatePath
 
 Write-Host "Build $buildName VM"
 packer build    -only "$buildName.*" `
@@ -67,6 +68,7 @@ packer build    -only "$buildName.*" `
                 -var "allowed_inbound_ip_addresses=$($AllowedInboundIpAddresses)" `
                 -var "use_azure_cli_auth=$UseAzureCliAuth" `
                 -var "azure_tags=$azure_tags" `
+                -var "internal_certs_folder=$InternalCertsFolder" `
                 -color=false `
                 $TemplatePath `
         | Where-Object {

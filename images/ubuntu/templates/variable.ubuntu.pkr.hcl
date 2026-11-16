@@ -7,6 +7,11 @@ variable "client_id" {
   type    = string
   default = "${env("ARM_CLIENT_ID")}"
 }
+variable "client_jwt" {
+  type      = string
+  default   = "${env("ARM_CLIENT_JWT")}"
+  sensitive = true
+}
 variable "client_secret" {
   type      = string
   default   = "${env("ARM_CLIENT_SECRET")}"
@@ -165,3 +170,10 @@ variable "install_user" {
   type    = string
   default = "installer"
 }
+
+##XTRATUS START
+variable "internal_certs_folder" {
+  type    = string
+  default = ""
+}
+##XTRATUS END

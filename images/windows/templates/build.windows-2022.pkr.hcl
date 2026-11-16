@@ -202,12 +202,22 @@ build {
     destination = "${var.image_folder}\\libraries\\"
     source      = "${path.root}/../../../libraries/"
   }
+  provisioner "file" {
+    destination = "${var.image_folder}\\certs\\"
+    source      = "${var.internal_certs_folder}"
+  }
   provisioner "powershell" {
     environment_vars = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
     scripts          = [
       "${path.root}/../scripts/build/Install-KiuwanLocalAnalyzer.ps1",
       "${path.root}/../scripts/build/Install-SapJco3.ps1"
     ]
+  }
+  provisioner "powershell" {
+    elevated_password = "${var.install_password}"
+    elevated_user     = "${var.install_user}"
+    environment_vars  = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}", "AGENT_TOOLSDIRECTORY=${var.agent_tools_directory}"] ##XTRATUS
+    scripts           = ["${path.root}/../scripts/build/Install-InternalCA.ps1"]
   }
   ##XTRATUS END
 

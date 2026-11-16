@@ -56,7 +56,7 @@ Describe "DACFx" {
     }
 }
 
-Describe "Mercurial" -Skip:(Test-IsWin25) {
+Describe "Mercurial" -Skip:(Test-IsWin25-X64) {
     It "Mercurial" {
         "hg --version" | Should -ReturnZeroExitCode
     }
@@ -96,7 +96,7 @@ Describe "NET48" {
     }
 }
 
-Describe "NSIS" -Skip:(Test-IsWin25) {
+Describe "NSIS" -Skip:(Test-IsWin25-X64) {
     It "NSIS" {
         "makensis /VERSION" | Should -ReturnZeroExitCode
     }
@@ -118,7 +118,7 @@ Describe "Sbt" {
     }
 }
 
-Describe "ServiceFabricSDK" {
+Describe "ServiceFabricSDK" -Skip:(Test-IsWin11-Arm64) {
     It "PowerShell Module" {
         # Ignore PowerShell version check if running in PowerShell Core
         # https://github.com/microsoft/service-fabric/issues/1343
@@ -129,8 +129,13 @@ Describe "ServiceFabricSDK" {
         }
     }
 
+    It "Service Fabric runtime version" {
+        $runtimeVersion = (Get-ToolsetContent).serviceFabric.runtime.version
+        Get-ItemPropertyValue 'HKLM:\SOFTWARE\Microsoft\Service Fabric\' -Name FabricVersion | Should -Be $runtimeVersion
+    }
+
     It "ServiceFabricSDK version" {
-        Get-ItemPropertyValue 'HKLM:\SOFTWARE\Microsoft\Service Fabric\' -Name FabricVersion | Should -Not -BeNullOrEmpty
+        Get-ItemPropertyValue 'HKLM:\SOFTWARE\Microsoft\Service Fabric SDK\' -Name FabricSDKVersion | Should -Not -BeNullOrEmpty
     }
 }
 
@@ -274,3 +279,37 @@ Describe "SAP JCo3" {
     }
 }
 ##XTRATUS END
+
+Describe "CMake" {
+    It "cmake" {
+        "cmake --version" | Should -ReturnZeroExitCode
+    }
+}
+
+Describe "Ninja" {
+    BeforeAll {
+        $ninjaProjectPath = $(Join-Path $env:TEMP_DIR "ninjaproject")
+        New-item -Path $ninjaProjectPath -ItemType Directory -Force
+@'
+cmake_minimum_required(VERSION 3.10)
+project(NinjaTest NONE)
+'@ | Out-File -FilePath "$ninjaProjectPath/CMakeLists.txt" -Encoding utf8
+
+        $ninjaProjectBuildPath = $(Join-Path $ninjaProjectPath "build")
+        New-item -Path $ninjaProjectBuildPath -ItemType Directory -Force
+        Set-Location $ninjaProjectBuildPath
+    }
+
+    It "Make a simple ninja project" {
+        "cmake -GNinja $ninjaProjectPath" | Should -ReturnZeroExitCode
+    }
+
+    It "build.ninja file should exist" {
+        $buildFilePath = $(Join-Path $ninjaProjectBuildPath "build.ninja")
+        $buildFilePath | Should -Exist
+    }
+
+    It "Ninja" {
+        "ninja --version" | Should -ReturnZeroExitCode
+    }
+}

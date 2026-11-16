@@ -34,7 +34,8 @@ Function Install-VisualStudio {
         [Parameter(Mandatory)] [String] $Channel,
         [String] $InstallChannelUri = "",
         [Parameter(Mandatory)] [String[]] $RequiredComponents,
-        [String] $ExtraArgs = ""
+        [String] $ExtraArgs = "",
+        [String] $Architecture = "x64"
     )
 
     if ($env:INSTALL_VS_2026) {
@@ -63,13 +64,20 @@ Function Install-VisualStudio {
             "channelUri"        = $channelUri
             "channelId"         = $channelId
             "productId"         = $productId
-            "arch"              = "x64"
+            "arch"              = $Architecture
             "add"               = $RequiredComponents | ForEach-Object { "$_;includeRecommended" }
         }
 
         # Create json file with response data
         $responseDataPath = "$env:TEMP\vs_install_response.json"
         $responseData | ConvertTo-Json | Out-File -FilePath $responseDataPath
+
+        # Disable keeping downloaded VS payloads in cache via policy.
+        $vsSetupPolicyPath = "HKLM:\SOFTWARE\Policies\Microsoft\VisualStudio\Setup"
+        if (-not (Test-Path -Path $vsSetupPolicyPath)) {
+            New-Item -Path $vsSetupPolicyPath -Force | Out-Null
+        }
+        New-ItemProperty -Path $vsSetupPolicyPath -Name "KeepDownloadedPayloads" -PropertyType DWord -Value 0 -Force | Out-Null
 
         $installStartTime = Get-Date
         Write-Host "Starting Install ..."
@@ -100,7 +108,7 @@ Function Install-VisualStudio {
             }
 
             # Expand the zip file
-            Expand-Archive -Path "$env:TEMP_DIR\vslogs.zip" -DestinationPath "$env:TEMP_DIR\vslogs"
+            Expand-Archive -Path "$env:TEMP\vslogs.zip" -DestinationPath "$env:TEMP_DIR\vslogs"
 
             # Print logs
             $vsLogsPath = "$env:TEMP_DIR\vslogs"
